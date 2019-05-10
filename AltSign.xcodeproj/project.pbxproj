@@ -15,6 +15,8 @@
 		BF5AB3C02286040400DC914B /* NSError+ALTError.m in Sources */ = {isa = PBXBuildFile; fileRef = BF5AB3BE2286040400DC914B /* NSError+ALTError.m */; };
 		BF5AB3C52286157F00DC914B /* ALTTeam.h in Headers */ = {isa = PBXBuildFile; fileRef = BF5AB3C32286157F00DC914B /* ALTTeam.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BF5AB3C62286157F00DC914B /* ALTTeam.m in Sources */ = {isa = PBXBuildFile; fileRef = BF5AB3C42286157F00DC914B /* ALTTeam.m */; };
+		BF5AB3C92286269B00DC914B /* ALTDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = BF5AB3C72286269B00DC914B /* ALTDevice.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BF5AB3CA2286269B00DC914B /* ALTDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = BF5AB3C82286269B00DC914B /* ALTDevice.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +30,8 @@
 		BF5AB3BE2286040400DC914B /* NSError+ALTError.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSError+ALTError.m"; sourceTree = "<group>"; };
 		BF5AB3C32286157F00DC914B /* ALTTeam.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALTTeam.h; sourceTree = "<group>"; };
 		BF5AB3C42286157F00DC914B /* ALTTeam.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALTTeam.m; sourceTree = "<group>"; };
+		BF5AB3C72286269B00DC914B /* ALTDevice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALTDevice.h; sourceTree = "<group>"; };
+		BF5AB3C82286269B00DC914B /* ALTDevice.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALTDevice.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,6 +89,8 @@
 				BF5AB3B82286024D00DC914B /* ALTAccount.m */,
 				BF5AB3C32286157F00DC914B /* ALTTeam.h */,
 				BF5AB3C42286157F00DC914B /* ALTTeam.m */,
+				BF5AB3C72286269B00DC914B /* ALTDevice.h */,
+				BF5AB3C82286269B00DC914B /* ALTDevice.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -98,6 +104,7 @@
 			files = (
 				BF5AB3B92286024D00DC914B /* ALTAccount.h in Headers */,
 				BF5AB3BF2286040400DC914B /* NSError+ALTError.h in Headers */,
+				BF5AB3C92286269B00DC914B /* ALTDevice.h in Headers */,
 				BF5AB3B5228600D100DC914B /* ALTSign.h in Headers */,
 				BF5AB3C52286157F00DC914B /* ALTTeam.h in Headers */,
 			);
@@ -172,6 +179,7 @@
 			files = (
 				BF5AB3C62286157F00DC914B /* ALTTeam.m in Sources */,
 				BF5AB3B6228600D100DC914B /* ALTSign.m in Sources */,
+				BF5AB3CA2286269B00DC914B /* ALTDevice.m in Sources */,
 				BF5AB3BA2286024D00DC914B /* ALTAccount.m in Sources */,
 				BF5AB3C02286040400DC914B /* NSError+ALTError.m in Sources */,
 			);

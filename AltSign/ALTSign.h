@@ -10,6 +10,7 @@
 
 #import <AltSign/ALTAccount.h>
 #import <AltSign/ALTTeam.h>
+#import <AltSign/ALTDevice.h>
 
 #import <AltSign/NSError+ALTError.h>
 
@@ -25,11 +26,20 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (class, nonatomic, readonly) ALTSign *shared;
 
+/* Authentication */
 - (void)authenticateWithAppleID:(NSString *)appleID password:(NSString *)password
               completionHandler:(void (^)(ALTAccount *_Nullable account, NSError *_Nullable error))completionHandler NS_SWIFT_NAME(authenticate(appleID:password:completionHandler:));
 
+/* Teams */
 - (void)fetchTeamsForAccount:(ALTAccount *)account
            completionHandler:(void (^)(NSArray<ALTTeam *> *_Nullable teams, NSError *_Nullable error))completionHandler;
+
+/* Devices */
+- (void)fetchDevicesForTeam:(ALTTeam *)team
+          completionHandler:(void (^)(NSArray<ALTDevice *> *_Nullable devices, NSError *_Nullable error))completionHandler;
+
+- (void)registerDeviceWithName:(NSString *)name identifier:(NSString *)identifier team:(ALTTeam *)team
+             completionHandler:(void (^)(ALTDevice *_Nullable device, NSError *_Nullable error))completionHandler NS_SWIFT_NAME(registerDevice(name:identifier:team:completionHandler:));
 
 @end
 

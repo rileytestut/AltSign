@@ -116,6 +116,7 @@ NS_ASSUME_NONNULL_END
 - (void)fetchTeamsForAccount:(ALTAccount *)account completionHandler:(void (^)(NSArray<ALTTeam *> *teams, NSError *error))completionHandler
 {
     NSURL *URL = [NSURL URLWithString:@"listTeams.action" relativeToURL:self.baseURL];
+    
     [self sendRequestWithURL:URL additionalParameters:nil account:account team:nil completionHandler:^(NSDictionary *responseDictionary, NSError *error) {
         if (responseDictionary == nil)
         {
@@ -123,10 +124,16 @@ NS_ASSUME_NONNULL_END
             return;
         }
         
-        NSArray *teams = responseDictionary[@"teams"];
+        NSArray *array = responseDictionary[@"teams"];
+        if (array == nil)
+        {
+            NSError *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorInvalidResponse userInfo:nil];
+            completionHandler(nil, error);
+            return;
+        }
         
-        NSMutableArray *parsedTeams = [NSMutableArray array];
-        for (NSDictionary *dictionary in teams)
+        NSMutableArray *teams = [NSMutableArray array];
+        for (NSDictionary *dictionary in array)
         {
             ALTTeam *team = [[ALTTeam alloc] initWithAccount:account responseDictionary:dictionary];
             if (team == nil)
@@ -136,10 +143,80 @@ NS_ASSUME_NONNULL_END
                 return;
             }
             
-            [parsedTeams addObject:team];
+            [teams addObject:team];
         }
         
-        completionHandler(parsedTeams, nil);
+        completionHandler(teams, nil);
+    }];
+}
+
+#pragma mark - Devices -
+
+- (void)fetchDevicesForTeam:(ALTTeam *)team completionHandler:(void (^)(NSArray<ALTDevice *> * _Nullable, NSError * _Nullable))completionHandler
+{
+    NSURL *URL = [NSURL URLWithString:@"ios/listDevices.action" relativeToURL:self.baseURL];
+    
+    [self sendRequestWithURL:URL additionalParameters:nil account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *error) {
+        if (responseDictionary == nil)
+        {
+            completionHandler(nil, error);
+            return;
+        }
+        
+        NSArray *array = responseDictionary[@"devices"];
+        if (array == nil)
+        {
+            NSError *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorInvalidResponse userInfo:nil];
+            completionHandler(nil, error);
+            return;
+        }
+        
+        NSMutableArray *devices = [NSMutableArray array];
+        for (NSDictionary *dictionary in array)
+        {
+            ALTDevice *device = [[ALTDevice alloc] initWithResponseDictionary:dictionary];
+            if (device == nil)
+            {
+                NSError *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorInvalidResponse userInfo:nil];
+                completionHandler(nil, error);
+                return;
+            }
+            
+            [devices addObject:device];
+        }
+        
+        completionHandler(devices, nil);
+    }];
+}
+
+- (void)registerDeviceWithName:(NSString *)name identifier:(NSString *)identifier team:(ALTTeam *)team completionHandler:(void (^)(ALTDevice * _Nullable, NSError * _Nullable))completionHandler
+{
+    NSURL *URL = [NSURL URLWithString:@"ios/addDevice.action" relativeToURL:self.baseURL];
+    
+    [self sendRequestWithURL:URL additionalParameters:@{@"deviceNumber": identifier, @"name": name} account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *error) {
+        if (responseDictionary == nil)
+        {
+            completionHandler(nil, error);
+            return;
+        }
+        
+        NSDictionary *dictionary = responseDictionary[@"device"];
+        if (dictionary == nil)
+        {
+            NSError *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorInvalidResponse userInfo:nil];
+            completionHandler(nil, error);
+            return;
+        }
+        
+        ALTDevice *device = [[ALTDevice alloc] initWithResponseDictionary:dictionary];
+        if (device == nil)
+        {
+            NSError *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorInvalidResponse userInfo:nil];
+            completionHandler(nil, error);
+            return;
+        }
+        
+        completionHandler(device, nil);
     }];
 }
 
