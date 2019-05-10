@@ -7,13 +7,23 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		BF5AB39E2285FDB200DC914B /* AltSign.h in Headers */ = {isa = PBXBuildFile; fileRef = BF5AB39C2285FDB200DC914B /* AltSign.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BF5AB3B5228600D100DC914B /* ALTSign.h in Headers */ = {isa = PBXBuildFile; fileRef = BF5AB3B3228600D100DC914B /* ALTSign.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BF5AB3B6228600D100DC914B /* ALTSign.m in Sources */ = {isa = PBXBuildFile; fileRef = BF5AB3B4228600D100DC914B /* ALTSign.m */; };
+		BF5AB3B92286024D00DC914B /* ALTAccount.h in Headers */ = {isa = PBXBuildFile; fileRef = BF5AB3B72286024D00DC914B /* ALTAccount.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BF5AB3BA2286024D00DC914B /* ALTAccount.m in Sources */ = {isa = PBXBuildFile; fileRef = BF5AB3B82286024D00DC914B /* ALTAccount.m */; };
+		BF5AB3BF2286040400DC914B /* NSError+ALTError.h in Headers */ = {isa = PBXBuildFile; fileRef = BF5AB3BD2286040400DC914B /* NSError+ALTError.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BF5AB3C02286040400DC914B /* NSError+ALTError.m in Sources */ = {isa = PBXBuildFile; fileRef = BF5AB3BE2286040400DC914B /* NSError+ALTError.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		BF5AB3992285FDB200DC914B /* AltSign.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AltSign.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		BF5AB39C2285FDB200DC914B /* AltSign.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AltSign.h; sourceTree = "<group>"; };
 		BF5AB39D2285FDB200DC914B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BF5AB3B3228600D100DC914B /* ALTSign.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALTSign.h; sourceTree = "<group>"; };
+		BF5AB3B4228600D100DC914B /* ALTSign.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALTSign.m; sourceTree = "<group>"; };
+		BF5AB3B72286024D00DC914B /* ALTAccount.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALTAccount.h; sourceTree = "<group>"; };
+		BF5AB3B82286024D00DC914B /* ALTAccount.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALTAccount.m; sourceTree = "<group>"; };
+		BF5AB3BD2286040400DC914B /* NSError+ALTError.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSError+ALTError.h"; sourceTree = "<group>"; };
+		BF5AB3BE2286040400DC914B /* NSError+ALTError.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSError+ALTError.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -46,10 +56,31 @@
 		BF5AB39B2285FDB200DC914B /* AltSign */ = {
 			isa = PBXGroup;
 			children = (
-				BF5AB39C2285FDB200DC914B /* AltSign.h */,
+				BF5AB3B3228600D100DC914B /* ALTSign.h */,
+				BF5AB3B4228600D100DC914B /* ALTSign.m */,
+				BF5AB3C2228604E700DC914B /* Model */,
+				BF5AB3C12286040800DC914B /* Categories */,
 				BF5AB39D2285FDB200DC914B /* Info.plist */,
 			);
 			path = AltSign;
+			sourceTree = "<group>";
+		};
+		BF5AB3C12286040800DC914B /* Categories */ = {
+			isa = PBXGroup;
+			children = (
+				BF5AB3BD2286040400DC914B /* NSError+ALTError.h */,
+				BF5AB3BE2286040400DC914B /* NSError+ALTError.m */,
+			);
+			path = Categories;
+			sourceTree = "<group>";
+		};
+		BF5AB3C2228604E700DC914B /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				BF5AB3B72286024D00DC914B /* ALTAccount.h */,
+				BF5AB3B82286024D00DC914B /* ALTAccount.m */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -59,7 +90,9 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BF5AB39E2285FDB200DC914B /* AltSign.h in Headers */,
+				BF5AB3B92286024D00DC914B /* ALTAccount.h in Headers */,
+				BF5AB3BF2286040400DC914B /* NSError+ALTError.h in Headers */,
+				BF5AB3B5228600D100DC914B /* ALTSign.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -130,6 +163,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BF5AB3B6228600D100DC914B /* ALTSign.m in Sources */,
+				BF5AB3BA2286024D00DC914B /* ALTAccount.m in Sources */,
+				BF5AB3C02286040400DC914B /* NSError+ALTError.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
