@@ -30,6 +30,9 @@ NSErrorDomain const AltSignErrorDomain = @"com.rileytestut.AltSign";
     {
         case ALTErrorInvalidResponse:
             return NSLocalizedString(@"The server returned an invalid response.", @"");
+        
+        case ALTErrorInvalidParameters:
+            return NSLocalizedString(@"The provided parameters are invalid.", "");
     }
     
     return nil;

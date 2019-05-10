@@ -13,6 +13,7 @@ extern NSErrorDomain const AltSignErrorDomain;
 typedef NS_ERROR_ENUM(AltSignErrorDomain, ALTError)
 {
     ALTErrorInvalidResponse = -23,
+    ALTErrorInvalidParameters = -24,
 };
 
 NS_ASSUME_NONNULL_BEGIN

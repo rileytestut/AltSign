@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 
 #import <AltSign/ALTAccount.h>
+#import <AltSign/ALTTeam.h>
+
 #import <AltSign/NSError+ALTError.h>
 
 //! Project version number for AltSign.
@@ -25,6 +27,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)authenticateWithAppleID:(NSString *)appleID password:(NSString *)password
               completionHandler:(void (^)(ALTAccount *_Nullable account, NSError *_Nullable error))completionHandler NS_SWIFT_NAME(authenticate(appleID:password:completionHandler:));
+
+- (void)fetchTeamsForAccount:(ALTAccount *)account
+           completionHandler:(void (^)(NSArray<ALTTeam *> *_Nullable teams, NSError *_Nullable error))completionHandler;
 
 @end
 
