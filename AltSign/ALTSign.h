@@ -12,6 +12,7 @@
 #import <AltSign/ALTTeam.h>
 #import <AltSign/ALTDevice.h>
 #import <AltSign/ALTCertificate.h>
+#import <AltSign/ALTAppID.h>
 
 #import <AltSign/NSError+ALTError.h>
 
@@ -53,6 +54,16 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)revokeCertificate:(ALTCertificate *)certificate forTeam:(ALTTeam *)team
         completionHandler:(void (^)(BOOL success, NSError *_Nullable error))completionHandler
                 NS_SWIFT_NAME(revoke(_:for:completionHandler:));
+
+/* App IDs */
+- (void)fetchAppIDsForTeam:(ALTTeam *)team
+         completionHandler:(void (^)(NSArray<ALTAppID *> *_Nullable appIDs, NSError *_Nullable error))completionHandler;
+
+- (void)addAppIDWithName:(NSString *)name bundleIdentifier:(NSString *)bundleIdentifier team:(ALTTeam *)team
+       completionHandler:(void (^)(ALTAppID *_Nullable appID, NSError *_Nullable error))completionHandler;
+
+- (void)deleteAppID:(ALTAppID *)appID forTeam:(ALTTeam *)team
+  completionHandler:(void (^)(BOOL success, NSError *_Nullable error))completionHandler;
 
 @end
 

@@ -321,6 +321,93 @@ NS_ASSUME_NONNULL_END
     }];
 }
 
+#pragma mark - App IDs -
+
+- (void)fetchAppIDsForTeam:(ALTTeam *)team completionHandler:(void (^)(NSArray<ALTAppID *> * _Nullable, NSError * _Nullable))completionHandler
+{
+    NSURL *URL = [NSURL URLWithString:@"ios/listAppIds.action" relativeToURL:self.baseURL];
+    
+    [self sendRequestWithURL:URL additionalParameters:nil account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *error) {
+        if (responseDictionary == nil)
+        {
+            completionHandler(nil, error);
+            return;
+        }
+        
+        NSArray *array = responseDictionary[@"appIds"];
+        if (array == nil)
+        {
+            NSError *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorInvalidResponse userInfo:nil];
+            completionHandler(nil, error);
+            return;
+        }
+        
+        NSMutableArray *appIDs = [NSMutableArray array];
+        for (NSDictionary *dictionary in array)
+        {
+            ALTAppID *appID = [[ALTAppID alloc] initWithResponseDictionary:dictionary];
+            if (appID == nil)
+            {
+                NSError *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorInvalidResponse userInfo:nil];
+                completionHandler(nil, error);
+                return;
+            }
+            
+            [appIDs addObject:appID];
+        }
+        
+        completionHandler(appIDs, nil);
+    }];
+}
+
+- (void)addAppIDWithName:(NSString *)name bundleIdentifier:(NSString *)bundleIdentifier team:(ALTTeam *)team
+       completionHandler:(void (^)(ALTAppID *_Nullable appID, NSError *_Nullable error))completionHandler
+{
+    NSURL *URL = [NSURL URLWithString:@"ios/addAppId.action" relativeToURL:self.baseURL];
+    
+    [self sendRequestWithURL:URL additionalParameters:@{@"identifier": bundleIdentifier, @"name": name} account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *error) {
+        if (responseDictionary == nil)
+        {
+            completionHandler(nil, error);
+            return;
+        }
+        
+        NSDictionary *dictionary = responseDictionary[@"appId"];
+        if (dictionary == nil)
+        {
+            NSError *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorInvalidResponse userInfo:nil];
+            completionHandler(nil, error);
+            return;
+        }
+        
+        ALTAppID *appID = [[ALTAppID alloc] initWithResponseDictionary:dictionary];
+        if (appID == nil)
+        {
+            NSError *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorInvalidResponse userInfo:nil];
+            completionHandler(nil, error);
+            return;
+        }
+        
+        completionHandler(appID, nil);
+    }];
+}
+
+- (void)deleteAppID:(ALTAppID *)appID forTeam:(ALTTeam *)team completionHandler:(void (^)(BOOL, NSError * _Nullable))completionHandler
+{
+    NSURL *URL = [NSURL URLWithString:@"ios/deleteAppId.action" relativeToURL:self.baseURL];
+    
+    [self sendRequestWithURL:URL additionalParameters:@{@"appIdId": appID.identifier} account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *error) {
+        if (responseDictionary == nil)
+        {
+            completionHandler(nil, error);
+            return;
+        }
+        
+        BOOL success = [responseDictionary[@"resultCode"] intValue] == 0;
+        completionHandler(success, nil);
+    }];
+}
+
 #pragma mark - Requests -
 
 - (void)sendRequestWithURL:(NSURL *)requestURL additionalParameters:(nullable NSDictionary *)additionalParameters account:(ALTAccount *)account team:(nullable ALTTeam *)team completionHandler:(void (^)(NSDictionary *responseDictionary, NSError *error))completionHandler

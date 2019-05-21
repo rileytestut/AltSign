@@ -10,6 +10,8 @@
 		BF48CFEB229435F50004760B /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF48CFE7229435DB0004760B /* openssl.framework */; };
 		BF48CFEE229437580004760B /* ALTCertificateRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = BF48CFEC229437580004760B /* ALTCertificateRequest.h */; };
 		BF48CFF0229438C10004760B /* ALTCertificateRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = BF48CFED229437580004760B /* ALTCertificateRequest.m */; };
+		BF48CFF622944FC60004760B /* ALTAppID.h in Headers */ = {isa = PBXBuildFile; fileRef = BF48CFF422944FC60004760B /* ALTAppID.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BF48CFF722944FC60004760B /* ALTAppID.m in Sources */ = {isa = PBXBuildFile; fileRef = BF48CFF522944FC60004760B /* ALTAppID.m */; };
 		BF5AB3B5228600D100DC914B /* ALTSign.h in Headers */ = {isa = PBXBuildFile; fileRef = BF5AB3B3228600D100DC914B /* ALTSign.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BF5AB3B6228600D100DC914B /* ALTSign.m in Sources */ = {isa = PBXBuildFile; fileRef = BF5AB3B4228600D100DC914B /* ALTSign.m */; };
 		BF5AB3B92286024D00DC914B /* ALTAccount.h in Headers */ = {isa = PBXBuildFile; fileRef = BF5AB3B72286024D00DC914B /* ALTAccount.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -45,6 +47,8 @@
 		BF48CFE1229435DB0004760B /* OpenSSL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OpenSSL.xcodeproj; path = Dependencies/OpenSSL/OpenSSL.xcodeproj; sourceTree = SOURCE_ROOT; };
 		BF48CFEC229437580004760B /* ALTCertificateRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALTCertificateRequest.h; sourceTree = "<group>"; };
 		BF48CFED229437580004760B /* ALTCertificateRequest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALTCertificateRequest.m; sourceTree = "<group>"; };
+		BF48CFF422944FC60004760B /* ALTAppID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALTAppID.h; sourceTree = "<group>"; };
+		BF48CFF522944FC60004760B /* ALTAppID.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALTAppID.m; sourceTree = "<group>"; };
 		BF5AB3992285FDB200DC914B /* AltSign.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AltSign.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BF5AB39D2285FDB200DC914B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BF5AB3B3228600D100DC914B /* ALTSign.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALTSign.h; sourceTree = "<group>"; };
@@ -149,6 +153,8 @@
 				BF5AB3CC228645DF00DC914B /* ALTCertificate.m */,
 				BF48CFEC229437580004760B /* ALTCertificateRequest.h */,
 				BF48CFED229437580004760B /* ALTCertificateRequest.m */,
+				BF48CFF422944FC60004760B /* ALTAppID.h */,
+				BF48CFF522944FC60004760B /* ALTAppID.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -167,6 +173,7 @@
 				BF5AB3C92286269B00DC914B /* ALTDevice.h in Headers */,
 				BF5AB3B5228600D100DC914B /* ALTSign.h in Headers */,
 				BF5AB3C52286157F00DC914B /* ALTTeam.h in Headers */,
+				BF48CFF622944FC60004760B /* ALTAppID.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -264,6 +271,7 @@
 				BF5AB3C62286157F00DC914B /* ALTTeam.m in Sources */,
 				BF5AB3B6228600D100DC914B /* ALTSign.m in Sources */,
 				BF5AB3CA2286269B00DC914B /* ALTDevice.m in Sources */,
+				BF48CFF722944FC60004760B /* ALTAppID.m in Sources */,
 				BF5AB3CE228645DF00DC914B /* ALTCertificate.m in Sources */,
 				BF5AB3BA2286024D00DC914B /* ALTAccount.m in Sources */,
 				BF5AB3C02286040400DC914B /* NSError+ALTError.m in Sources */,
