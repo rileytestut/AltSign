@@ -1,37 +1,30 @@
 //
-//  ALTSign.h
+//  ALTAppleAPI.h
 //  AltSign
 //
-//  Created by Riley Testut on 5/10/19.
+//  Created by Riley Testut on 5/22/19.
 //  Copyright © 2019 Riley Testut. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 
-#import <AltSign/ALTAccount.h>
-#import <AltSign/ALTTeam.h>
-#import <AltSign/ALTDevice.h>
-#import <AltSign/ALTCertificate.h>
-#import <AltSign/ALTAppID.h>
-#import <AltSign/ALTProvisioningProfile.h>
-
-#import <AltSign/NSError+ALTError.h>
-
-//! Project version number for AltSign.
-FOUNDATION_EXPORT double AltSignVersionNumber;
-
-//! Project version string for AltSign.
-FOUNDATION_EXPORT const unsigned char AltSignVersionString[];
+@class ALTAccount;
+@class ALTTeam;
+@class ALTDevice;
+@class ALTCertificate;
+@class ALTAppID;
+@class ALTProvisioningProfile;
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ALTSign : NSObject
+@interface ALTAppleAPI : NSObject
 
-@property (class, nonatomic, readonly) ALTSign *shared;
+@property (class, nonatomic, readonly) ALTAppleAPI *shared;
 
 /* Authentication */
 - (void)authenticateWithAppleID:(NSString *)appleID password:(NSString *)password
-              completionHandler:(void (^)(ALTAccount *_Nullable account, NSError *_Nullable error))completionHandler NS_SWIFT_NAME(authenticate(appleID:password:completionHandler:));
+              completionHandler:(void (^)(ALTAccount *_Nullable account, NSError *_Nullable error))completionHandler
+NS_SWIFT_NAME(authenticate(appleID:password:completionHandler:));
 
 /* Teams */
 - (void)fetchTeamsForAccount:(ALTAccount *)account
@@ -42,7 +35,8 @@ NS_ASSUME_NONNULL_BEGIN
           completionHandler:(void (^)(NSArray<ALTDevice *> *_Nullable devices, NSError *_Nullable error))completionHandler;
 
 - (void)registerDeviceWithName:(NSString *)name identifier:(NSString *)identifier team:(ALTTeam *)team
-             completionHandler:(void (^)(ALTDevice *_Nullable device, NSError *_Nullable error))completionHandler NS_SWIFT_NAME(registerDevice(name:identifier:team:completionHandler:));
+             completionHandler:(void (^)(ALTDevice *_Nullable device, NSError *_Nullable error))completionHandler
+NS_SWIFT_NAME(registerDevice(name:identifier:team:completionHandler:));
 
 /* Certificates */
 - (void)fetchCertificatesForTeam:(ALTTeam *)team
@@ -50,11 +44,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)addCertificateWithMachineName:(NSString *)name toTeam:(ALTTeam *)team
                     completionHandler:(void (^)(ALTCertificate *_Nullable certificate, NSError *_Nullable error))completionHandler
-                NS_SWIFT_NAME(addCertificate(machineName:to:completionHandler:));
+NS_SWIFT_NAME(addCertificate(machineName:to:completionHandler:));
 
 - (void)revokeCertificate:(ALTCertificate *)certificate forTeam:(ALTTeam *)team
         completionHandler:(void (^)(BOOL success, NSError *_Nullable error))completionHandler
-                NS_SWIFT_NAME(revoke(_:for:completionHandler:));
+NS_SWIFT_NAME(revoke(_:for:completionHandler:));
 
 /* App IDs */
 - (void)fetchAppIDsForTeam:(ALTTeam *)team

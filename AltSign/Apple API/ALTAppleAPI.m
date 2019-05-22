@@ -1,13 +1,22 @@
 //
-//  ALTSign.m
+//  ALTAppleAPI.m
 //  AltSign
 //
-//  Created by Riley Testut on 5/10/19.
+//  Created by Riley Testut on 5/22/19.
 //  Copyright © 2019 Riley Testut. All rights reserved.
 //
 
-#import "ALTSign.h"
+#import "ALTAppleAPI.h"
+
+#import "ALTAccount.h"
+#import "ALTTeam.h"
+#import "ALTDevice.h"
+#import "ALTCertificate.h"
 #import "ALTCertificateRequest.h"
+#import "ALTAppID.h"
+#import "ALTProvisioningProfile.h"
+
+#import <AltSign/NSError+ALTError.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -16,7 +25,7 @@ NSString *const ALTProtocolVersion = @"QH65B2";
 NSString *const ALTAppIDKey = @"ba2ec180e6ca6e6c6a542255453b24d6e6e5b2be0cc48bc1b0d8ad64cfe0228f";
 NSString *const ALTClientID = @"XABBG36SBA";
 
-@interface ALTSign ()
+@interface ALTAppleAPI ()
 
 @property (nonatomic, readonly) NSURLSession *session;
 
@@ -26,17 +35,17 @@ NSString *const ALTClientID = @"XABBG36SBA";
 
 NS_ASSUME_NONNULL_END
 
-@implementation ALTSign
+@implementation ALTAppleAPI
 
 + (instancetype)shared
 {
-    static ALTSign *_sign = nil;
+    static ALTAppleAPI *_appleAPI = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        _sign = [[self alloc] init];
+        _appleAPI = [[self alloc] init];
     });
     
-    return _sign;
+    return _appleAPI;
 }
 
 - (instancetype)init
