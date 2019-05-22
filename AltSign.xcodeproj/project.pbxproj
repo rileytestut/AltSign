@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BF48CFEB229435F50004760B /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF48CFE7229435DB0004760B /* openssl.framework */; };
+		BF48CFEE229437580004760B /* ALTCertificateRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = BF48CFEC229437580004760B /* ALTCertificateRequest.h */; };
+		BF48CFF0229438C10004760B /* ALTCertificateRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = BF48CFED229437580004760B /* ALTCertificateRequest.m */; };
 		BF5AB3B5228600D100DC914B /* ALTSign.h in Headers */ = {isa = PBXBuildFile; fileRef = BF5AB3B3228600D100DC914B /* ALTSign.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BF5AB3B6228600D100DC914B /* ALTSign.m in Sources */ = {isa = PBXBuildFile; fileRef = BF5AB3B4228600D100DC914B /* ALTSign.m */; };
 		BF5AB3B92286024D00DC914B /* ALTAccount.h in Headers */ = {isa = PBXBuildFile; fileRef = BF5AB3B72286024D00DC914B /* ALTAccount.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -17,9 +20,31 @@
 		BF5AB3C62286157F00DC914B /* ALTTeam.m in Sources */ = {isa = PBXBuildFile; fileRef = BF5AB3C42286157F00DC914B /* ALTTeam.m */; };
 		BF5AB3C92286269B00DC914B /* ALTDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = BF5AB3C72286269B00DC914B /* ALTDevice.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BF5AB3CA2286269B00DC914B /* ALTDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = BF5AB3C82286269B00DC914B /* ALTDevice.m */; };
+		BF5AB3CD228645DF00DC914B /* ALTCertificate.h in Headers */ = {isa = PBXBuildFile; fileRef = BF5AB3CB228645DF00DC914B /* ALTCertificate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BF5AB3CE228645DF00DC914B /* ALTCertificate.m in Sources */ = {isa = PBXBuildFile; fileRef = BF5AB3CC228645DF00DC914B /* ALTCertificate.m */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		BF48CFE6229435DB0004760B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BF48CFE1229435DB0004760B /* OpenSSL.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9F4A265C223BD82B005CB63A;
+			remoteInfo = "OpenSSL (iOS)";
+		};
+		BF48CFE8229435DB0004760B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BF48CFE1229435DB0004760B /* OpenSSL.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9F4A2716223BE476005CB63A;
+			remoteInfo = "OpenSSL (macOS)";
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		BF48CFE1229435DB0004760B /* OpenSSL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OpenSSL.xcodeproj; path = Dependencies/OpenSSL/OpenSSL.xcodeproj; sourceTree = SOURCE_ROOT; };
+		BF48CFEC229437580004760B /* ALTCertificateRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALTCertificateRequest.h; sourceTree = "<group>"; };
+		BF48CFED229437580004760B /* ALTCertificateRequest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALTCertificateRequest.m; sourceTree = "<group>"; };
 		BF5AB3992285FDB200DC914B /* AltSign.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AltSign.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BF5AB39D2285FDB200DC914B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BF5AB3B3228600D100DC914B /* ALTSign.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALTSign.h; sourceTree = "<group>"; };
@@ -32,6 +57,8 @@
 		BF5AB3C42286157F00DC914B /* ALTTeam.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALTTeam.m; sourceTree = "<group>"; };
 		BF5AB3C72286269B00DC914B /* ALTDevice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALTDevice.h; sourceTree = "<group>"; };
 		BF5AB3C82286269B00DC914B /* ALTDevice.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALTDevice.m; sourceTree = "<group>"; };
+		BF5AB3CB228645DF00DC914B /* ALTCertificate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALTCertificate.h; sourceTree = "<group>"; };
+		BF5AB3CC228645DF00DC914B /* ALTCertificate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALTCertificate.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -39,17 +66,43 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BF48CFEB229435F50004760B /* openssl.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		BF48CFE0229435CB0004760B /* Dependencies */ = {
+			isa = PBXGroup;
+			children = (
+				BF48CFE1229435DB0004760B /* OpenSSL.xcodeproj */,
+			);
+			name = Dependencies;
+			sourceTree = "<group>";
+		};
+		BF48CFE2229435DB0004760B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				BF48CFE7229435DB0004760B /* openssl.framework */,
+				BF48CFE9229435DB0004760B /* openssl.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		BF48CFEA229435F50004760B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		BF5AB38F2285FDB200DC914B = {
 			isa = PBXGroup;
 			children = (
 				BF5AB39B2285FDB200DC914B /* AltSign */,
 				BF5AB39A2285FDB200DC914B /* Products */,
+				BF48CFEA229435F50004760B /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -68,6 +121,7 @@
 				BF5AB3B4228600D100DC914B /* ALTSign.m */,
 				BF5AB3C2228604E700DC914B /* Model */,
 				BF5AB3C12286040800DC914B /* Categories */,
+				BF48CFE0229435CB0004760B /* Dependencies */,
 				BF5AB39D2285FDB200DC914B /* Info.plist */,
 			);
 			path = AltSign;
@@ -91,6 +145,10 @@
 				BF5AB3C42286157F00DC914B /* ALTTeam.m */,
 				BF5AB3C72286269B00DC914B /* ALTDevice.h */,
 				BF5AB3C82286269B00DC914B /* ALTDevice.m */,
+				BF5AB3CB228645DF00DC914B /* ALTCertificate.h */,
+				BF5AB3CC228645DF00DC914B /* ALTCertificate.m */,
+				BF48CFEC229437580004760B /* ALTCertificateRequest.h */,
+				BF48CFED229437580004760B /* ALTCertificateRequest.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -104,6 +162,8 @@
 			files = (
 				BF5AB3B92286024D00DC914B /* ALTAccount.h in Headers */,
 				BF5AB3BF2286040400DC914B /* NSError+ALTError.h in Headers */,
+				BF5AB3CD228645DF00DC914B /* ALTCertificate.h in Headers */,
+				BF48CFEE229437580004760B /* ALTCertificateRequest.h in Headers */,
 				BF5AB3C92286269B00DC914B /* ALTDevice.h in Headers */,
 				BF5AB3B5228600D100DC914B /* ALTSign.h in Headers */,
 				BF5AB3C52286157F00DC914B /* ALTTeam.h in Headers */,
@@ -155,12 +215,35 @@
 			mainGroup = BF5AB38F2285FDB200DC914B;
 			productRefGroup = BF5AB39A2285FDB200DC914B /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = BF48CFE2229435DB0004760B /* Products */;
+					ProjectRef = BF48CFE1229435DB0004760B /* OpenSSL.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				BF5AB3982285FDB200DC914B /* AltSign */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		BF48CFE7229435DB0004760B /* openssl.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = openssl.framework;
+			remoteRef = BF48CFE6229435DB0004760B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BF48CFE9229435DB0004760B /* openssl.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = openssl.framework;
+			remoteRef = BF48CFE8229435DB0004760B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		BF5AB3972285FDB200DC914B /* Resources */ = {
@@ -177,9 +260,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BF48CFF0229438C10004760B /* ALTCertificateRequest.m in Sources */,
 				BF5AB3C62286157F00DC914B /* ALTTeam.m in Sources */,
 				BF5AB3B6228600D100DC914B /* ALTSign.m in Sources */,
 				BF5AB3CA2286269B00DC914B /* ALTDevice.m in Sources */,
+				BF5AB3CE228645DF00DC914B /* ALTCertificate.m in Sources */,
 				BF5AB3BA2286024D00DC914B /* ALTAccount.m in Sources */,
 				BF5AB3C02286040400DC914B /* NSError+ALTError.m in Sources */,
 			);
@@ -309,6 +394,7 @@
 		BF5AB3A22285FDB200DC914B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
@@ -316,6 +402,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Dependencies/OpenSSL/ios/include\"";
 				INFOPLIST_FILE = AltSign/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -334,6 +421,7 @@
 		BF5AB3A32285FDB200DC914B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
@@ -341,6 +429,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Dependencies/OpenSSL/ios/include\"";
 				INFOPLIST_FILE = AltSign/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (

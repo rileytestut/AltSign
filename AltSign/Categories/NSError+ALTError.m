@@ -28,6 +28,9 @@ NSErrorDomain const AltSignErrorDomain = @"com.rileytestut.AltSign";
 {
     switch (self.code)
     {
+        case ALTErrorUnknown:
+            return NSLocalizedString(@"An unknown error occured.", "");
+            
         case ALTErrorInvalidResponse:
             return NSLocalizedString(@"The server returned an invalid response.", @"");
         

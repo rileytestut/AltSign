@@ -7,6 +7,7 @@
 //
 
 #import "ALTSign.h"
+#import "ALTCertificateRequest.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -217,6 +218,106 @@ NS_ASSUME_NONNULL_END
         }
         
         completionHandler(device, nil);
+    }];
+}
+
+#pragma mark - Certificates -
+
+- (void)fetchCertificatesForTeam:(ALTTeam *)team completionHandler:(void (^)(NSArray<ALTCertificate *> * _Nullable, NSError * _Nullable))completionHandler
+{
+    NSURL *URL = [NSURL URLWithString:@"ios/listAllDevelopmentCerts.action" relativeToURL:self.baseURL];
+    
+    [self sendRequestWithURL:URL additionalParameters:nil account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *error) {
+        if (responseDictionary == nil)
+        {
+            completionHandler(nil, error);
+            return;
+        }
+        
+        NSArray *array = responseDictionary[@"certificates"];
+        if (array == nil)
+        {
+            NSError *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorInvalidResponse userInfo:nil];
+            completionHandler(nil, error);
+            return;
+        }
+        
+        NSMutableArray *certificates = [NSMutableArray array];
+        for (NSDictionary *dictionary in array)
+        {
+            ALTCertificate *certificate = [[ALTCertificate alloc] initWithResponseDictionary:dictionary];
+            if (certificate == nil)
+            {
+                NSError *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorInvalidResponse userInfo:nil];
+                completionHandler(nil, error);
+                return;
+            }
+            
+            [certificates addObject:certificate];
+        }
+        
+        completionHandler(certificates, nil);
+    }];
+}
+
+- (void)addCertificateWithMachineName:(NSString *)machineName toTeam:(ALTTeam *)team completionHandler:(void (^)(ALTCertificate * _Nullable, NSError * _Nullable))completionHandler
+{
+    ALTCertificateRequest *request = [[ALTCertificateRequest alloc] init];
+    if (request == nil)
+    {
+        NSError *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorUnknown userInfo:nil];
+        completionHandler(nil, error);
+        return;
+    }
+    
+    NSURL *URL = [NSURL URLWithString:@"ios/submitDevelopmentCSR.action" relativeToURL:self.baseURL];
+    NSString *encodedCSR = [[NSString alloc] initWithData:request.data encoding:NSUTF8StringEncoding];
+    
+    [self sendRequestWithURL:URL additionalParameters:@{@"csrContent": encodedCSR,
+                                                        @"machineId": [[NSUUID UUID] UUIDString],
+                                                        @"machineName": machineName}
+                     account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *error) {
+                         if (responseDictionary == nil)
+                         {
+                             completionHandler(nil, error);
+                             return;
+                         }
+                         
+                         NSDictionary *dictionary = responseDictionary[@"certRequest"];
+                         if (dictionary == nil)
+                         {
+                             NSError *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorInvalidResponse userInfo:nil];
+                             completionHandler(nil, error);
+                             return;
+                         }
+                         
+                         ALTCertificate *certificate = [[ALTCertificate alloc] initWithResponseDictionary:dictionary];
+                         if (certificate == nil)
+                         {
+                             NSError *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorInvalidResponse userInfo:nil];
+                             completionHandler(nil, error);
+                             return;
+                         }
+                         
+                         certificate.privateKey = request.privateKey;
+                         
+                         completionHandler(certificate, nil);
+                     }];
+}
+
+- (void)revokeCertificate:(ALTCertificate *)certificate forTeam:(ALTTeam *)team completionHandler:(void (^)(BOOL, NSError * _Nullable))completionHandler
+{
+    NSURL *URL = [NSURL URLWithString:@"ios/revokeDevelopmentCert.action" relativeToURL:self.baseURL];
+    
+    [self sendRequestWithURL:URL additionalParameters:@{@"serialNumber": certificate.serialNumber} account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *error) {
+        if (responseDictionary == nil)
+        {
+            completionHandler(nil, error);
+            return;
+        }
+        
+        BOOL success = (responseDictionary[@"certRequests"] != nil);
+        completionHandler(success, nil);
     }];
 }
 

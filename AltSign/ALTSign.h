@@ -11,6 +11,7 @@
 #import <AltSign/ALTAccount.h>
 #import <AltSign/ALTTeam.h>
 #import <AltSign/ALTDevice.h>
+#import <AltSign/ALTCertificate.h>
 
 #import <AltSign/NSError+ALTError.h>
 
@@ -40,6 +41,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)registerDeviceWithName:(NSString *)name identifier:(NSString *)identifier team:(ALTTeam *)team
              completionHandler:(void (^)(ALTDevice *_Nullable device, NSError *_Nullable error))completionHandler NS_SWIFT_NAME(registerDevice(name:identifier:team:completionHandler:));
+
+/* Certificates */
+- (void)fetchCertificatesForTeam:(ALTTeam *)team
+               completionHandler:(void (^)(NSArray<ALTCertificate *> *_Nullable certificates, NSError *_Nullable error))completionHandler;
+
+- (void)addCertificateWithMachineName:(NSString *)name toTeam:(ALTTeam *)team
+                    completionHandler:(void (^)(ALTCertificate *_Nullable certificate, NSError *_Nullable error))completionHandler
+                NS_SWIFT_NAME(addCertificate(machineName:to:completionHandler:));
+
+- (void)revokeCertificate:(ALTCertificate *)certificate forTeam:(ALTTeam *)team
+        completionHandler:(void (^)(BOOL success, NSError *_Nullable error))completionHandler
+                NS_SWIFT_NAME(revoke(_:for:completionHandler:));
 
 @end
 

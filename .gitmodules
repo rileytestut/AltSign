@@ -1,0 +1,3 @@
+[submodule "Dependencies/OpenSSL"]
+	path = Dependencies/OpenSSL
+	url = https://github.com/krzyzanowskim/OpenSSL.git
