@@ -13,6 +13,7 @@
 #import <AltSign/ALTDevice.h>
 #import <AltSign/ALTCertificate.h>
 #import <AltSign/ALTAppID.h>
+#import <AltSign/ALTProvisioningProfile.h>
 
 #import <AltSign/NSError+ALTError.h>
 
@@ -64,6 +65,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)deleteAppID:(ALTAppID *)appID forTeam:(ALTTeam *)team
   completionHandler:(void (^)(BOOL success, NSError *_Nullable error))completionHandler;
+
+/* Provisioning Profiles */
+- (void)fetchProvisioningProfileForAppID:(ALTAppID *)appID team:(ALTTeam *)team
+                       completionHandler:(void (^)(ALTProvisioningProfile *_Nullable provisioningProfile, NSError *_Nullable error))completionHandler;
 
 @end
 

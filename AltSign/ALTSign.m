@@ -408,6 +408,39 @@ NS_ASSUME_NONNULL_END
     }];
 }
 
+#pragma mark - Provisioning Profiles -
+
+- (void)fetchProvisioningProfileForAppID:(ALTAppID *)appID team:(ALTTeam *)team completionHandler:(void (^)(ALTProvisioningProfile * _Nullable, NSError * _Nullable))completionHandler
+{
+    NSURL *URL = [NSURL URLWithString:@"ios/downloadTeamProvisioningProfile.action" relativeToURL:self.baseURL];
+    
+    [self sendRequestWithURL:URL additionalParameters:@{@"appIdId": appID.identifier} account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *error) {
+        if (responseDictionary == nil)
+        {
+            completionHandler(nil, error);
+            return;
+        }
+        
+        NSDictionary *dictionary = responseDictionary[@"provisioningProfile"];
+        if (dictionary == nil)
+        {
+            NSError *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorInvalidResponse userInfo:nil];
+            completionHandler(nil, error);
+            return;
+        }
+        
+        ALTProvisioningProfile *provisioningProfile = [[ALTProvisioningProfile alloc] initWithResponseDictionary:dictionary];
+        if (provisioningProfile == nil)
+        {
+            NSError *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorInvalidResponse userInfo:nil];
+            completionHandler(nil, error);
+            return;
+        }
+        
+        completionHandler(provisioningProfile, nil);
+    }];
+}
+
 #pragma mark - Requests -
 
 - (void)sendRequestWithURL:(NSURL *)requestURL additionalParameters:(nullable NSDictionary *)additionalParameters account:(ALTAccount *)account team:(nullable ALTTeam *)team completionHandler:(void (^)(NSDictionary *responseDictionary, NSError *error))completionHandler

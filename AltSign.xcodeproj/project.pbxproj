@@ -24,6 +24,8 @@
 		BF5AB3CA2286269B00DC914B /* ALTDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = BF5AB3C82286269B00DC914B /* ALTDevice.m */; };
 		BF5AB3CD228645DF00DC914B /* ALTCertificate.h in Headers */ = {isa = PBXBuildFile; fileRef = BF5AB3CB228645DF00DC914B /* ALTCertificate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BF5AB3CE228645DF00DC914B /* ALTCertificate.m in Sources */ = {isa = PBXBuildFile; fileRef = BF5AB3CC228645DF00DC914B /* ALTCertificate.m */; };
+		BFBAC88B2295D90F00587369 /* ALTProvisioningProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = BFBAC8892295D90F00587369 /* ALTProvisioningProfile.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BFBAC88C2295D90F00587369 /* ALTProvisioningProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = BFBAC88A2295D90F00587369 /* ALTProvisioningProfile.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +65,8 @@
 		BF5AB3C82286269B00DC914B /* ALTDevice.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALTDevice.m; sourceTree = "<group>"; };
 		BF5AB3CB228645DF00DC914B /* ALTCertificate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALTCertificate.h; sourceTree = "<group>"; };
 		BF5AB3CC228645DF00DC914B /* ALTCertificate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALTCertificate.m; sourceTree = "<group>"; };
+		BFBAC8892295D90F00587369 /* ALTProvisioningProfile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALTProvisioningProfile.h; sourceTree = "<group>"; };
+		BFBAC88A2295D90F00587369 /* ALTProvisioningProfile.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALTProvisioningProfile.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -155,6 +159,8 @@
 				BF48CFED229437580004760B /* ALTCertificateRequest.m */,
 				BF48CFF422944FC60004760B /* ALTAppID.h */,
 				BF48CFF522944FC60004760B /* ALTAppID.m */,
+				BFBAC8892295D90F00587369 /* ALTProvisioningProfile.h */,
+				BFBAC88A2295D90F00587369 /* ALTProvisioningProfile.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -166,6 +172,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BFBAC88B2295D90F00587369 /* ALTProvisioningProfile.h in Headers */,
 				BF5AB3B92286024D00DC914B /* ALTAccount.h in Headers */,
 				BF5AB3BF2286040400DC914B /* NSError+ALTError.h in Headers */,
 				BF5AB3CD228645DF00DC914B /* ALTCertificate.h in Headers */,
@@ -268,6 +275,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BF48CFF0229438C10004760B /* ALTCertificateRequest.m in Sources */,
+				BFBAC88C2295D90F00587369 /* ALTProvisioningProfile.m in Sources */,
 				BF5AB3C62286157F00DC914B /* ALTTeam.m in Sources */,
 				BF5AB3B6228600D100DC914B /* ALTSign.m in Sources */,
 				BF5AB3CA2286269B00DC914B /* ALTDevice.m in Sources */,
