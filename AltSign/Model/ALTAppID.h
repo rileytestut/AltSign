@@ -17,8 +17,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (copy, nonatomic) NSString *bundleIdentifier;
 
-- (nullable instancetype)initWithResponseDictionary:(NSDictionary *)responseDictionary;
-
 @end
 
 NS_ASSUME_NONNULL_END

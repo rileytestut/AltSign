@@ -21,8 +21,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, copy) NSString *cookie;
 
-- (nullable instancetype)initWithAppleID:(NSString *)appleID responseDictionary:(NSDictionary *)responseDictionary;
-
 @end
 
 NS_ASSUME_NONNULL_END

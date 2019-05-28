@@ -19,8 +19,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, nullable) NSData *data;
 @property (nonatomic, copy, nullable) NSData *privateKey;
 
-- (nullable instancetype)initWithResponseDictionary:(NSDictionary *)responseDictionary;
-
 - (nullable NSData *)p12Data;
 
 @end

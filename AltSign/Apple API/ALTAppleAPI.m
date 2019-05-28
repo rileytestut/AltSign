@@ -8,13 +8,7 @@
 
 #import "ALTAppleAPI.h"
 
-#import "ALTAccount.h"
-#import "ALTTeam.h"
-#import "ALTDevice.h"
-#import "ALTCertificate.h"
-#import "ALTCertificateRequest.h"
-#import "ALTAppID.h"
-#import "ALTProvisioningProfile.h"
+#import "ALTModel+Internal.h"
 
 #import <AltSign/NSError+ALTError.h>
 
