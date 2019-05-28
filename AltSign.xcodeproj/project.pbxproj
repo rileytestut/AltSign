@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		BF48CFEB229435F50004760B /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF48CFE7229435DB0004760B /* openssl.framework */; };
 		BF48CFEE229437580004760B /* ALTCertificateRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = BF48CFEC229437580004760B /* ALTCertificateRequest.h */; };
 		BF48CFF0229438C10004760B /* ALTCertificateRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = BF48CFED229437580004760B /* ALTCertificateRequest.m */; };
 		BF48CFF622944FC60004760B /* ALTAppID.h in Headers */ = {isa = PBXBuildFile; fileRef = BF48CFF422944FC60004760B /* ALTAppID.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -24,13 +23,51 @@
 		BF5AB3CD228645DF00DC914B /* ALTCertificate.h in Headers */ = {isa = PBXBuildFile; fileRef = BF5AB3CB228645DF00DC914B /* ALTCertificate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BF5AB3CE228645DF00DC914B /* ALTCertificate.m in Sources */ = {isa = PBXBuildFile; fileRef = BF5AB3CC228645DF00DC914B /* ALTCertificate.m */; };
 		BF9B633F229DC27C002F0A62 /* ALTModel+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = BF9B633E229DC27C002F0A62 /* ALTModel+Internal.h */; };
+		BF9B6340229DC9DD002F0A62 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF48CFE7229435DB0004760B /* openssl.framework */; };
 		BFBAC88B2295D90F00587369 /* ALTProvisioningProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = BFBAC8892295D90F00587369 /* ALTProvisioningProfile.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BFBAC88C2295D90F00587369 /* ALTProvisioningProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = BFBAC88A2295D90F00587369 /* ALTProvisioningProfile.m */; };
 		BFBAC8912295E05600587369 /* ALTAppleAPI.h in Headers */ = {isa = PBXBuildFile; fileRef = BFBAC88F2295E05600587369 /* ALTAppleAPI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BFBAC8922295E05600587369 /* ALTAppleAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = BFBAC8902295E05600587369 /* ALTAppleAPI.m */; };
+		BFBAC8CC2295ED5300587369 /* bplist.c in Sources */ = {isa = PBXBuildFile; fileRef = BFBAC8B52295ED5200587369 /* bplist.c */; };
+		BFBAC8CD2295ED5300587369 /* Key.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFBAC8B72295ED5200587369 /* Key.cpp */; };
+		BFBAC8CE2295ED5300587369 /* plist.c in Sources */ = {isa = PBXBuildFile; fileRef = BFBAC8B82295ED5200587369 /* plist.c */; };
+		BFBAC8CF2295ED5300587369 /* Date.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFBAC8B92295ED5200587369 /* Date.cpp */; };
+		BFBAC8D02295ED5300587369 /* Integer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFBAC8BA2295ED5200587369 /* Integer.cpp */; };
+		BFBAC8D12295ED5300587369 /* String.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFBAC8BB2295ED5200587369 /* String.cpp */; };
+		BFBAC8D22295ED5300587369 /* Uid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFBAC8BC2295ED5200587369 /* Uid.cpp */; };
+		BFBAC8D32295ED5300587369 /* Array.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFBAC8BD2295ED5200587369 /* Array.cpp */; };
+		BFBAC8D42295ED5300587369 /* Structure.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFBAC8BE2295ED5200587369 /* Structure.cpp */; };
+		BFBAC8D52295ED5300587369 /* ptrarray.c in Sources */ = {isa = PBXBuildFile; fileRef = BFBAC8BF2295ED5200587369 /* ptrarray.c */; };
+		BFBAC8D62295ED5300587369 /* Data.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFBAC8C02295ED5200587369 /* Data.cpp */; };
+		BFBAC8D72295ED5300587369 /* base64.c in Sources */ = {isa = PBXBuildFile; fileRef = BFBAC8C12295ED5200587369 /* base64.c */; };
+		BFBAC8D82295ED5300587369 /* Real.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFBAC8C22295ED5200587369 /* Real.cpp */; };
+		BFBAC8D92295ED5300587369 /* xplist.c in Sources */ = {isa = PBXBuildFile; fileRef = BFBAC8C32295ED5200587369 /* xplist.c */; };
+		BFBAC8DA2295ED5300587369 /* Dictionary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFBAC8C42295ED5200587369 /* Dictionary.cpp */; };
+		BFBAC8DB2295ED5300587369 /* bytearray.c in Sources */ = {isa = PBXBuildFile; fileRef = BFBAC8C52295ED5200587369 /* bytearray.c */; };
+		BFBAC8DC2295ED5300587369 /* Node.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFBAC8C72295ED5300587369 /* Node.cpp */; };
+		BFBAC8DD2295ED5300587369 /* hashtable.c in Sources */ = {isa = PBXBuildFile; fileRef = BFBAC8C92295ED5300587369 /* hashtable.c */; };
+		BFBAC8DE2295ED5300587369 /* Boolean.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFBAC8CA2295ED5300587369 /* Boolean.cpp */; };
+		BFBAC8E32295ED6C00587369 /* ldid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFBAC8DF2295ED6C00587369 /* ldid.cpp */; };
+		BFBAC8E42295ED6C00587369 /* lookup2.c in Sources */ = {isa = PBXBuildFile; fileRef = BFBAC8E22295ED6C00587369 /* lookup2.c */; };
+		BFBAC8EC2295EE3B00587369 /* node_iterator.c in Sources */ = {isa = PBXBuildFile; fileRef = BFBAC8E62295EE3B00587369 /* node_iterator.c */; };
+		BFBAC8ED2295EE3B00587369 /* node.c in Sources */ = {isa = PBXBuildFile; fileRef = BFBAC8E72295EE3B00587369 /* node.c */; };
+		BFBAC8EE2295EE3B00587369 /* node_list.c in Sources */ = {isa = PBXBuildFile; fileRef = BFBAC8E82295EE3B00587369 /* node_list.c */; };
+		BFBAC8EF2295EE3B00587369 /* iterator.c in Sources */ = {isa = PBXBuildFile; fileRef = BFBAC8E92295EE3B00587369 /* iterator.c */; };
+		BFBAC8F02295EE3B00587369 /* list.c in Sources */ = {isa = PBXBuildFile; fileRef = BFBAC8EA2295EE3B00587369 /* list.c */; };
+		BFBAC8F12295EE3B00587369 /* cnary.c in Sources */ = {isa = PBXBuildFile; fileRef = BFBAC8EB2295EE3B00587369 /* cnary.c */; };
+		BFBAC8F32295EF0500587369 /* libxml2.2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = BFBAC8F22295EF0500587369 /* libxml2.2.tbd */; };
+		BFBAC8F42295EFE300587369 /* libldid.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BFBAC8AA2295ED1900587369 /* libldid.a */; };
+		BFBAC93A2295FCB500587369 /* libxml2.2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = BFBAC8F22295EF0500587369 /* libxml2.2.tbd */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		BF4586B522987AE400BD7491 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BF48CFE1229435DB0004760B /* OpenSSL.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 9F4A265B223BD82B005CB63A;
+			remoteInfo = "OpenSSL (iOS)";
+		};
 		BF48CFE6229435DB0004760B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BF48CFE1229435DB0004760B /* OpenSSL.xcodeproj */;
@@ -46,6 +83,18 @@
 			remoteInfo = "OpenSSL (macOS)";
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		BFBAC8A82295ED1900587369 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		BF48CFE1229435DB0004760B /* OpenSSL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OpenSSL.xcodeproj; path = Dependencies/OpenSSL/OpenSSL.xcodeproj; sourceTree = SOURCE_ROOT; };
@@ -71,6 +120,43 @@
 		BFBAC88A2295D90F00587369 /* ALTProvisioningProfile.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALTProvisioningProfile.m; sourceTree = "<group>"; };
 		BFBAC88F2295E05600587369 /* ALTAppleAPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALTAppleAPI.h; sourceTree = "<group>"; };
 		BFBAC8902295E05600587369 /* ALTAppleAPI.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALTAppleAPI.m; sourceTree = "<group>"; };
+		BFBAC8AA2295ED1900587369 /* libldid.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libldid.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		BFBAC8B42295ED5200587369 /* hashtable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = hashtable.h; path = Dependencies/ldid/libplist/src/hashtable.h; sourceTree = SOURCE_ROOT; };
+		BFBAC8B52295ED5200587369 /* bplist.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bplist.c; path = Dependencies/ldid/libplist/src/bplist.c; sourceTree = SOURCE_ROOT; };
+		BFBAC8B62295ED5200587369 /* bytearray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bytearray.h; path = Dependencies/ldid/libplist/src/bytearray.h; sourceTree = SOURCE_ROOT; };
+		BFBAC8B72295ED5200587369 /* Key.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Key.cpp; path = Dependencies/ldid/libplist/src/Key.cpp; sourceTree = SOURCE_ROOT; };
+		BFBAC8B82295ED5200587369 /* plist.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = plist.c; path = Dependencies/ldid/libplist/src/plist.c; sourceTree = SOURCE_ROOT; };
+		BFBAC8B92295ED5200587369 /* Date.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Date.cpp; path = Dependencies/ldid/libplist/src/Date.cpp; sourceTree = SOURCE_ROOT; };
+		BFBAC8BA2295ED5200587369 /* Integer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Integer.cpp; path = Dependencies/ldid/libplist/src/Integer.cpp; sourceTree = SOURCE_ROOT; };
+		BFBAC8BB2295ED5200587369 /* String.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = String.cpp; path = Dependencies/ldid/libplist/src/String.cpp; sourceTree = SOURCE_ROOT; };
+		BFBAC8BC2295ED5200587369 /* Uid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Uid.cpp; path = Dependencies/ldid/libplist/src/Uid.cpp; sourceTree = SOURCE_ROOT; };
+		BFBAC8BD2295ED5200587369 /* Array.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Array.cpp; path = Dependencies/ldid/libplist/src/Array.cpp; sourceTree = SOURCE_ROOT; };
+		BFBAC8BE2295ED5200587369 /* Structure.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Structure.cpp; path = Dependencies/ldid/libplist/src/Structure.cpp; sourceTree = SOURCE_ROOT; };
+		BFBAC8BF2295ED5200587369 /* ptrarray.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ptrarray.c; path = Dependencies/ldid/libplist/src/ptrarray.c; sourceTree = SOURCE_ROOT; };
+		BFBAC8C02295ED5200587369 /* Data.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Data.cpp; path = Dependencies/ldid/libplist/src/Data.cpp; sourceTree = SOURCE_ROOT; };
+		BFBAC8C12295ED5200587369 /* base64.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = base64.c; path = Dependencies/ldid/libplist/src/base64.c; sourceTree = SOURCE_ROOT; };
+		BFBAC8C22295ED5200587369 /* Real.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Real.cpp; path = Dependencies/ldid/libplist/src/Real.cpp; sourceTree = SOURCE_ROOT; };
+		BFBAC8C32295ED5200587369 /* xplist.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = xplist.c; path = Dependencies/ldid/libplist/src/xplist.c; sourceTree = SOURCE_ROOT; };
+		BFBAC8C42295ED5200587369 /* Dictionary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Dictionary.cpp; path = Dependencies/ldid/libplist/src/Dictionary.cpp; sourceTree = SOURCE_ROOT; };
+		BFBAC8C52295ED5200587369 /* bytearray.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bytearray.c; path = Dependencies/ldid/libplist/src/bytearray.c; sourceTree = SOURCE_ROOT; };
+		BFBAC8C62295ED5200587369 /* ptrarray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ptrarray.h; path = Dependencies/ldid/libplist/src/ptrarray.h; sourceTree = SOURCE_ROOT; };
+		BFBAC8C72295ED5300587369 /* Node.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Node.cpp; path = Dependencies/ldid/libplist/src/Node.cpp; sourceTree = SOURCE_ROOT; };
+		BFBAC8C82295ED5300587369 /* plist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = plist.h; path = Dependencies/ldid/libplist/src/plist.h; sourceTree = SOURCE_ROOT; };
+		BFBAC8C92295ED5300587369 /* hashtable.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = hashtable.c; path = Dependencies/ldid/libplist/src/hashtable.c; sourceTree = SOURCE_ROOT; };
+		BFBAC8CA2295ED5300587369 /* Boolean.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Boolean.cpp; path = Dependencies/ldid/libplist/src/Boolean.cpp; sourceTree = SOURCE_ROOT; };
+		BFBAC8CB2295ED5300587369 /* base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = base64.h; path = Dependencies/ldid/libplist/src/base64.h; sourceTree = SOURCE_ROOT; };
+		BFBAC8DF2295ED6C00587369 /* ldid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ldid.cpp; path = Dependencies/ldid/ldid.cpp; sourceTree = SOURCE_ROOT; };
+		BFBAC8E02295ED6C00587369 /* sha1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sha1.h; path = Dependencies/ldid/sha1.h; sourceTree = SOURCE_ROOT; };
+		BFBAC8E12295ED6C00587369 /* ldid.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = ldid.hpp; path = Dependencies/ldid/ldid.hpp; sourceTree = SOURCE_ROOT; };
+		BFBAC8E22295ED6C00587369 /* lookup2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lookup2.c; path = Dependencies/ldid/lookup2.c; sourceTree = SOURCE_ROOT; };
+		BFBAC8E62295EE3B00587369 /* node_iterator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = node_iterator.c; path = Dependencies/ldid/libplist/libcnary/node_iterator.c; sourceTree = SOURCE_ROOT; };
+		BFBAC8E72295EE3B00587369 /* node.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = node.c; path = Dependencies/ldid/libplist/libcnary/node.c; sourceTree = SOURCE_ROOT; };
+		BFBAC8E82295EE3B00587369 /* node_list.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = node_list.c; path = Dependencies/ldid/libplist/libcnary/node_list.c; sourceTree = SOURCE_ROOT; };
+		BFBAC8E92295EE3B00587369 /* iterator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = iterator.c; path = Dependencies/ldid/libplist/libcnary/iterator.c; sourceTree = SOURCE_ROOT; };
+		BFBAC8EA2295EE3B00587369 /* list.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = list.c; path = Dependencies/ldid/libplist/libcnary/list.c; sourceTree = SOURCE_ROOT; };
+		BFBAC8EB2295EE3B00587369 /* cnary.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = cnary.c; path = Dependencies/ldid/libplist/libcnary/cnary.c; sourceTree = SOURCE_ROOT; };
+		BFBAC8F22295EF0500587369 /* libxml2.2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.2.tbd; path = usr/lib/libxml2.2.tbd; sourceTree = SDKROOT; };
+		BFBAC9302295F64600587369 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,7 +164,17 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BF48CFEB229435F50004760B /* openssl.framework in Frameworks */,
+				BF9B6340229DC9DD002F0A62 /* openssl.framework in Frameworks */,
+				BFBAC93A2295FCB500587369 /* libxml2.2.tbd in Frameworks */,
+				BFBAC8F42295EFE300587369 /* libldid.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BFBAC8A72295ED1900587369 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BFBAC8F32295EF0500587369 /* libxml2.2.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -105,6 +201,8 @@
 		BF48CFEA229435F50004760B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BFBAC9302295F64600587369 /* libz.tbd */,
+				BFBAC8F22295EF0500587369 /* libxml2.2.tbd */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -113,6 +211,7 @@
 			isa = PBXGroup;
 			children = (
 				BF5AB39B2285FDB200DC914B /* AltSign */,
+				BFBAC8AB2295ED1900587369 /* ldid */,
 				BF5AB39A2285FDB200DC914B /* Products */,
 				BF48CFEA229435F50004760B /* Frameworks */,
 			);
@@ -122,6 +221,7 @@
 			isa = PBXGroup;
 			children = (
 				BF5AB3992285FDB200DC914B /* AltSign.framework */,
+				BFBAC8AA2295ED1900587369 /* libldid.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -179,6 +279,63 @@
 			path = "Apple API";
 			sourceTree = "<group>";
 		};
+		BFBAC8AB2295ED1900587369 /* ldid */ = {
+			isa = PBXGroup;
+			children = (
+				BFBAC8E12295ED6C00587369 /* ldid.hpp */,
+				BFBAC8DF2295ED6C00587369 /* ldid.cpp */,
+				BFBAC8E22295ED6C00587369 /* lookup2.c */,
+				BFBAC8E02295ED6C00587369 /* sha1.h */,
+				BFBAC8B32295ED3600587369 /* libplist */,
+				BFBAC8E52295EE2500587369 /* libcnary */,
+			);
+			path = ldid;
+			sourceTree = "<group>";
+		};
+		BFBAC8B32295ED3600587369 /* libplist */ = {
+			isa = PBXGroup;
+			children = (
+				BFBAC8BD2295ED5200587369 /* Array.cpp */,
+				BFBAC8C12295ED5200587369 /* base64.c */,
+				BFBAC8CB2295ED5300587369 /* base64.h */,
+				BFBAC8CA2295ED5300587369 /* Boolean.cpp */,
+				BFBAC8B52295ED5200587369 /* bplist.c */,
+				BFBAC8C52295ED5200587369 /* bytearray.c */,
+				BFBAC8B62295ED5200587369 /* bytearray.h */,
+				BFBAC8C02295ED5200587369 /* Data.cpp */,
+				BFBAC8B92295ED5200587369 /* Date.cpp */,
+				BFBAC8C42295ED5200587369 /* Dictionary.cpp */,
+				BFBAC8C92295ED5300587369 /* hashtable.c */,
+				BFBAC8B42295ED5200587369 /* hashtable.h */,
+				BFBAC8BA2295ED5200587369 /* Integer.cpp */,
+				BFBAC8B72295ED5200587369 /* Key.cpp */,
+				BFBAC8C72295ED5300587369 /* Node.cpp */,
+				BFBAC8B82295ED5200587369 /* plist.c */,
+				BFBAC8C82295ED5300587369 /* plist.h */,
+				BFBAC8BF2295ED5200587369 /* ptrarray.c */,
+				BFBAC8C62295ED5200587369 /* ptrarray.h */,
+				BFBAC8C22295ED5200587369 /* Real.cpp */,
+				BFBAC8BB2295ED5200587369 /* String.cpp */,
+				BFBAC8BE2295ED5200587369 /* Structure.cpp */,
+				BFBAC8BC2295ED5200587369 /* Uid.cpp */,
+				BFBAC8C32295ED5200587369 /* xplist.c */,
+			);
+			name = libplist;
+			sourceTree = "<group>";
+		};
+		BFBAC8E52295EE2500587369 /* libcnary */ = {
+			isa = PBXGroup;
+			children = (
+				BFBAC8EB2295EE3B00587369 /* cnary.c */,
+				BFBAC8E92295EE3B00587369 /* iterator.c */,
+				BFBAC8EA2295EE3B00587369 /* list.c */,
+				BFBAC8E62295EE3B00587369 /* node_iterator.c */,
+				BFBAC8E82295EE3B00587369 /* node_list.c */,
+				BFBAC8E72295EE3B00587369 /* node.c */,
+			);
+			name = libcnary;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -215,11 +372,29 @@
 			buildRules = (
 			);
 			dependencies = (
+				BF4586B622987AE400BD7491 /* PBXTargetDependency */,
 			);
 			name = AltSign;
 			productName = AltSign;
 			productReference = BF5AB3992285FDB200DC914B /* AltSign.framework */;
 			productType = "com.apple.product-type.framework";
+		};
+		BFBAC8A92295ED1900587369 /* ldid */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BFBAC8B02295ED1900587369 /* Build configuration list for PBXNativeTarget "ldid" */;
+			buildPhases = (
+				BFBAC8A62295ED1900587369 /* Sources */,
+				BFBAC8A72295ED1900587369 /* Frameworks */,
+				BFBAC8A82295ED1900587369 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ldid;
+			productName = ldid;
+			productReference = BFBAC8AA2295ED1900587369 /* libldid.a */;
+			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
 
@@ -231,6 +406,9 @@
 				ORGANIZATIONNAME = "Riley Testut";
 				TargetAttributes = {
 					BF5AB3982285FDB200DC914B = {
+						CreatedOnToolsVersion = 10.2.1;
+					};
+					BFBAC8A92295ED1900587369 = {
 						CreatedOnToolsVersion = 10.2.1;
 					};
 				};
@@ -254,6 +432,7 @@
 			projectRoot = "";
 			targets = (
 				BF5AB3982285FDB200DC914B /* AltSign */,
+				BFBAC8A92295ED1900587369 /* ldid */,
 			);
 		};
 /* End PBXProject section */
@@ -302,7 +481,49 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BFBAC8A62295ED1900587369 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BFBAC8DC2295ED5300587369 /* Node.cpp in Sources */,
+				BFBAC8D42295ED5300587369 /* Structure.cpp in Sources */,
+				BFBAC8CE2295ED5300587369 /* plist.c in Sources */,
+				BFBAC8D32295ED5300587369 /* Array.cpp in Sources */,
+				BFBAC8E42295ED6C00587369 /* lookup2.c in Sources */,
+				BFBAC8EE2295EE3B00587369 /* node_list.c in Sources */,
+				BFBAC8D22295ED5300587369 /* Uid.cpp in Sources */,
+				BFBAC8D52295ED5300587369 /* ptrarray.c in Sources */,
+				BFBAC8CC2295ED5300587369 /* bplist.c in Sources */,
+				BFBAC8D02295ED5300587369 /* Integer.cpp in Sources */,
+				BFBAC8CD2295ED5300587369 /* Key.cpp in Sources */,
+				BFBAC8DA2295ED5300587369 /* Dictionary.cpp in Sources */,
+				BFBAC8ED2295EE3B00587369 /* node.c in Sources */,
+				BFBAC8F02295EE3B00587369 /* list.c in Sources */,
+				BFBAC8D62295ED5300587369 /* Data.cpp in Sources */,
+				BFBAC8D82295ED5300587369 /* Real.cpp in Sources */,
+				BFBAC8D12295ED5300587369 /* String.cpp in Sources */,
+				BFBAC8D92295ED5300587369 /* xplist.c in Sources */,
+				BFBAC8EF2295EE3B00587369 /* iterator.c in Sources */,
+				BFBAC8DE2295ED5300587369 /* Boolean.cpp in Sources */,
+				BFBAC8DD2295ED5300587369 /* hashtable.c in Sources */,
+				BFBAC8D72295ED5300587369 /* base64.c in Sources */,
+				BFBAC8CF2295ED5300587369 /* Date.cpp in Sources */,
+				BFBAC8E32295ED6C00587369 /* ldid.cpp in Sources */,
+				BFBAC8F12295EE3B00587369 /* cnary.c in Sources */,
+				BFBAC8DB2295ED5300587369 /* bytearray.c in Sources */,
+				BFBAC8EC2295EE3B00587369 /* node_iterator.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		BF4586B622987AE400BD7491 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "OpenSSL (iOS)";
+			targetProxy = BF4586B522987AE400BD7491 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		BF5AB39F2285FDB200DC914B /* Debug */ = {
@@ -357,11 +578,13 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Dependencies/OpenSSL/ios/include\"";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -413,10 +636,12 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Dependencies/OpenSSL/ios/include\"";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -434,7 +659,6 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Dependencies/OpenSSL/ios/include\"";
 				INFOPLIST_FILE = AltSign/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -461,7 +685,6 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Dependencies/OpenSSL/ios/include\"";
 				INFOPLIST_FILE = AltSign/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -472,6 +695,46 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.rileytestut.AltSign;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		BFBAC8B12295ED1900587369 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 6XVY5G3U44;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Dependencies/ldid/libplist/include\"",
+					"\"$(SRCROOT)/Dependencies/ldid/libplist/libcnary/include\"",
+					"\"${SDKROOT}/usr/include/libxml2\"",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		BFBAC8B22295ED1900587369 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 6XVY5G3U44;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Dependencies/ldid/libplist/include\"",
+					"\"$(SRCROOT)/Dependencies/ldid/libplist/libcnary/include\"",
+					"\"${SDKROOT}/usr/include/libxml2\"",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -494,6 +757,15 @@
 			buildConfigurations = (
 				BF5AB3A22285FDB200DC914B /* Debug */,
 				BF5AB3A32285FDB200DC914B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BFBAC8B02295ED1900587369 /* Build configuration list for PBXNativeTarget "ldid" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BFBAC8B12295ED1900587369 /* Debug */,
+				BFBAC8B22295ED1900587369 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
