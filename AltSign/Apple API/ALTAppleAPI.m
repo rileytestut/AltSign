@@ -315,7 +315,7 @@ NS_ASSUME_NONNULL_END
     [self sendRequestWithURL:URL additionalParameters:@{@"serialNumber": certificate.serialNumber} account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *error) {
         if (responseDictionary == nil)
         {
-            completionHandler(nil, error);
+            completionHandler(NO, error);
             return;
         }
         
@@ -402,7 +402,7 @@ NS_ASSUME_NONNULL_END
     [self sendRequestWithURL:URL additionalParameters:@{@"appIdId": appID.identifier} account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *error) {
         if (responseDictionary == nil)
         {
-            completionHandler(nil, error);
+            completionHandler(NO, error);
             return;
         }
         
