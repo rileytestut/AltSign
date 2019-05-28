@@ -10,23 +10,29 @@
 
 @implementation ALTDevice
 
-- (nullable instancetype)initWithResponseDictionary:(NSDictionary *)responseDictionary
+- (instancetype)initWithName:(NSString *)name identifier:(NSString *)identifier
 {
     self = [super init];
     if (self)
     {
-        NSString *name = responseDictionary[@"name"];
-        NSString *identifier = responseDictionary[@"deviceNumber"];
-        
-        if (name == nil || identifier == nil)
-        {
-            return nil;
-        }
-        
         _name = [name copy];
         _identifier = [identifier copy];
     }
     
+    return self;
+}
+
+- (nullable instancetype)initWithResponseDictionary:(NSDictionary *)responseDictionary
+{
+    NSString *name = responseDictionary[@"name"];
+    NSString *identifier = responseDictionary[@"deviceNumber"];
+    
+    if (name == nil || identifier == nil)
+    {
+        return nil;
+    }
+    
+    self = [self initWithName:name identifier:identifier];
     return self;
 }
 

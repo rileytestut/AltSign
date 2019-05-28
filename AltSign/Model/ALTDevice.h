@@ -15,6 +15,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *name;
 @property (nonatomic, copy) NSString *identifier;
 
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithName:(NSString *)name identifier:(NSString *)identifier NS_DESIGNATED_INITIALIZER;
+
 @end
 
 NS_ASSUME_NONNULL_END
