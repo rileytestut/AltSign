@@ -24,6 +24,9 @@
 		BF5AB3CE228645DF00DC914B /* ALTCertificate.m in Sources */ = {isa = PBXBuildFile; fileRef = BF5AB3CC228645DF00DC914B /* ALTCertificate.m */; };
 		BF9B633F229DC27C002F0A62 /* ALTModel+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = BF9B633E229DC27C002F0A62 /* ALTModel+Internal.h */; };
 		BF9B6340229DC9DD002F0A62 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF48CFE7229435DB0004760B /* openssl.framework */; };
+		BF9B6374229DCD2B002F0A62 /* libzip_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF9B6373229DCD2A002F0A62 /* libzip_iOS.framework */; };
+		BF9B6375229DCD4D002F0A62 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = BFBAC9302295F64600587369 /* libz.tbd */; };
+		BF9B6377229DCDAC002F0A62 /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = BF9B6376229DCDAC002F0A62 /* libbz2.tbd */; };
 		BFBAC88B2295D90F00587369 /* ALTProvisioningProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = BFBAC8892295D90F00587369 /* ALTProvisioningProfile.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BFBAC88C2295D90F00587369 /* ALTProvisioningProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = BFBAC88A2295D90F00587369 /* ALTProvisioningProfile.m */; };
 		BFBAC8912295E05600587369 /* ALTAppleAPI.h in Headers */ = {isa = PBXBuildFile; fileRef = BFBAC88F2295E05600587369 /* ALTAppleAPI.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -82,6 +85,104 @@
 			remoteGlobalIDString = 9F4A2716223BE476005CB63A;
 			remoteInfo = "OpenSSL (macOS)";
 		};
+		BF9B6356229DCBE9002F0A62 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BF9B6341229DCBE9002F0A62 /* libzip.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4BDC71E015B182B200236D3C;
+			remoteInfo = libzip_iOS;
+		};
+		BF9B6358229DCBE9002F0A62 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BF9B6341229DCBE9002F0A62 /* libzip.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4B01D68B15B2F3F1002D5007;
+			remoteInfo = libzip;
+		};
+		BF9B635A229DCBE9002F0A62 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BF9B6341229DCBE9002F0A62 /* libzip.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4B01D6FD15B2F4B1002D5007;
+			remoteInfo = zipmerge;
+		};
+		BF9B635C229DCBE9002F0A62 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BF9B6341229DCBE9002F0A62 /* libzip.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4B01D71315B2F4EB002D5007;
+			remoteInfo = zipcmp;
+		};
+		BF9B635E229DCBE9002F0A62 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BF9B6341229DCBE9002F0A62 /* libzip.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3D7E35371B3305FB00022624;
+			remoteInfo = "in-memory";
+		};
+		BF9B6360229DCBE9002F0A62 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BF9B6341229DCBE9002F0A62 /* libzip.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4BACD5C115BC2DC900920691;
+			remoteInfo = add_from_filep;
+		};
+		BF9B6362229DCBE9002F0A62 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BF9B6341229DCBE9002F0A62 /* libzip.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4BFF2B511FE12FCA006EF3F3;
+			remoteInfo = can_clone_file;
+		};
+		BF9B6364229DCBE9002F0A62 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BF9B6341229DCBE9002F0A62 /* libzip.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4BACD5D015BC2DF200920691;
+			remoteInfo = fopen_unchanged;
+		};
+		BF9B6366229DCBE9002F0A62 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BF9B6341229DCBE9002F0A62 /* libzip.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4BACD5DF15BC2F3700920691;
+			remoteInfo = fread;
+		};
+		BF9B6368229DCBE9002F0A62 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BF9B6341229DCBE9002F0A62 /* libzip.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4BD6CB6C19E71CD100710654;
+			remoteInfo = hole;
+		};
+		BF9B636A229DCBE9002F0A62 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BF9B6341229DCBE9002F0A62 /* libzip.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4BACD58915BC2CEA00920691;
+			remoteInfo = ziptool;
+		};
+		BF9B636C229DCBE9002F0A62 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BF9B6341229DCBE9002F0A62 /* libzip.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4BACD65015BC301300920691;
+			remoteInfo = tryopen;
+		};
+		BF9B636E229DCBE9002F0A62 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BF9B6341229DCBE9002F0A62 /* libzip.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4B51DDC01FDAE20A00C5CA85;
+			remoteInfo = ziptool_regress;
+		};
+		BF9B6370229DCBF9002F0A62 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BF9B6341229DCBE9002F0A62 /* libzip.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 4BDC71DF15B182B200236D3C;
+			remoteInfo = libzip_iOS;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -116,6 +217,9 @@
 		BF5AB3CB228645DF00DC914B /* ALTCertificate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALTCertificate.h; sourceTree = "<group>"; };
 		BF5AB3CC228645DF00DC914B /* ALTCertificate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALTCertificate.m; sourceTree = "<group>"; };
 		BF9B633E229DC27C002F0A62 /* ALTModel+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ALTModel+Internal.h"; sourceTree = "<group>"; };
+		BF9B6341229DCBE9002F0A62 /* libzip.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libzip.xcodeproj; path = Dependencies/libzip/xcode/libzip.xcodeproj; sourceTree = SOURCE_ROOT; };
+		BF9B6373229DCD2A002F0A62 /* libzip_iOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = libzip_iOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		BF9B6376229DCDAC002F0A62 /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = usr/lib/libbz2.tbd; sourceTree = SDKROOT; };
 		BFBAC8892295D90F00587369 /* ALTProvisioningProfile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALTProvisioningProfile.h; sourceTree = "<group>"; };
 		BFBAC88A2295D90F00587369 /* ALTProvisioningProfile.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALTProvisioningProfile.m; sourceTree = "<group>"; };
 		BFBAC88F2295E05600587369 /* ALTAppleAPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALTAppleAPI.h; sourceTree = "<group>"; };
@@ -164,8 +268,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BF9B6377229DCDAC002F0A62 /* libbz2.tbd in Frameworks */,
+				BF9B6375229DCD4D002F0A62 /* libz.tbd in Frameworks */,
 				BF9B6340229DC9DD002F0A62 /* openssl.framework in Frameworks */,
 				BFBAC93A2295FCB500587369 /* libxml2.2.tbd in Frameworks */,
+				BF9B6374229DCD2B002F0A62 /* libzip_iOS.framework in Frameworks */,
 				BFBAC8F42295EFE300587369 /* libldid.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -185,6 +292,7 @@
 			isa = PBXGroup;
 			children = (
 				BF48CFE1229435DB0004760B /* OpenSSL.xcodeproj */,
+				BF9B6341229DCBE9002F0A62 /* libzip.xcodeproj */,
 			);
 			name = Dependencies;
 			sourceTree = "<group>";
@@ -201,6 +309,8 @@
 		BF48CFEA229435F50004760B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BF9B6376229DCDAC002F0A62 /* libbz2.tbd */,
+				BF9B6373229DCD2A002F0A62 /* libzip_iOS.framework */,
 				BFBAC9302295F64600587369 /* libz.tbd */,
 				BFBAC8F22295EF0500587369 /* libxml2.2.tbd */,
 			);
@@ -268,6 +378,26 @@
 				BFBAC88A2295D90F00587369 /* ALTProvisioningProfile.m */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		BF9B6342229DCBE9002F0A62 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				BF9B6357229DCBE9002F0A62 /* libzip_iOS.framework */,
+				BF9B6359229DCBE9002F0A62 /* libzip.framework */,
+				BF9B635B229DCBE9002F0A62 /* zipmerge */,
+				BF9B635D229DCBE9002F0A62 /* zipcmp */,
+				BF9B635F229DCBE9002F0A62 /* in-memory */,
+				BF9B6361229DCBE9002F0A62 /* add_from_filep */,
+				BF9B6363229DCBE9002F0A62 /* can_clone_file */,
+				BF9B6365229DCBE9002F0A62 /* fopen_unchanged */,
+				BF9B6367229DCBE9002F0A62 /* fread */,
+				BF9B6369229DCBE9002F0A62 /* hole */,
+				BF9B636B229DCBE9002F0A62 /* ziptool */,
+				BF9B636D229DCBE9002F0A62 /* tryopen */,
+				BF9B636F229DCBE9002F0A62 /* ziptool_regress */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		BFBAC8992295E1A200587369 /* Apple API */ = {
@@ -372,6 +502,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				BF9B6371229DCBF9002F0A62 /* PBXTargetDependency */,
 				BF4586B622987AE400BD7491 /* PBXTargetDependency */,
 			);
 			name = AltSign;
@@ -425,6 +556,10 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = BF9B6342229DCBE9002F0A62 /* Products */;
+					ProjectRef = BF9B6341229DCBE9002F0A62 /* libzip.xcodeproj */;
+				},
+				{
 					ProductGroup = BF48CFE2229435DB0004760B /* Products */;
 					ProjectRef = BF48CFE1229435DB0004760B /* OpenSSL.xcodeproj */;
 				},
@@ -450,6 +585,97 @@
 			fileType = wrapper.framework;
 			path = openssl.framework;
 			remoteRef = BF48CFE8229435DB0004760B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BF9B6357229DCBE9002F0A62 /* libzip_iOS.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = libzip_iOS.framework;
+			remoteRef = BF9B6356229DCBE9002F0A62 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BF9B6359229DCBE9002F0A62 /* libzip.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = libzip.framework;
+			remoteRef = BF9B6358229DCBE9002F0A62 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BF9B635B229DCBE9002F0A62 /* zipmerge */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = zipmerge;
+			remoteRef = BF9B635A229DCBE9002F0A62 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BF9B635D229DCBE9002F0A62 /* zipcmp */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = zipcmp;
+			remoteRef = BF9B635C229DCBE9002F0A62 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BF9B635F229DCBE9002F0A62 /* in-memory */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = "in-memory";
+			remoteRef = BF9B635E229DCBE9002F0A62 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BF9B6361229DCBE9002F0A62 /* add_from_filep */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = add_from_filep;
+			remoteRef = BF9B6360229DCBE9002F0A62 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BF9B6363229DCBE9002F0A62 /* can_clone_file */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = can_clone_file;
+			remoteRef = BF9B6362229DCBE9002F0A62 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BF9B6365229DCBE9002F0A62 /* fopen_unchanged */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = fopen_unchanged;
+			remoteRef = BF9B6364229DCBE9002F0A62 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BF9B6367229DCBE9002F0A62 /* fread */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = fread;
+			remoteRef = BF9B6366229DCBE9002F0A62 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BF9B6369229DCBE9002F0A62 /* hole */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = hole;
+			remoteRef = BF9B6368229DCBE9002F0A62 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BF9B636B229DCBE9002F0A62 /* ziptool */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = ziptool;
+			remoteRef = BF9B636A229DCBE9002F0A62 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BF9B636D229DCBE9002F0A62 /* tryopen */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = tryopen;
+			remoteRef = BF9B636C229DCBE9002F0A62 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BF9B636F229DCBE9002F0A62 /* ziptool_regress */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = ziptool_regress;
+			remoteRef = BF9B636E229DCBE9002F0A62 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -522,6 +748,11 @@
 			isa = PBXTargetDependency;
 			name = "OpenSSL (iOS)";
 			targetProxy = BF4586B522987AE400BD7491 /* PBXContainerItemProxy */;
+		};
+		BF9B6371229DCBF9002F0A62 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = libzip_iOS;
+			targetProxy = BF9B6370229DCBF9002F0A62 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
