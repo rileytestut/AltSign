@@ -8,6 +8,7 @@
 
 // Functionality
 #import <AltSign/ALTAppleAPI.h>
+#import <AltSign/ALTSigner.h>
 
 // Model
 #import <AltSign/ALTAccount.h>

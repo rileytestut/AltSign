@@ -71,6 +71,12 @@
 		BF9B6415229E0CCE002F0A62 /* NSFileManager+Apps.h in Headers */ = {isa = PBXBuildFile; fileRef = BF9B6412229E0CCE002F0A62 /* NSFileManager+Apps.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BF9B6416229E0CCE002F0A62 /* NSFileManager+Apps.m in Sources */ = {isa = PBXBuildFile; fileRef = BF9B6413229E0CCE002F0A62 /* NSFileManager+Apps.m */; };
 		BF9B6417229E0CCE002F0A62 /* NSFileManager+Apps.m in Sources */ = {isa = PBXBuildFile; fileRef = BF9B6413229E0CCE002F0A62 /* NSFileManager+Apps.m */; };
+		BF9B641D229E0DF5002F0A62 /* ALTSigner.h in Headers */ = {isa = PBXBuildFile; fileRef = BF9B6419229E0DF4002F0A62 /* ALTSigner.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BF9B641E229E0DF5002F0A62 /* ALTSigner.h in Headers */ = {isa = PBXBuildFile; fileRef = BF9B6419229E0DF4002F0A62 /* ALTSigner.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BF9B641F229E0DF5002F0A62 /* ALTSigner.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF9B641A229E0DF4002F0A62 /* ALTSigner.mm */; };
+		BF9B6420229E0DF5002F0A62 /* ALTSigner.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF9B641A229E0DF4002F0A62 /* ALTSigner.mm */; };
+		BF9B6421229E0DF5002F0A62 /* apple.pem in Resources */ = {isa = PBXBuildFile; fileRef = BF9B641C229E0DF4002F0A62 /* apple.pem */; };
+		BF9B6422229E0DF5002F0A62 /* apple.pem in Resources */ = {isa = PBXBuildFile; fileRef = BF9B641C229E0DF4002F0A62 /* apple.pem */; };
 		BFBAC88B2295D90F00587369 /* ALTProvisioningProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = BFBAC8892295D90F00587369 /* ALTProvisioningProfile.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BFBAC88C2295D90F00587369 /* ALTProvisioningProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = BFBAC88A2295D90F00587369 /* ALTProvisioningProfile.m */; };
 		BFBAC8912295E05600587369 /* ALTAppleAPI.h in Headers */ = {isa = PBXBuildFile; fileRef = BFBAC88F2295E05600587369 /* ALTAppleAPI.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -185,6 +191,9 @@
 		BF9B63FF229E0AA0002F0A62 /* unzip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = unzip.h; path = Dependencies/minizip/unzip.h; sourceTree = SOURCE_ROOT; };
 		BF9B6412229E0CCE002F0A62 /* NSFileManager+Apps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+Apps.h"; sourceTree = "<group>"; };
 		BF9B6413229E0CCE002F0A62 /* NSFileManager+Apps.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+Apps.m"; sourceTree = "<group>"; };
+		BF9B6419229E0DF4002F0A62 /* ALTSigner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALTSigner.h; sourceTree = "<group>"; };
+		BF9B641A229E0DF4002F0A62 /* ALTSigner.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ALTSigner.mm; sourceTree = "<group>"; };
+		BF9B641C229E0DF4002F0A62 /* apple.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = apple.pem; sourceTree = "<group>"; };
 		BFBAC8892295D90F00587369 /* ALTProvisioningProfile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALTProvisioningProfile.h; sourceTree = "<group>"; };
 		BFBAC88A2295D90F00587369 /* ALTProvisioningProfile.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALTProvisioningProfile.m; sourceTree = "<group>"; };
 		BFBAC88F2295E05600587369 /* ALTAppleAPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALTAppleAPI.h; sourceTree = "<group>"; };
@@ -318,7 +327,9 @@
 				BF5AB3B3228600D100DC914B /* AltSign.h */,
 				BFBAC8992295E1A200587369 /* Apple API */,
 				BF5AB3C2228604E700DC914B /* Model */,
+				BF9B6418229E0DF4002F0A62 /* Signing */,
 				BF5AB3C12286040800DC914B /* Categories */,
+				BF9B641B229E0DF4002F0A62 /* Resources */,
 				BF48CFE0229435CB0004760B /* Dependencies */,
 				BF5AB39D2285FDB200DC914B /* Info.plist */,
 			);
@@ -372,6 +383,23 @@
 				BF9B63F9229E0A9F002F0A62 /* zip.h */,
 			);
 			name = minizip;
+			sourceTree = "<group>";
+		};
+		BF9B6418229E0DF4002F0A62 /* Signing */ = {
+			isa = PBXGroup;
+			children = (
+				BF9B6419229E0DF4002F0A62 /* ALTSigner.h */,
+				BF9B641A229E0DF4002F0A62 /* ALTSigner.mm */,
+			);
+			path = Signing;
+			sourceTree = "<group>";
+		};
+		BF9B641B229E0DF4002F0A62 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				BF9B641C229E0DF4002F0A62 /* apple.pem */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		BFBAC8992295E1A200587369 /* Apple API */ = {
@@ -457,6 +485,7 @@
 				BF9B6408229E0AA0002F0A62 /* mztools.h in Headers */,
 				BF5AB3C92286269B00DC914B /* ALTDevice.h in Headers */,
 				BF9B6404229E0AA0002F0A62 /* zip.h in Headers */,
+				BF9B641D229E0DF5002F0A62 /* ALTSigner.h in Headers */,
 				BF9B6414229E0CCE002F0A62 /* NSFileManager+Apps.h in Headers */,
 				BF9B6410229E0AA0002F0A62 /* unzip.h in Headers */,
 				BF9B6406229E0AA0002F0A62 /* ioapi.h in Headers */,
@@ -481,6 +510,7 @@
 				BF9B6409229E0AA0002F0A62 /* mztools.h in Headers */,
 				BF9B6384229DCF3A002F0A62 /* ALTDevice.h in Headers */,
 				BF9B6405229E0AA0002F0A62 /* zip.h in Headers */,
+				BF9B641E229E0DF5002F0A62 /* ALTSigner.h in Headers */,
 				BF9B6415229E0CCE002F0A62 /* NSFileManager+Apps.h in Headers */,
 				BF9B6411229E0AA0002F0A62 /* unzip.h in Headers */,
 				BF9B6407229E0AA0002F0A62 /* ioapi.h in Headers */,
@@ -613,6 +643,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BF9B6421229E0DF5002F0A62 /* apple.pem in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -620,6 +651,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BF9B6422229E0DF5002F0A62 /* apple.pem in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -630,6 +662,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BF9B641F229E0DF5002F0A62 /* ALTSigner.mm in Sources */,
 				BF48CFF0229438C10004760B /* ALTCertificateRequest.m in Sources */,
 				BFBAC88C2295D90F00587369 /* ALTProvisioningProfile.m in Sources */,
 				BF5AB3C62286157F00DC914B /* ALTTeam.m in Sources */,
@@ -651,6 +684,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BF9B6420229E0DF5002F0A62 /* ALTSigner.mm in Sources */,
 				BF9B638A229DCF3A002F0A62 /* ALTCertificateRequest.m in Sources */,
 				BF9B638B229DCF3A002F0A62 /* ALTProvisioningProfile.m in Sources */,
 				BF9B638C229DCF3A002F0A62 /* ALTTeam.m in Sources */,
