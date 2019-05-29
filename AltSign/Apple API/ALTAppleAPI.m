@@ -432,7 +432,7 @@ NS_ASSUME_NONNULL_END
             return;
         }
         
-        ALTProvisioningProfile *provisioningProfile = [[ALTProvisioningProfile alloc] initWithResponseDictionary:dictionary];
+        ALTProvisioningProfile *provisioningProfile = [[ALTProvisioningProfile alloc] initWithAppID:appID responseDictionary:dictionary];
         if (provisioningProfile == nil)
         {
             NSError *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorInvalidResponse userInfo:nil];

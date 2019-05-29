@@ -37,7 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface ALTProvisioningProfile ()
-- (nullable instancetype)initWithResponseDictionary:(NSDictionary *)responseDictionary;
+- (nullable instancetype)initWithAppID:(ALTAppID *)appID responseDictionary:(NSDictionary *)responseDictionary;
 @end
 
 NS_ASSUME_NONNULL_END

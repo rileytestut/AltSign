@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+@class ALTAppID;
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface ALTProvisioningProfile : NSObject
@@ -16,6 +18,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (copy, nonatomic) NSString *identifier;
 
 @property (copy, nonatomic) NSData *data;
+
+@property (copy, nonatomic) ALTAppID *appID;
 
 @end
 

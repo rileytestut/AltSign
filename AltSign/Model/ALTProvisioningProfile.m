@@ -7,14 +7,17 @@
 //
 
 #import "ALTProvisioningProfile.h"
+#import "ALTAppID.h"
 
 @implementation ALTProvisioningProfile
 
-- (nullable instancetype)initWithResponseDictionary:(NSDictionary *)responseDictionary
+- (nullable instancetype)initWithAppID:(ALTAppID *)appID responseDictionary:(NSDictionary *)responseDictionary
 {
     self = [super init];
     if (self)
     {
+        _appID = [appID copy];
+        
         NSString *name = responseDictionary[@"name"];
         NSString *identifier = responseDictionary[@"UUID"];
         NSData *data = responseDictionary[@"encodedProfile"];
@@ -26,7 +29,7 @@
         
         _name = [name copy];
         _identifier = [identifier copy];
-        _data = [data copy];
+        _data = [data copy];        
     }
     
     return self;
@@ -36,7 +39,7 @@
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"<%@: %p, Name: %@, UUID: %@>", NSStringFromClass([self class]), self, self.name, self.identifier];
+    return [NSString stringWithFormat:@"<%@: %p, Name: %@, UUID: %@, App ID: %@>", NSStringFromClass([self class]), self, self.name, self.identifier, self.appID.identifier];
 }
 
 - (BOOL)isEqual:(id)object
@@ -47,13 +50,13 @@
         return NO;
     }
     
-    BOOL isEqual = (self.identifier == profile.identifier && self.data == profile.data);
+    BOOL isEqual = (self.identifier == profile.identifier && self.data == profile.data && self.appID == profile.appID);
     return isEqual;
 }
 
 - (NSUInteger)hash
 {
-    return self.identifier.hash ^ self.data.hash;
+    return self.identifier.hash ^ self.data.hash ^ self.appID.hash;
 }
 
 @end
