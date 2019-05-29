@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "BF9B6378229DCF3A002F0A62"
-               BuildableName = "AltSign-macOS.framework"
+               BuildableName = "AltSign.framework"
                BlueprintName = "AltSign-macOS"
                ReferencedContainer = "container:AltSign.xcodeproj">
             </BuildableReference>
@@ -46,7 +46,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "BF9B6378229DCF3A002F0A62"
-            BuildableName = "AltSign-macOS.framework"
+            BuildableName = "AltSign.framework"
             BlueprintName = "AltSign-macOS"
             ReferencedContainer = "container:AltSign.xcodeproj">
          </BuildableReference>
@@ -64,7 +64,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "BF9B6378229DCF3A002F0A62"
-            BuildableName = "AltSign-macOS.framework"
+            BuildableName = "AltSign.framework"
             BlueprintName = "AltSign-macOS"
             ReferencedContainer = "container:AltSign.xcodeproj">
          </BuildableReference>
