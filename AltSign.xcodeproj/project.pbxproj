@@ -67,6 +67,10 @@
 		BF9B640F229E0AA0002F0A62 /* mztools.c in Sources */ = {isa = PBXBuildFile; fileRef = BF9B63FE229E0AA0002F0A62 /* mztools.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		BF9B6410229E0AA0002F0A62 /* unzip.h in Headers */ = {isa = PBXBuildFile; fileRef = BF9B63FF229E0AA0002F0A62 /* unzip.h */; };
 		BF9B6411229E0AA0002F0A62 /* unzip.h in Headers */ = {isa = PBXBuildFile; fileRef = BF9B63FF229E0AA0002F0A62 /* unzip.h */; };
+		BF9B6414229E0CCE002F0A62 /* NSFileManager+Apps.h in Headers */ = {isa = PBXBuildFile; fileRef = BF9B6412229E0CCE002F0A62 /* NSFileManager+Apps.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BF9B6415229E0CCE002F0A62 /* NSFileManager+Apps.h in Headers */ = {isa = PBXBuildFile; fileRef = BF9B6412229E0CCE002F0A62 /* NSFileManager+Apps.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BF9B6416229E0CCE002F0A62 /* NSFileManager+Apps.m in Sources */ = {isa = PBXBuildFile; fileRef = BF9B6413229E0CCE002F0A62 /* NSFileManager+Apps.m */; };
+		BF9B6417229E0CCE002F0A62 /* NSFileManager+Apps.m in Sources */ = {isa = PBXBuildFile; fileRef = BF9B6413229E0CCE002F0A62 /* NSFileManager+Apps.m */; };
 		BFBAC88B2295D90F00587369 /* ALTProvisioningProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = BFBAC8892295D90F00587369 /* ALTProvisioningProfile.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BFBAC88C2295D90F00587369 /* ALTProvisioningProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = BFBAC88A2295D90F00587369 /* ALTProvisioningProfile.m */; };
 		BFBAC8912295E05600587369 /* ALTAppleAPI.h in Headers */ = {isa = PBXBuildFile; fileRef = BFBAC88F2295E05600587369 /* ALTAppleAPI.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -179,6 +183,8 @@
 		BF9B63FD229E0AA0002F0A62 /* zip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = zip.c; path = Dependencies/minizip/zip.c; sourceTree = SOURCE_ROOT; };
 		BF9B63FE229E0AA0002F0A62 /* mztools.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mztools.c; path = Dependencies/minizip/mztools.c; sourceTree = SOURCE_ROOT; };
 		BF9B63FF229E0AA0002F0A62 /* unzip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = unzip.h; path = Dependencies/minizip/unzip.h; sourceTree = SOURCE_ROOT; };
+		BF9B6412229E0CCE002F0A62 /* NSFileManager+Apps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+Apps.h"; sourceTree = "<group>"; };
+		BF9B6413229E0CCE002F0A62 /* NSFileManager+Apps.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+Apps.m"; sourceTree = "<group>"; };
 		BFBAC8892295D90F00587369 /* ALTProvisioningProfile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALTProvisioningProfile.h; sourceTree = "<group>"; };
 		BFBAC88A2295D90F00587369 /* ALTProvisioningProfile.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALTProvisioningProfile.m; sourceTree = "<group>"; };
 		BFBAC88F2295E05600587369 /* ALTAppleAPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALTAppleAPI.h; sourceTree = "<group>"; };
@@ -324,6 +330,8 @@
 			children = (
 				BF5AB3BD2286040400DC914B /* NSError+ALTError.h */,
 				BF5AB3BE2286040400DC914B /* NSError+ALTError.m */,
+				BF9B6412229E0CCE002F0A62 /* NSFileManager+Apps.h */,
+				BF9B6413229E0CCE002F0A62 /* NSFileManager+Apps.m */,
 			);
 			path = Categories;
 			sourceTree = "<group>";
@@ -449,6 +457,7 @@
 				BF9B6408229E0AA0002F0A62 /* mztools.h in Headers */,
 				BF5AB3C92286269B00DC914B /* ALTDevice.h in Headers */,
 				BF9B6404229E0AA0002F0A62 /* zip.h in Headers */,
+				BF9B6414229E0CCE002F0A62 /* NSFileManager+Apps.h in Headers */,
 				BF9B6410229E0AA0002F0A62 /* unzip.h in Headers */,
 				BF9B6406229E0AA0002F0A62 /* ioapi.h in Headers */,
 				BF9B633F229DC27C002F0A62 /* ALTModel+Internal.h in Headers */,
@@ -472,6 +481,7 @@
 				BF9B6409229E0AA0002F0A62 /* mztools.h in Headers */,
 				BF9B6384229DCF3A002F0A62 /* ALTDevice.h in Headers */,
 				BF9B6405229E0AA0002F0A62 /* zip.h in Headers */,
+				BF9B6415229E0CCE002F0A62 /* NSFileManager+Apps.h in Headers */,
 				BF9B6411229E0AA0002F0A62 /* unzip.h in Headers */,
 				BF9B6407229E0AA0002F0A62 /* ioapi.h in Headers */,
 				BF9B6385229DCF3A002F0A62 /* ALTModel+Internal.h in Headers */,
@@ -626,6 +636,7 @@
 				BF5AB3CA2286269B00DC914B /* ALTDevice.m in Sources */,
 				BF9B640E229E0AA0002F0A62 /* mztools.c in Sources */,
 				BFBAC8922295E05600587369 /* ALTAppleAPI.m in Sources */,
+				BF9B6416229E0CCE002F0A62 /* NSFileManager+Apps.m in Sources */,
 				BF48CFF722944FC60004760B /* ALTAppID.m in Sources */,
 				BF9B640A229E0AA0002F0A62 /* unzip.c in Sources */,
 				BF5AB3CE228645DF00DC914B /* ALTCertificate.m in Sources */,
@@ -646,6 +657,7 @@
 				BF9B638D229DCF3A002F0A62 /* ALTDevice.m in Sources */,
 				BF9B640F229E0AA0002F0A62 /* mztools.c in Sources */,
 				BF9B638E229DCF3A002F0A62 /* ALTAppleAPI.m in Sources */,
+				BF9B6417229E0CCE002F0A62 /* NSFileManager+Apps.m in Sources */,
 				BF9B638F229DCF3A002F0A62 /* ALTAppID.m in Sources */,
 				BF9B640B229E0AA0002F0A62 /* unzip.c in Sources */,
 				BF9B6390229DCF3A002F0A62 /* ALTCertificate.m in Sources */,

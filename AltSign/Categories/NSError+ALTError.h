@@ -15,6 +15,9 @@ typedef NS_ERROR_ENUM(AltSignErrorDomain, ALTError)
     ALTErrorUnknown = -1,
     ALTErrorInvalidResponse = -23,
     ALTErrorInvalidParameters = -24,
+    
+    ALTErrorMissingAppBundle = -100,
+    ALTErrorMissingInfoPlist = -101,
 };
 
 NS_ASSUME_NONNULL_BEGIN

@@ -19,6 +19,7 @@
 
 // Categories
 #import <AltSign/NSError+ALTError.h>
+#import <AltSign/NSFileManager+Apps.h>
 
 //! Project version number for AltSign.
 FOUNDATION_EXPORT double AltSignVersionNumber;

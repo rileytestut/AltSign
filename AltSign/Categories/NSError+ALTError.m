@@ -29,13 +29,19 @@ NSErrorDomain const AltSignErrorDomain = @"com.rileytestut.AltSign";
     switch (self.code)
     {
         case ALTErrorUnknown:
-            return NSLocalizedString(@"An unknown error occured.", "");
+            return NSLocalizedString(@"An unknown error occured.", @"");
             
         case ALTErrorInvalidResponse:
             return NSLocalizedString(@"The server returned an invalid response.", @"");
         
         case ALTErrorInvalidParameters:
-            return NSLocalizedString(@"The provided parameters are invalid.", "");
+            return NSLocalizedString(@"The provided parameters are invalid.", @"");
+            
+        case ALTErrorMissingAppBundle:
+            return NSLocalizedString(@"The provided .ipa does not contain an app bundle.", @"");
+            
+        case ALTErrorMissingInfoPlist:
+            return NSLocalizedString(@"The provided app is missing its Info.plist.", @"");
     }
     
     return nil;
