@@ -10,25 +10,31 @@
 
 @implementation ALTAppID
 
-- (nullable instancetype)initWithResponseDictionary:(NSDictionary *)responseDictionary
+- (instancetype)initWithName:(NSString *)name identifier:(NSString *)identifier bundleIdentifier:(NSString *)bundleIdentifier
 {
     self = [super init];
     if (self)
     {
-        NSString *name = responseDictionary[@"name"];
-        NSString *identifier = responseDictionary[@"appIdId"];
-        NSString *bundleIdentifier = responseDictionary[@"identifier"];
-        
-        if (name == nil || identifier == nil || bundleIdentifier == nil)
-        {
-            return nil;
-        }
-        
         _name = [name copy];
         _identifier = [identifier copy];
         _bundleIdentifier = [bundleIdentifier copy];
     }
     
+    return self;
+}
+
+- (nullable instancetype)initWithResponseDictionary:(NSDictionary *)responseDictionary
+{
+    NSString *name = responseDictionary[@"name"];
+    NSString *identifier = responseDictionary[@"appIdId"];
+    NSString *bundleIdentifier = responseDictionary[@"identifier"];
+    
+    if (name == nil || identifier == nil || bundleIdentifier == nil)
+    {
+        return nil;
+    }
+    
+    self = [self initWithName:name identifier:identifier bundleIdentifier:bundleIdentifier];
     return self;
 }
 
@@ -54,6 +60,14 @@
 - (NSUInteger)hash
 {
     return self.identifier.hash ^ self.bundleIdentifier.hash;
+}
+
+#pragma mark - <NSCopying> -
+
+- (nonnull id)copyWithZone:(nullable NSZone *)zone
+{
+    ALTAppID *appID = [[ALTAppID alloc] initWithName:self.name identifier:self.identifier bundleIdentifier:self.bundleIdentifier];
+    return appID;
 }
 
 @end

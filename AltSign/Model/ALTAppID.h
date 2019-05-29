@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ALTAppID : NSObject
+@interface ALTAppID : NSObject <NSCopying>
 
 @property (copy, nonatomic) NSString *name;
 @property (copy, nonatomic) NSString *identifier;
