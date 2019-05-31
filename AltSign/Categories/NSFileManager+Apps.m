@@ -70,6 +70,22 @@ char ALTDirectoryDeliminator = '/';
         }
         
         NSString *filename = [[NSString alloc] initWithCString:cFilename encoding:NSUTF8StringEncoding];
+        if ([filename hasPrefix:@"__MACOSX"])
+        {
+            if (i + 1 < zipInfo.number_entry)
+            {
+                if (unzGoToNextFile(zipFile) != UNZ_OK)
+                {
+                    *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileReadUnknownError userInfo:@{NSFilePathErrorKey: filename}];
+                    
+                    finish();
+                    return nil;
+                }
+            }
+            
+            continue;
+        }
+        
         NSURL *fileURL = [directoryURL URLByAppendingPathComponent:filename];
         
         if ([filename characterAtIndex:filename.length - 1] == ALTDirectoryDeliminator)
