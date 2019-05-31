@@ -17,7 +17,7 @@
     {
         _appleID = [appleID copy];
         
-        NSString *identifier = responseDictionary[@"personId"];
+        NSNumber *identifier = responseDictionary[@"personId"];
         NSString *firstName = responseDictionary[@"firstName"];
         NSString *lastName = responseDictionary[@"lastName"];
         NSString *cookie = responseDictionary[@"myacinfo"];
@@ -27,7 +27,7 @@
             return nil;
         }
         
-        _identifier = [identifier copy];
+        _identifier = [identifier.description copy];
         _firstName = [firstName copy];
         _lastName = [lastName copy];
         _cookie = [cookie copy];
