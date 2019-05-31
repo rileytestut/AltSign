@@ -10,7 +10,7 @@
 
 #import "ALTModel+Internal.h"
 
-#import <AltSign/NSError+ALTError.h>
+#import <AltSign/NSError+ALTErrors.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -83,10 +83,10 @@ NS_ASSUME_NONNULL_END
     NSData *encodedBody = [body dataUsingEncoding:NSUTF8StringEncoding];
     request.HTTPBody = encodedBody;
     
-    NSURLSessionDataTask *dataTask = [self.session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+    NSURLSessionDataTask *dataTask = [self.session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable requestError) {
         if (data == nil)
         {
-            completionHandler(nil, error);
+            completionHandler(nil, requestError);
             return;
         }
         
@@ -95,21 +95,31 @@ NS_ASSUME_NONNULL_END
         
         if (responseDictionary == nil)
         {
-            NSError *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorInvalidResponse userInfo:@{NSUnderlyingErrorKey: parseError}];
+            NSError *error = [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorBadServerResponse userInfo:@{NSUnderlyingErrorKey: parseError}];
             completionHandler(nil, error);
             return;
         }
         
-        ALTAccount *account = [[ALTAccount alloc] initWithAppleID:appleID responseDictionary:responseDictionary];
-        if (account != nil)
-        {
-            completionHandler(account, nil);
-        }
-        else
-        {
-            NSError *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorInvalidResponse userInfo:nil];
-            completionHandler(nil, error);
-        }
+        NSError *error = nil;
+        ALTAccount *account = [self processResponse:responseDictionary parseHandler:^id {
+            ALTAccount *account = [[ALTAccount alloc] initWithAppleID:appleID responseDictionary:responseDictionary];
+            return account;
+        } resultCodeHandler:^NSError * _Nullable(NSInteger resultCode) {
+            switch (resultCode)
+            {
+            case -22910:
+            case -22938:
+                return [NSError errorWithDomain:ALTAppleAPIErrorDomain code:ALTAppleAPIErrorAppSpecificPasswordRequired userInfo:nil];
+                
+            case -1:
+            case -20101:
+                return [NSError errorWithDomain:ALTAppleAPIErrorDomain code:ALTAppleAPIErrorIncorrectCredentials userInfo:nil];
+                
+            default: return nil;
+            }
+        } error:&error];
+        
+        completionHandler(account, error);
     }];
     
     [dataTask resume];
@@ -121,36 +131,43 @@ NS_ASSUME_NONNULL_END
 {
     NSURL *URL = [NSURL URLWithString:@"listTeams.action" relativeToURL:self.baseURL];
     
-    [self sendRequestWithURL:URL additionalParameters:nil account:account team:nil completionHandler:^(NSDictionary *responseDictionary, NSError *error) {
+    [self sendRequestWithURL:URL additionalParameters:nil account:account team:nil completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
         if (responseDictionary == nil)
         {
-            completionHandler(nil, error);
+            completionHandler(nil, requestError);
             return;
         }
         
-        NSArray *array = responseDictionary[@"teams"];
-        if (array == nil)
-        {
-            NSError *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorInvalidResponse userInfo:nil];
-            completionHandler(nil, error);
-            return;
-        }
-        
-        NSMutableArray *teams = [NSMutableArray array];
-        for (NSDictionary *dictionary in array)
-        {
-            ALTTeam *team = [[ALTTeam alloc] initWithAccount:account responseDictionary:dictionary];
-            if (team == nil)
+        NSError *error = nil;
+        NSArray *teams = [self processResponse:responseDictionary parseHandler:^id _Nullable{
+            NSArray *array = responseDictionary[@"teams"];
+            if (array == nil)
             {
-                NSError *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorInvalidResponse userInfo:nil];
-                completionHandler(nil, error);
-                return;
+                return nil;
             }
             
-            [teams addObject:team];
-        }
+            NSMutableArray *teams = [NSMutableArray array];
+            for (NSDictionary *dictionary in array)
+            {
+                ALTTeam *team = [[ALTTeam alloc] initWithAccount:account responseDictionary:dictionary];
+                if (team == nil)
+                {
+                    return nil;
+                }
+                
+                [teams addObject:team];
+            }
+            return teams;
+        } resultCodeHandler:nil error:&error];
         
-        completionHandler(teams, nil);
+        if (teams != nil && teams.count == 0)
+        {
+            completionHandler(nil, [NSError errorWithDomain:ALTAppleAPIErrorDomain code:ALTAppleAPIErrorNoTeams userInfo:nil]);
+        }
+        else
+        {
+            completionHandler(teams, error);
+        }        
     }];
 }
 
@@ -160,36 +177,36 @@ NS_ASSUME_NONNULL_END
 {
     NSURL *URL = [NSURL URLWithString:@"ios/listDevices.action" relativeToURL:self.baseURL];
     
-    [self sendRequestWithURL:URL additionalParameters:nil account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *error) {
+    [self sendRequestWithURL:URL additionalParameters:nil account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
         if (responseDictionary == nil)
         {
-            completionHandler(nil, error);
+            completionHandler(nil, requestError);
             return;
         }
         
-        NSArray *array = responseDictionary[@"devices"];
-        if (array == nil)
-        {
-            NSError *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorInvalidResponse userInfo:nil];
-            completionHandler(nil, error);
-            return;
-        }
-        
-        NSMutableArray *devices = [NSMutableArray array];
-        for (NSDictionary *dictionary in array)
-        {
-            ALTDevice *device = [[ALTDevice alloc] initWithResponseDictionary:dictionary];
-            if (device == nil)
+        NSError *error = nil;
+        NSArray *devices = [self processResponse:responseDictionary parseHandler:^id _Nullable{
+            NSArray *array = responseDictionary[@"devices"];
+            if (array == nil)
             {
-                NSError *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorInvalidResponse userInfo:nil];
-                completionHandler(nil, error);
-                return;
+                return nil;
             }
             
-            [devices addObject:device];
-        }
+            NSMutableArray *devices = [NSMutableArray array];
+            for (NSDictionary *dictionary in array)
+            {
+                ALTDevice *device = [[ALTDevice alloc] initWithResponseDictionary:dictionary];
+                if (device == nil)
+                {
+                    return nil;
+                }
+                
+                [devices addObject:device];
+            }
+            return devices;
+        } resultCodeHandler:nil error:&error];
         
-        completionHandler(devices, nil);
+        completionHandler(devices, error);
     }];
 }
 
@@ -197,30 +214,41 @@ NS_ASSUME_NONNULL_END
 {
     NSURL *URL = [NSURL URLWithString:@"ios/addDevice.action" relativeToURL:self.baseURL];
     
-    [self sendRequestWithURL:URL additionalParameters:@{@"deviceNumber": identifier, @"name": name} account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *error) {
+    [self sendRequestWithURL:URL additionalParameters:@{@"deviceNumber": identifier, @"name": name} account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
         if (responseDictionary == nil)
         {
-            completionHandler(nil, error);
+            completionHandler(nil, requestError);
             return;
         }
         
-        NSDictionary *dictionary = responseDictionary[@"device"];
-        if (dictionary == nil)
-        {
-            NSError *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorInvalidResponse userInfo:nil];
-            completionHandler(nil, error);
-            return;
-        }
+        NSError *error = nil;
+        ALTDevice *device = [self processResponse:responseDictionary parseHandler:^id () {
+            NSDictionary *dictionary = responseDictionary[@"device"];
+            if (dictionary == nil)
+            {
+                return nil;
+            }
+            
+            ALTDevice *device = [[ALTDevice alloc] initWithResponseDictionary:dictionary];
+            return device;
+        } resultCodeHandler:^NSError * _Nullable(NSInteger resultCode) {
+            switch (resultCode)
+            {
+                case 35:
+                    if ([[[responseDictionary objectForKey:@"userString"] lowercaseString] containsString:@"already exists"])
+                    {
+                        return [NSError errorWithDomain:ALTAppleAPIErrorDomain code:ALTAppleAPIErrorDeviceAlreadyRegistered userInfo:nil];
+                    }
+                    else
+                    {
+                        return [NSError errorWithDomain:ALTAppleAPIErrorDomain code:ALTAppleAPIErrorInvalidDeviceID userInfo:nil];
+                    }
+                    
+                default: return nil;
+            }
+        } error:&error];
         
-        ALTDevice *device = [[ALTDevice alloc] initWithResponseDictionary:dictionary];
-        if (device == nil)
-        {
-            NSError *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorInvalidResponse userInfo:nil];
-            completionHandler(nil, error);
-            return;
-        }
-        
-        completionHandler(device, nil);
+        completionHandler(device, error);
     }];
 }
 
@@ -230,36 +258,36 @@ NS_ASSUME_NONNULL_END
 {
     NSURL *URL = [NSURL URLWithString:@"ios/listAllDevelopmentCerts.action" relativeToURL:self.baseURL];
     
-    [self sendRequestWithURL:URL additionalParameters:nil account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *error) {
+    [self sendRequestWithURL:URL additionalParameters:nil account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
         if (responseDictionary == nil)
         {
-            completionHandler(nil, error);
+            completionHandler(nil, requestError);
             return;
         }
         
-        NSArray *array = responseDictionary[@"certificates"];
-        if (array == nil)
-        {
-            NSError *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorInvalidResponse userInfo:nil];
-            completionHandler(nil, error);
-            return;
-        }
-        
-        NSMutableArray *certificates = [NSMutableArray array];
-        for (NSDictionary *dictionary in array)
-        {
-            ALTCertificate *certificate = [[ALTCertificate alloc] initWithResponseDictionary:dictionary];
-            if (certificate == nil)
+        NSError *error = nil;
+        NSArray *certificates = [self processResponse:responseDictionary parseHandler:^id {
+            NSArray *array = responseDictionary[@"certificates"];
+            if (array == nil)
             {
-                NSError *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorInvalidResponse userInfo:nil];
-                completionHandler(nil, error);
-                return;
+                return nil;
             }
             
-            [certificates addObject:certificate];
-        }
+            NSMutableArray *certificates = [NSMutableArray array];
+            for (NSDictionary *dictionary in array)
+            {
+                ALTCertificate *certificate = [[ALTCertificate alloc] initWithResponseDictionary:dictionary];
+                if (certificate == nil)
+                {
+                    return nil;
+                }
+                
+                [certificates addObject:certificate];
+            }
+            return certificates;
+        } resultCodeHandler:nil error:&error];
         
-        completionHandler(certificates, nil);
+        completionHandler(certificates, error);
     }];
 }
 
@@ -268,7 +296,7 @@ NS_ASSUME_NONNULL_END
     ALTCertificateRequest *request = [[ALTCertificateRequest alloc] init];
     if (request == nil)
     {
-        NSError *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorUnknown userInfo:nil];
+        NSError *error = [NSError errorWithDomain:ALTAppleAPIErrorDomain code:ALTAppleAPIErrorInvalidCertificateRequest userInfo:nil];
         completionHandler(nil, error);
         return;
     }
@@ -279,32 +307,35 @@ NS_ASSUME_NONNULL_END
     [self sendRequestWithURL:URL additionalParameters:@{@"csrContent": encodedCSR,
                                                         @"machineId": [[NSUUID UUID] UUIDString],
                                                         @"machineName": machineName}
-                     account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *error) {
+                     account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
                          if (responseDictionary == nil)
                          {
-                             completionHandler(nil, error);
+                             completionHandler(nil, requestError);
                              return;
                          }
                          
-                         NSDictionary *dictionary = responseDictionary[@"certRequest"];
-                         if (dictionary == nil)
-                         {
-                             NSError *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorInvalidResponse userInfo:nil];
-                             completionHandler(nil, error);
-                             return;
-                         }
+                         NSError *error = nil;
+                         ALTCertificate *certificate = [self processResponse:responseDictionary parseHandler:^id _Nullable{
+                             NSDictionary *dictionary = responseDictionary[@"certRequest"];
+                             if (dictionary == nil)
+                             {
+                                 return nil;
+                             }
+                             
+                             ALTCertificate *certificate = [[ALTCertificate alloc] initWithResponseDictionary:dictionary];
+                             certificate.privateKey = request.privateKey;
+                             return certificate;
+                         } resultCodeHandler:^NSError * _Nullable(NSInteger resultCode) {
+                             switch (resultCode)
+                             {
+                                 case 3250:
+                                     return [NSError errorWithDomain:ALTAppleAPIErrorDomain code:ALTAppleAPIErrorInvalidCertificateRequest userInfo:nil];
+                                     
+                                 default: return nil;
+                             }
+                         } error:&error];
                          
-                         ALTCertificate *certificate = [[ALTCertificate alloc] initWithResponseDictionary:dictionary];
-                         if (certificate == nil)
-                         {
-                             NSError *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorInvalidResponse userInfo:nil];
-                             completionHandler(nil, error);
-                             return;
-                         }
-                         
-                         certificate.privateKey = request.privateKey;
-                         
-                         completionHandler(certificate, nil);
+                         completionHandler(certificate, error);
                      }];
 }
 
@@ -312,15 +343,27 @@ NS_ASSUME_NONNULL_END
 {
     NSURL *URL = [NSURL URLWithString:@"ios/revokeDevelopmentCert.action" relativeToURL:self.baseURL];
     
-    [self sendRequestWithURL:URL additionalParameters:@{@"serialNumber": certificate.serialNumber} account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *error) {
+    [self sendRequestWithURL:URL additionalParameters:@{@"serialNumber": certificate.serialNumber} account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
         if (responseDictionary == nil)
         {
-            completionHandler(NO, error);
+            completionHandler(NO, requestError);
             return;
         }
         
-        BOOL success = (responseDictionary[@"certRequests"] != nil);
-        completionHandler(success, nil);
+        NSError *error = nil;
+        id result = [self processResponse:responseDictionary parseHandler:^id _Nullable{
+            return responseDictionary[@"certRequests"];
+        } resultCodeHandler:^NSError * _Nullable(NSInteger resultCode) {
+            switch (resultCode)
+            {
+                case 7252:
+                    return [NSError errorWithDomain:ALTAppleAPIErrorDomain code:ALTAppleAPIErrorCertificateDoesNotExist userInfo:nil];
+                    
+                default: return nil;
+            }
+        } error:&error];
+        
+        completionHandler(result != nil, error);
     }];
 }
 
@@ -330,36 +373,36 @@ NS_ASSUME_NONNULL_END
 {
     NSURL *URL = [NSURL URLWithString:@"ios/listAppIds.action" relativeToURL:self.baseURL];
     
-    [self sendRequestWithURL:URL additionalParameters:nil account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *error) {
+    [self sendRequestWithURL:URL additionalParameters:nil account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
         if (responseDictionary == nil)
         {
-            completionHandler(nil, error);
+            completionHandler(nil, requestError);
             return;
         }
         
-        NSArray *array = responseDictionary[@"appIds"];
-        if (array == nil)
-        {
-            NSError *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorInvalidResponse userInfo:nil];
-            completionHandler(nil, error);
-            return;
-        }
-        
-        NSMutableArray *appIDs = [NSMutableArray array];
-        for (NSDictionary *dictionary in array)
-        {
-            ALTAppID *appID = [[ALTAppID alloc] initWithResponseDictionary:dictionary];
-            if (appID == nil)
+        NSError *error = nil;
+        NSArray *appIDs = [self processResponse:responseDictionary parseHandler:^id _Nullable{
+            NSArray *array = responseDictionary[@"appIds"];
+            if (array == nil)
             {
-                NSError *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorInvalidResponse userInfo:nil];
-                completionHandler(nil, error);
-                return;
+                return nil;
             }
             
-            [appIDs addObject:appID];
-        }
+            NSMutableArray *appIDs = [NSMutableArray array];
+            for (NSDictionary *dictionary in array)
+            {
+                ALTAppID *appID = [[ALTAppID alloc] initWithResponseDictionary:dictionary];
+                if (appID == nil)
+                {
+                    return nil;
+                }
+                
+                [appIDs addObject:appID];
+            }
+            return appIDs;
+        } resultCodeHandler:nil error:&error];
         
-        completionHandler(appIDs, nil);
+        completionHandler(appIDs, error);
     }];
 }
 
@@ -368,30 +411,40 @@ NS_ASSUME_NONNULL_END
 {
     NSURL *URL = [NSURL URLWithString:@"ios/addAppId.action" relativeToURL:self.baseURL];
     
-    [self sendRequestWithURL:URL additionalParameters:@{@"identifier": bundleIdentifier, @"name": name} account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *error) {
+    [self sendRequestWithURL:URL additionalParameters:@{@"identifier": bundleIdentifier, @"name": name} account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
         if (responseDictionary == nil)
         {
-            completionHandler(nil, error);
+            completionHandler(nil, requestError);
             return;
         }
         
-        NSDictionary *dictionary = responseDictionary[@"appId"];
-        if (dictionary == nil)
-        {
-            NSError *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorInvalidResponse userInfo:nil];
-            completionHandler(nil, error);
-            return;
-        }
+        NSError *error = nil;
+        ALTAppID *appID = [self processResponse:responseDictionary parseHandler:^id _Nullable{
+            NSDictionary *dictionary = responseDictionary[@"appId"];
+            if (dictionary == nil)
+            {
+                return nil;
+            }
+            
+            ALTAppID *appID = [[ALTAppID alloc] initWithResponseDictionary:dictionary];
+            return appID;
+        } resultCodeHandler:^NSError * _Nullable(NSInteger resultCode) {
+            switch (resultCode)
+            {
+                case 35:
+                    return [NSError errorWithDomain:ALTAppleAPIErrorDomain code:ALTAppleAPIErrorInvalidAppIDName userInfo:nil];
+                    
+                case 9401:
+                    return [NSError errorWithDomain:ALTAppleAPIErrorDomain code:ALTAppleAPIErrorBundleIdentifierUnavailable userInfo:nil];
+                    
+                case 9412:
+                    return [NSError errorWithDomain:ALTAppleAPIErrorDomain code:ALTAppleAPIErrorInvalidBundleIdentifier userInfo:nil];
+                    
+                default: return nil;
+            }
+        } error:&error];
         
-        ALTAppID *appID = [[ALTAppID alloc] initWithResponseDictionary:dictionary];
-        if (appID == nil)
-        {
-            NSError *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorInvalidResponse userInfo:nil];
-            completionHandler(nil, error);
-            return;
-        }
-        
-        completionHandler(appID, nil);
+        completionHandler(appID, error);
     }];
 }
 
@@ -399,15 +452,28 @@ NS_ASSUME_NONNULL_END
 {
     NSURL *URL = [NSURL URLWithString:@"ios/deleteAppId.action" relativeToURL:self.baseURL];
     
-    [self sendRequestWithURL:URL additionalParameters:@{@"appIdId": appID.identifier} account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *error) {
+    [self sendRequestWithURL:URL additionalParameters:@{@"appIdId": appID.identifier} account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
         if (responseDictionary == nil)
         {
-            completionHandler(NO, error);
+            completionHandler(NO, requestError);
             return;
         }
         
-        BOOL success = [responseDictionary[@"resultCode"] intValue] == 0;
-        completionHandler(success, nil);
+        NSError *error = nil;
+        id value = [self processResponse:responseDictionary parseHandler:^id _Nullable{
+            NSNumber *result = responseDictionary[@"resultCode"];
+            return [result integerValue] == 0 ? result : nil;
+        } resultCodeHandler:^NSError * _Nullable(NSInteger resultCode) {
+            switch (resultCode)
+            {
+                case 9100:
+                    return [NSError errorWithDomain:ALTAppleAPIErrorDomain code:ALTAppleAPIErrorAppIDDoesNotExist userInfo:nil];
+                    
+                default: return nil;
+            }
+        } error:&error];
+        
+        completionHandler(value != nil, error);
     }];
 }
 
@@ -417,30 +483,34 @@ NS_ASSUME_NONNULL_END
 {
     NSURL *URL = [NSURL URLWithString:@"ios/downloadTeamProvisioningProfile.action" relativeToURL:self.baseURL];
     
-    [self sendRequestWithURL:URL additionalParameters:@{@"appIdId": appID.identifier} account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *error) {
+    [self sendRequestWithURL:URL additionalParameters:@{@"appIdId": appID.identifier} account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
         if (responseDictionary == nil)
         {
-            completionHandler(nil, error);
+            completionHandler(nil, requestError);
             return;
         }
         
-        NSDictionary *dictionary = responseDictionary[@"provisioningProfile"];
-        if (dictionary == nil)
-        {
-            NSError *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorInvalidResponse userInfo:nil];
-            completionHandler(nil, error);
-            return;
-        }
+        NSError *error = nil;
+        ALTProvisioningProfile *provisioningProfile = [self processResponse:responseDictionary parseHandler:^id _Nullable{
+            NSDictionary *dictionary = responseDictionary[@"provisioningProfile"];
+            if (dictionary == nil)
+            {
+                return nil;
+            }
+            
+            ALTProvisioningProfile *provisioningProfile = [[ALTProvisioningProfile alloc] initWithAppID:appID responseDictionary:dictionary];
+            return provisioningProfile;
+        } resultCodeHandler:^NSError * _Nullable(NSInteger resultCode) {
+            switch (resultCode)
+            {
+                case 8201:
+                    return [NSError errorWithDomain:ALTAppleAPIErrorDomain code:ALTAppleAPIErrorAppIDDoesNotExist userInfo:nil];
+                    
+                default: return nil;
+            }
+        } error:&error];
         
-        ALTProvisioningProfile *provisioningProfile = [[ALTProvisioningProfile alloc] initWithAppID:appID responseDictionary:dictionary];
-        if (provisioningProfile == nil)
-        {
-            NSError *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorInvalidResponse userInfo:nil];
-            completionHandler(nil, error);
-            return;
-        }
-        
-        completionHandler(provisioningProfile, nil);
+        completionHandler(provisioningProfile, error);
     }];
 }
 
@@ -475,7 +545,7 @@ NS_ASSUME_NONNULL_END
     NSData *bodyData = [NSPropertyListSerialization dataWithPropertyList:parameters format:NSPropertyListXMLFormat_v1_0 options:0 error:&serializationError];
     if (bodyData == nil)
     {
-        NSError *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorInvalidParameters userInfo:@{NSUnderlyingErrorKey: serializationError}];
+        NSError *error = [NSError errorWithDomain:ALTAppleAPIErrorDomain code:ALTAppleAPIErrorInvalidParameters userInfo:@{NSUnderlyingErrorKey: serializationError}];
         completionHandler(nil, error);
         return;
     }
@@ -512,7 +582,7 @@ NS_ASSUME_NONNULL_END
         
         if (responseDictionary == nil)
         {
-            NSError *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorInvalidResponse userInfo:@{NSUnderlyingErrorKey: parseError}];
+            NSError *error = [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorBadServerResponse userInfo:@{NSUnderlyingErrorKey: parseError}];
             completionHandler(nil, error);
             return;
         }
@@ -521,6 +591,55 @@ NS_ASSUME_NONNULL_END
     }];
     
     [dataTask resume];
+}
+
+- (nullable id)processResponse:(NSDictionary *)responseDictionary
+                         parseHandler:(id _Nullable (^_Nullable)(void))parseHandler
+                    resultCodeHandler:(NSError *_Nullable (^_Nullable)(NSInteger resultCode))resultCodeHandler
+                         error:(NSError **)error
+{
+    if (parseHandler != nil)
+    {
+        id value = parseHandler();
+        if (value != nil)
+        {
+            return value;
+        }
+    }
+    
+    id result = responseDictionary[@"resultCode"];
+    if (result == nil)
+    {
+        *error = [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorBadServerResponse userInfo:nil];
+        return nil;
+    }
+    
+    NSInteger resultCode = [result integerValue]; // Works wether result is NSNumber or NSString.
+    if (resultCode == 0)
+    {
+        return nil;
+    }
+    else
+    {
+        NSError *tempError = nil;
+        if (resultCodeHandler)
+        {
+            tempError = resultCodeHandler(resultCode);
+        }
+        
+        if (tempError == nil)
+        {
+            NSString *localizedDescription = [responseDictionary objectForKey:@"userString"] ?: [responseDictionary objectForKey:@"resultString"];
+            
+            NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+            userInfo[NSLocalizedDescriptionKey] = localizedDescription;
+            tempError = [NSError errorWithDomain:ALTAppleAPIErrorDomain code:ALTAppleAPIErrorUnknown userInfo:userInfo];
+        }
+        
+        *error = tempError;
+        
+        return nil;
+    }
 }
 
 @end

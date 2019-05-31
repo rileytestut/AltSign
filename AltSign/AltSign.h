@@ -19,7 +19,7 @@
 #import <AltSign/ALTProvisioningProfile.h>
 
 // Categories
-#import <AltSign/NSError+ALTError.h>
+#import <AltSign/NSError+ALTErrors.h>
 #import <AltSign/NSFileManager+Apps.h>
 
 //! Project version number for AltSign.

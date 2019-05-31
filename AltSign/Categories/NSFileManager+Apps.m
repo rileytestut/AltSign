@@ -8,7 +8,7 @@
 
 #import "NSFileManager+Apps.h"
 
-#import "NSError+ALTError.h"
+#import "NSError+ALTErrors.h"
 
 #include "zip.h"
 #include "unzip.h"
