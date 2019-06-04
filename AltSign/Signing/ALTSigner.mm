@@ -87,35 +87,50 @@ std::string CertificatesContent(ALTCertificate *altCertificate)
     return self;
 }
 
-- (NSProgress *)signAppAtURL:(NSURL *)appURL provisioningProfile:(ALTProvisioningProfile *)profile completionHandler:(void (^)(NSURL *fileURL, NSError *error))completionHandler
+- (NSProgress *)signAppAtURL:(NSURL *)appURL provisioningProfile:(ALTProvisioningProfile *)profile completionHandler:(void (^)(BOOL success, NSError *error))completionHandler
 {
     NSProgress *progress = [NSProgress discreteProgressWithTotalUnitCount:100];
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSURL *ipaURL = nil;
+        NSURL *appBundleURL = nil;
+        
+        void (^finish)(BOOL, NSError *) = ^(BOOL success, NSError *error) {
+            if (ipaURL != nil)
+            {
+                NSError *removeError = nil;
+                if (![[NSFileManager defaultManager] removeItemAtURL:[ipaURL URLByDeletingLastPathComponent] error:&removeError])
+                {
+                    NSLog(@"Failed to clean up after resigning. %@", removeError);
+                }
+            }
+            
+            completionHandler(success, error);
+        };
+        
         __block NSError *error = nil;
         
-        NSURL *outputDirectoryURL = [[appURL URLByDeletingLastPathComponent] URLByAppendingPathComponent:@"Output" isDirectory:YES];
-        
-        if ([[NSFileManager defaultManager] fileExistsAtPath:outputDirectoryURL.path])
+        if ([appURL.pathExtension.lowercaseString isEqualToString:@"ipa"])
         {
-            if (![[NSFileManager defaultManager] removeItemAtURL:outputDirectoryURL error:&error])
+            ipaURL = appURL;
+            
+            NSURL *outputDirectoryURL = [[appURL URLByDeletingLastPathComponent] URLByAppendingPathComponent:[[NSUUID UUID] UUIDString] isDirectory:YES];
+            if (![[NSFileManager defaultManager] createDirectoryAtURL:outputDirectoryURL withIntermediateDirectories:YES attributes:nil error:&error])
             {
-                completionHandler(nil, error);
+                finish(NO, error);
+                return;
+            }
+            
+            appBundleURL = [[NSFileManager defaultManager] unzipAppBundleAtURL:appURL toDirectory:outputDirectoryURL error:&error];
+            if (appBundleURL == nil)
+            {
+                finish(NO, error);
                 return;
             }
         }
-        
-        if (![[NSFileManager defaultManager] createDirectoryAtURL:outputDirectoryURL withIntermediateDirectories:YES attributes:nil error:&error])
+        else
         {
-            completionHandler(nil, error);
-            return;
-        }
-        
-        NSURL *appBundleURL = [[NSFileManager defaultManager] unzipAppBundleAtURL:appURL toDirectory:outputDirectoryURL error:&error];
-        if (appBundleURL == nil)
-        {
-            completionHandler(nil, error);
-            return;
+            appBundleURL = appURL;
         }
         
         NSURL *infoPlistURL = [appBundleURL URLByAppendingPathComponent:@"Info.plist"];
@@ -139,7 +154,7 @@ std::string CertificatesContent(ALTCertificate *altCertificate)
         NSData *entitlementsData = [NSPropertyListSerialization dataWithPropertyList:entitlements format:NSPropertyListXMLFormat_v1_0 options:0 error:&error];
         if (entitlementsData == nil)
         {
-            completionHandler(nil, error);
+            finish(NO, error);
             return;
         }
         
@@ -163,8 +178,17 @@ std::string CertificatesContent(ALTCertificate *altCertificate)
         
         // Dispatch after to allow time to finish signing binary.
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            NSURL *resignedIPAURL = [[NSFileManager defaultManager] zipAppBundleAtURL:appBundleURL error:&error];
-            completionHandler(resignedIPAURL, error);
+            if (ipaURL != nil)
+            {
+                NSURL *resignedIPAURL = [[NSFileManager defaultManager] zipAppBundleAtURL:appBundleURL error:&error];
+                
+                if (![[NSFileManager defaultManager] replaceItemAtURL:ipaURL withItemAtURL:resignedIPAURL backupItemName:nil options:0 resultingItemURL:nil error:&error])
+                {
+                    finish(NO, error);
+                }
+            }
+            
+            finish(YES, nil);
         });
     });
 

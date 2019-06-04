@@ -22,8 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithTeam:(ALTTeam *)team certificate:(ALTCertificate *)certificate;
 
-- (NSProgress *)signAppAtURL:(NSURL *)appURL provisioningProfile:(ALTProvisioningProfile *)provisioningProfile
-   completionHandler:(void (^)(NSURL *_Nullable fileURL, NSError *_Nullable error))completionHandler;
+- (NSProgress *)signAppAtURL:(NSURL *)appURL provisioningProfile:(ALTProvisioningProfile *)profile completionHandler:(void (^)(BOOL success, NSError *_Nullable error))completionHandler;
 
 @end
 
