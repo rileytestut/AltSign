@@ -20,16 +20,18 @@
         
         NSString *name = responseDictionary[@"name"];
         NSString *identifier = responseDictionary[@"UUID"];
+        NSDate *expirationDate = responseDictionary[@"dateExpire"];
         NSData *data = responseDictionary[@"encodedProfile"];
         
-        if (name == nil || identifier == nil || data == nil)
+        if (name == nil || identifier == nil || expirationDate == nil || data == nil)
         {
             return nil;
         }
         
         _name = [name copy];
         _identifier = [identifier copy];
-        _data = [data copy];        
+        _expirationDate = [expirationDate copy];
+        _data = [data copy];
     }
     
     return self;

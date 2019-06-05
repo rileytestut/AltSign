@@ -16,6 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (copy, nonatomic) NSString *name;
 @property (copy, nonatomic) NSString *identifier;
+@property (copy, nonatomic) NSDate *expirationDate;
 
 @property (copy, nonatomic) NSData *data;
 
