@@ -75,6 +75,11 @@ std::string CertificatesContent(ALTCertificate *altCertificate)
 
 @implementation ALTSigner
 
++ (void)load
+{
+    OpenSSL_add_all_algorithms();
+}
+
 - (instancetype)initWithTeam:(ALTTeam *)team certificate:(ALTCertificate *)certificate
 {
     self = [super init];

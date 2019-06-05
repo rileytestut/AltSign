@@ -36,8 +36,6 @@
 // Based on https://www.codepool.biz/how-to-use-openssl-to-generate-x-509-certificate-request.html
 - (void)generateRequest:(NSData **)outputRequest privateKey:(NSData **)outputPrivateKey
 {
-    OpenSSL_add_all_algorithms();
-    
     BIGNUM *bignum = NULL;
     __block RSA *rsa = NULL;
     
