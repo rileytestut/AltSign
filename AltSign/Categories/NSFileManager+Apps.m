@@ -52,8 +52,6 @@ char ALTDirectoryDeliminator = '/';
         return nil;
     }
     
-    NSString *appBundlePath = nil;
-    
     char buffer[ALTReadBufferSize];
     
     for (int i = 0; i < zipInfo.number_entry; i++)
@@ -86,32 +84,49 @@ char ALTDirectoryDeliminator = '/';
             continue;
         }
         
+        NSError *(^createDirectory)(NSURL *) = ^NSError *(NSURL *directoryURL) {
+            NSError *error = nil;
+            if (![self createDirectoryAtURL:directoryURL withIntermediateDirectories:YES attributes:nil error:&error])
+            {
+                return error;
+            }
+            
+            return nil;
+        };
+        
         NSURL *fileURL = [directoryURL URLByAppendingPathComponent:filename];
         
         if ([filename characterAtIndex:filename.length - 1] == ALTDirectoryDeliminator)
         {
             // Directory
             
-            if ([filename.pathExtension isEqualToString:@"app"])
+            NSError *directoryError = createDirectory(fileURL);
+            if (directoryError != nil)
             {
-                appBundlePath = filename;
-            }
-            
-            if (![self createDirectoryAtURL:fileURL withIntermediateDirectories:YES attributes:nil error:error])
-            {
+                *error = directoryError;
                 return nil;
             }
         }
         else
         {
-            // File
-            
+            // File            
             if (unzOpenCurrentFile(zipFile) != UNZ_OK)
             {
                 *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileReadUnknownError userInfo:@{NSURLErrorKey: fileURL}];
                 
                 finish();
                 return nil;
+            }
+            
+            NSURL *parentDirectory = [fileURL URLByDeletingLastPathComponent];
+            if (![[NSFileManager defaultManager] fileExistsAtPath:parentDirectory.path])
+            {
+                NSError *directoryError = createDirectory(parentDirectory);
+                if (directoryError != nil)
+                {
+                    *error = directoryError;
+                    return nil;
+                }
             }
             
             outputFile = fopen(fileURL.fileSystemRepresentation, "wb");
@@ -176,16 +191,25 @@ char ALTDirectoryDeliminator = '/';
     
     finish();
     
-    if (appBundlePath != nil)
+    NSURL *payloadDirectory = [directoryURL URLByAppendingPathComponent:@"Payload"];
+    NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:payloadDirectory.path error:error];
+    if (contents == nil)
     {
-        NSURL *outputURL = [directoryURL URLByAppendingPathComponent:appBundlePath];
-        return outputURL;
-    }
-    else
-    {
-        *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorMissingAppBundle userInfo:@{NSURLErrorKey: ipaURL}];
+        finish();
         return nil;
     }
+    
+    for (NSString *filename in contents)
+    {
+        if ([filename.pathExtension.lowercaseString isEqualToString:@"app"])
+        {
+            NSURL *outputURL = [payloadDirectory URLByAppendingPathComponent:filename];
+            return outputURL;
+        }
+    }
+    
+    *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorMissingAppBundle userInfo:@{NSURLErrorKey: ipaURL}];
+    return nil;
 }
 
 - (NSURL *)zipAppBundleAtURL:(NSURL *)appBundleURL error:(NSError **)error
