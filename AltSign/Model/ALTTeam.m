@@ -10,25 +10,59 @@
 
 @implementation ALTTeam
 
-- (nullable instancetype)initWithAccount:(ALTAccount *)account responseDictionary:(NSDictionary *)responseDictionary
+- (instancetype)initWithName:(NSString *)name identifier:(NSString *)identifier type:(ALTTeamType)type account:(ALTAccount *)account
 {
     self = [super init];
     if (self)
     {
-        _account = account;
-        
-        NSString *name = responseDictionary[@"name"];
-        NSString *identifier = responseDictionary[@"teamId"];
-        
-        if (name == nil || identifier == nil)
-        {
-            return nil;
-        }
-        
         _name = [name copy];
         _identifier = [identifier copy];
+        _type = type;
+        _account = account;
     }
     
+    return self;
+}
+
+- (nullable instancetype)initWithAccount:(ALTAccount *)account responseDictionary:(NSDictionary *)responseDictionary
+{
+    NSString *name = responseDictionary[@"name"];
+    NSString *identifier = responseDictionary[@"teamId"];
+    NSString *teamType = responseDictionary[@"type"];
+    
+    if (name == nil || identifier == nil || teamType == nil)
+    {
+        return nil;
+    }
+    
+    ALTTeamType type = ALTTeamTypeUnknown;
+    
+    if ([teamType isEqualToString:@"Company/Organization"])
+    {
+        type = ALTTeamTypeOrganization;
+    }
+    else if ([teamType isEqualToString:@"Individual"])
+    {
+        NSArray *memberships = responseDictionary[@"memberships"];
+        
+        NSDictionary *membership = memberships.firstObject;
+        NSString *name = membership[@"name"];
+        
+        if (memberships.count == 1 && [name.lowercaseString containsString:@"free"])
+        {
+            type = ALTTeamTypeFree;
+        }
+        else
+        {
+            type = ALTTeamTypeIndividual;
+        }
+    }
+    else
+    {
+        type = ALTTeamTypeUnknown;
+    }
+    
+    self = [self initWithName:name identifier:identifier type:type account:account];
     return self;
 }
 
