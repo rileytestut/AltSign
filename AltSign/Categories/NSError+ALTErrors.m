@@ -62,13 +62,13 @@ NSErrorDomain const ALTAppleAPIErrorDomain = @"com.rileytestut.ALTAppleAPI";
             return NSLocalizedString(@"The provided parameters are invalid.", @"");
             
         case ALTAppleAPIErrorIncorrectCredentials:
-            return NSLocalizedString(@"Your Apple ID or password was entered incorrectly.", @"");
+            return NSLocalizedString(@"Incorrect Apple ID or password.", @"");
             
         case ALTAppleAPIErrorNoTeams:
             return NSLocalizedString(@"You are not a member of any development teams.", @"");
             
         case ALTAppleAPIErrorAppSpecificPasswordRequired:
-            return NSLocalizedString(@"Please sign in with an app-specific password. You can create one at appleid.apple.com.", @"");
+            return NSLocalizedString(@"An app-specific password is required. You can create one at appleid.apple.com.", @"");
             
         case ALTAppleAPIErrorInvalidDeviceID:
             return NSLocalizedString(@"This device's UDID is invalid.", @"");
