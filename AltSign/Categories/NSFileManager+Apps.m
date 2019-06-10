@@ -52,6 +52,8 @@ char ALTDirectoryDeliminator = '/';
         return nil;
     }
     
+    NSProgress *progress = [NSProgress progressWithTotalUnitCount:zipInfo.number_entry];
+    
     char buffer[ALTReadBufferSize];
     
     for (int i = 0; i < zipInfo.number_entry; i++)
@@ -177,6 +179,8 @@ char ALTDirectoryDeliminator = '/';
         
         unzCloseCurrentFile(zipFile);
         
+        progress.completedUnitCount += 1;
+        
         if (i + 1 < zipInfo.number_entry)
         {
             if (unzGoToNextFile(zipFile) != UNZ_OK)
@@ -203,7 +207,24 @@ char ALTDirectoryDeliminator = '/';
     {
         if ([filename.pathExtension.lowercaseString isEqualToString:@"app"])
         {
-            NSURL *outputURL = [payloadDirectory URLByAppendingPathComponent:filename];
+            NSURL *appBundleURL = [payloadDirectory URLByAppendingPathComponent:filename];
+            NSURL *outputURL = [directoryURL URLByAppendingPathComponent:filename];
+            
+            if (![[NSFileManager defaultManager] moveItemAtURL:appBundleURL toURL:outputURL error:error])
+            {
+                finish();
+                return nil;
+            }
+            
+            NSError *deleteError = nil;
+            if (![[NSFileManager defaultManager] removeItemAtURL:payloadDirectory error:&deleteError])
+            {
+                *error = deleteError;
+                
+                finish();
+                return nil;
+            }
+            
             return outputURL;
         }
     }
@@ -237,6 +258,26 @@ char ALTDirectoryDeliminator = '/';
     
     NSURL *payloadDirectory = [NSURL fileURLWithPath:@"Payload" isDirectory:YES];
     NSURL *appBundleDirectory = [payloadDirectory URLByAppendingPathComponent:appBundleFilename isDirectory:YES];
+    
+    NSDirectoryEnumerator *countEnumerator = [self enumeratorAtURL:appBundleURL
+                                        includingPropertiesForKeys:@[]
+                                                           options:0
+                                                      errorHandler:^BOOL(NSURL * _Nonnull url, NSError * _Nonnull error) {
+                                                          if (error) {
+                                                              NSLog(@"[Error] %@ (%@)", error, url);
+                                                              return NO;
+                                                          }
+                                                          
+                                                          return YES;
+                                                      }];
+    
+    NSInteger totalCount = 0;
+    for (NSURL *__unused fileURL in countEnumerator)
+    {
+        totalCount++;
+    }
+    
+    NSProgress *progress = [NSProgress progressWithTotalUnitCount:totalCount + 2]; // We add two extra entries at the end.
  
     NSDirectoryEnumerator *enumerator = [self enumeratorAtURL:appBundleURL
                                    includingPropertiesForKeys:@[NSURLIsDirectoryKey]
@@ -266,6 +307,8 @@ char ALTDirectoryDeliminator = '/';
             success = NO;
             break;
         }
+        
+        progress.completedUnitCount += 1;
     }
     
     if (success)
@@ -274,11 +317,15 @@ char ALTDirectoryDeliminator = '/';
         {
             success = NO;
         }
+        
+        progress.completedUnitCount += 1;
 
         if (![self writeItemAtURL:appBundleDirectory toZipFile:&zipFile depth:2 relativeURL:nil isDirectory:YES error:error])
         {
             success = NO;
         }
+        
+        progress.completedUnitCount += 1;
     }
     
     zipClose(zipFile, NULL);
