@@ -94,50 +94,82 @@ std::string CertificatesContent(ALTCertificate *altCertificate)
 
 - (NSProgress *)signAppAtURL:(NSURL *)appURL provisioningProfile:(ALTProvisioningProfile *)profile completionHandler:(void (^)(BOOL success, NSError *error))completionHandler
 {
-    NSProgress *progress = [NSProgress discreteProgressWithTotalUnitCount:100];
+    NSProgress *progress = [NSProgress discreteProgressWithTotalUnitCount:1];
+    
+    NSURL *ipaURL = nil;
+    NSURL *appBundleURL = nil;
+    
+    void (^finish)(BOOL, NSError *) = ^(BOOL success, NSError *error) {
+        if (ipaURL != nil)
+        {
+            NSError *removeError = nil;
+            if (![[NSFileManager defaultManager] removeItemAtURL:[ipaURL URLByDeletingLastPathComponent] error:&removeError])
+            {
+                NSLog(@"Failed to clean up after resigning. %@", removeError);
+            }
+        }
+        
+        completionHandler(success, error);
+    };
+    
+    __block NSError *error = nil;
+    
+    if ([appURL.pathExtension.lowercaseString isEqualToString:@"ipa"])
+    {
+        ipaURL = appURL;
+        
+        NSURL *outputDirectoryURL = [[appURL URLByDeletingLastPathComponent] URLByAppendingPathComponent:[[NSUUID UUID] UUIDString] isDirectory:YES];
+        if (![[NSFileManager defaultManager] createDirectoryAtURL:outputDirectoryURL withIntermediateDirectories:YES attributes:nil error:&error])
+        {
+            finish(NO, error);
+            return progress;
+        }
+        
+        appBundleURL = [[NSFileManager defaultManager] unzipAppBundleAtURL:appURL toDirectory:outputDirectoryURL error:&error];
+        if (appBundleURL == nil)
+        {
+            finish(NO, error);
+            return progress;
+        }
+    }
+    else
+    {
+        appBundleURL = appURL;
+    }
+    
+    NSDirectoryEnumerator *countEnumerator = [[NSFileManager defaultManager] enumeratorAtURL:appURL
+                                                                  includingPropertiesForKeys:@[NSURLIsDirectoryKey]
+                                                                                     options:0
+                                                                                errorHandler:^BOOL(NSURL * _Nonnull url, NSError * _Nonnull error) {
+                                                                                    if (error) {
+                                                                                        NSLog(@"[Error] %@ (%@)", error, url);
+                                                                                        return NO;
+                                                                                    }
+                                                                                    
+                                                                                    return YES;
+                                                                                }];
+        
+    NSInteger totalCount = 0;
+    for (NSURL *__unused fileURL in countEnumerator)
+    {
+        NSNumber *isDirectory = nil;
+        if (![fileURL getResourceValue:&isDirectory forKey:NSURLIsDirectoryKey error:nil] || [isDirectory boolValue])
+        {
+            continue;
+        }
+        
+        // Ignore CodeResources files.
+        if ([[fileURL lastPathComponent] isEqualToString:@"CodeResources"])
+        {
+            continue;
+        }
+        
+        totalCount++;
+    }
+    
+    progress.totalUnitCount = totalCount;
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSURL *ipaURL = nil;
-        NSURL *appBundleURL = nil;
-        
-        void (^finish)(BOOL, NSError *) = ^(BOOL success, NSError *error) {
-            if (ipaURL != nil)
-            {
-                NSError *removeError = nil;
-                if (![[NSFileManager defaultManager] removeItemAtURL:[ipaURL URLByDeletingLastPathComponent] error:&removeError])
-                {
-                    NSLog(@"Failed to clean up after resigning. %@", removeError);
-                }
-            }
-            
-            completionHandler(success, error);
-        };
-        
-        __block NSError *error = nil;
-        
-        if ([appURL.pathExtension.lowercaseString isEqualToString:@"ipa"])
-        {
-            ipaURL = appURL;
-            
-            NSURL *outputDirectoryURL = [[appURL URLByDeletingLastPathComponent] URLByAppendingPathComponent:[[NSUUID UUID] UUIDString] isDirectory:YES];
-            if (![[NSFileManager defaultManager] createDirectoryAtURL:outputDirectoryURL withIntermediateDirectories:YES attributes:nil error:&error])
-            {
-                finish(NO, error);
-                return;
-            }
-            
-            appBundleURL = [[NSFileManager defaultManager] unzipAppBundleAtURL:appURL toDirectory:outputDirectoryURL error:&error];
-            if (appBundleURL == nil)
-            {
-                finish(NO, error);
-                return;
-            }
-        }
-        else
-        {
-            appBundleURL = appURL;
-        }
-        
         NSURL *infoPlistURL = [appBundleURL URLByAppendingPathComponent:@"Info.plist"];
         
         NSMutableDictionary *infoPlist = [NSMutableDictionary dictionaryWithContentsOfURL:infoPlistURL];
@@ -175,10 +207,11 @@ std::string CertificatesContent(ALTCertificate *altCertificate)
                    ldid::fun([&](const std::string &a, const std::string &b) -> std::string {
             return entitlementsString;
         }),
-                   ldid::fun([&](const std::string &) {}),
+                   ldid::fun([&](const std::string &string) {
+            progress.completedUnitCount += 1;
+        }),
                    ldid::fun([&](const double signingProgress) {
-            int percentage = (signingProgress * 100);
-            progress.completedUnitCount = percentage;
+            
         }));
         
         // Dispatch after to allow time to finish signing binary.
