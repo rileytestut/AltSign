@@ -13,11 +13,12 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ALTCertificate : NSObject
 
 @property (nonatomic, copy) NSString *name;
-@property (nonatomic, copy) NSString *identifier;
 @property (nonatomic, copy) NSString *serialNumber;
 
 @property (nonatomic, copy, nullable) NSData *data;
 @property (nonatomic, copy, nullable) NSData *privateKey;
+
+- (nullable instancetype)initWithData:(NSData *)data;
 
 - (nullable NSData *)p12Data;
 

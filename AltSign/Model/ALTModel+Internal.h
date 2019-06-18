@@ -29,6 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface ALTCertificate ()
+- (instancetype)initWithName:(NSString *)name serialNumber:(NSString *)serialNumber data:(nullable NSData *)data NS_DESIGNATED_INITIALIZER;
 - (nullable instancetype)initWithResponseDictionary:(NSDictionary *)responseDictionary;
 @end
 

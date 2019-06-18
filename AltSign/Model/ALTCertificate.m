@@ -11,38 +11,101 @@
 #include <openssl/pem.h>
 #include <openssl/pkcs12.h>
 
+NSString *ALTCertificatePEMPrefix = @"-----BEGIN CERTIFICATE-----";
+NSString *ALTCertificatePEMSuffix = @"-----END CERTIFICATE-----";
+
 @implementation ALTCertificate
 
-- (instancetype)initWithResponseDictionary:(NSDictionary *)responseDictionary
+- (instancetype)initWithName:(NSString *)name serialNumber:(NSString *)serialNumber data:(nullable NSData *)data
 {
     self = [super init];
     if (self)
     {
-        NSString *name = responseDictionary[@"name"];
-        NSString *identifier = responseDictionary[@"certificateId"];
-        NSString *serialNumber = responseDictionary[@"serialNumber"] ?: responseDictionary[@"serialNum"];
-        
-        if (name == nil || identifier == nil || serialNumber == nil)
-        {
-            return nil;
-        }
-        
         _name = [name copy];
-        _identifier = [identifier copy];
         _serialNumber = [serialNumber copy];
-        
-        NSData *data = responseDictionary[@"certContent"];
-        if (data != nil)
-        {
-            NSString *base64Data = [data base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
-            
-            NSString *content = [NSString stringWithFormat:@"-----BEGIN CERTIFICATE-----\n%@\n-----END CERTIFICATE-----", base64Data];
-            NSData *pemData = [content dataUsingEncoding:NSUTF8StringEncoding];
-            
-            _data = [pemData copy];
-        }
+        _data = [data copy];
     }
     
+    return self;
+}
+
+- (instancetype)initWithResponseDictionary:(NSDictionary *)responseDictionary
+{
+    NSData *data = responseDictionary[@"certContent"];
+    
+    if (data != nil)
+    {
+        self = [self initWithData:data];
+    }
+    else
+    {
+        NSString *name = responseDictionary[@"name"];
+        NSString *serialNumber = responseDictionary[@"serialNumber"] ?: responseDictionary[@"serialNum"];
+        
+        self = [self initWithName:name serialNumber:serialNumber data:nil];
+    }
+    
+    return self;
+}
+
+- (nullable instancetype)initWithData:(NSData *)data
+{
+    NSData *pemData = data;
+    
+    NSData *prefixData = [data subdataWithRange:NSMakeRange(0, MIN(data.length, ALTCertificatePEMPrefix.length))];
+    NSString *prefix = [[NSString alloc] initWithData:prefixData encoding:NSUTF8StringEncoding];
+    
+    if (![prefix isEqualToString:ALTCertificatePEMPrefix])
+    {
+        // Convert to proper PEM format before storing.
+        NSString *base64Data = [data base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+        
+        NSString *content = [NSString stringWithFormat:@"%@\n%@\n%@", ALTCertificatePEMPrefix, base64Data, ALTCertificatePEMSuffix];
+        pemData = [content dataUsingEncoding:NSUTF8StringEncoding];
+    }
+    
+    BIO *certificateBuffer = BIO_new(BIO_s_mem());
+    BIO_write(certificateBuffer, pemData.bytes, (int)pemData.length);
+    
+    X509 *certificate = nil;
+    PEM_read_bio_X509(certificateBuffer, &certificate, 0, 0);
+    if (certificate == nil)
+    {
+        return nil;
+    }
+    
+    /* Certificate Common Name */
+    X509_NAME *subject = X509_get_subject_name(certificate);
+    int index = X509_NAME_get_index_by_NID(subject, NID_commonName, -1);
+    if (index == -1)
+    {
+        return nil;
+    }
+    
+    X509_NAME_ENTRY *nameEntry = X509_NAME_get_entry(subject, index);
+    ASN1_STRING *nameData = X509_NAME_ENTRY_get_data(nameEntry);
+    unsigned char *cName = ASN1_STRING_data(nameData);
+    
+    
+    /* Serial Number */
+    ASN1_INTEGER *serialNumberData = X509_get_serialNumber(certificate);
+    BIGNUM *number = ASN1_INTEGER_to_BN(serialNumberData, NULL);
+    if (number == nil)
+    {
+        return nil;
+    }
+    
+    char *cSerialNumber = BN_bn2hex(number);
+    
+    if (cName == nil || cSerialNumber == nil)
+    {
+        return nil;
+    }
+    
+    NSString *name = [NSString stringWithFormat:@"%s", cName];
+    NSString *serialNumber = [NSString stringWithFormat:@"%s", cSerialNumber];
+    
+    self = [self initWithName:name serialNumber:serialNumber data:pemData];
     return self;
 }
 
@@ -50,7 +113,7 @@
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"<%@: %p, Name: %@, ID: %@, SN: %@>", NSStringFromClass([self class]), self, self.name, self.identifier, self.serialNumber];
+    return [NSString stringWithFormat:@"<%@: %p, Name: %@, SN: %@>", NSStringFromClass([self class]), self, self.name, self.serialNumber];
 }
 
 - (BOOL)isEqual:(id)object
@@ -61,13 +124,13 @@
         return NO;
     }
     
-    BOOL isEqual = (self.identifier == certificate.identifier);
+    BOOL isEqual = (self.serialNumber == certificate.serialNumber);
     return isEqual;
 }
 
 - (NSUInteger)hash
 {
-    return self.identifier.hash;
+    return self.serialNumber.hash;
 }
 
 #pragma mark - ALTCertificate -
