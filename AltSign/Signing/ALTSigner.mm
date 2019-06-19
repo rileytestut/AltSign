@@ -173,13 +173,13 @@ std::string CertificatesContent(ALTCertificate *altCertificate)
         NSURL *infoPlistURL = [appBundleURL URLByAppendingPathComponent:@"Info.plist"];
         
         NSMutableDictionary *infoPlist = [NSMutableDictionary dictionaryWithContentsOfURL:infoPlistURL];
-        infoPlist[(NSString *)kCFBundleIdentifierKey] = profile.appID.bundleIdentifier;
+        infoPlist[(NSString *)kCFBundleIdentifierKey] = profile.bundleIdentifier;
         [infoPlist writeToURL:infoPlistURL atomically:YES];
         
         NSURL *profileURL = [appBundleURL URLByAppendingPathComponent:@"embedded.mobileprovision"];
         [profile.data writeToURL:profileURL atomically:YES];
         
-        NSString *applicationIdentifier = [NSString stringWithFormat:@"%@.%@", self.team.identifier, profile.appID.bundleIdentifier];
+        NSString *applicationIdentifier = [NSString stringWithFormat:@"%@.%@", self.team.identifier, profile.bundleIdentifier];
         NSString *keychainAccessGroup = [NSString stringWithFormat:@"%@.*", self.team.identifier];
         
         NSDictionary<NSString *, id> *entitlements = @{@"application-identifier": applicationIdentifier,

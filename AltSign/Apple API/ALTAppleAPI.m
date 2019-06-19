@@ -498,7 +498,7 @@ NS_ASSUME_NONNULL_END
                 return nil;
             }
             
-            ALTProvisioningProfile *provisioningProfile = [[ALTProvisioningProfile alloc] initWithAppID:appID responseDictionary:dictionary];
+            ALTProvisioningProfile *provisioningProfile = [[ALTProvisioningProfile alloc] initWithResponseDictionary:dictionary];
             return provisioningProfile;
         } resultCodeHandler:^NSError * _Nullable(NSInteger resultCode) {
             switch (resultCode)
