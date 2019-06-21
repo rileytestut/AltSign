@@ -105,7 +105,25 @@ NSString *ALTCertificatePEMSuffix = @"-----END CERTIFICATE-----";
     NSString *name = [NSString stringWithFormat:@"%s", cName];
     NSString *serialNumber = [NSString stringWithFormat:@"%s", cSerialNumber];
     
-    self = [self initWithName:name serialNumber:serialNumber data:pemData];
+    NSInteger location = NSNotFound;
+    for (int i = 0; i < serialNumber.length; i++)
+    {
+        if ([serialNumber characterAtIndex:i] != '0')
+        {
+            location = i;
+            break;
+        }
+    }
+
+    if (location == NSNotFound)
+    {
+        return nil;
+    }
+    
+    // Remove leading zeros.
+    NSString *trimmedSerialNumber = [serialNumber substringFromIndex:location];
+    
+    self = [self initWithName:name serialNumber:trimmedSerialNumber data:pemData];
     return self;
 }
 
