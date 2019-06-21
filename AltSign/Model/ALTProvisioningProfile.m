@@ -24,6 +24,12 @@ ALTEntitlement const ALTEntitlementInterAppAudio = @"IAD53UNK2F";
 
 - (nullable instancetype)initWithResponseDictionary:(NSDictionary *)responseDictionary
 {
+    NSString *identifier = responseDictionary[@"provisioningProfileId"];
+    if (identifier == nil)
+    {
+        return nil;
+    }
+    
     NSData *data = responseDictionary[@"encodedProfile"];
     if (data == nil)
     {
@@ -31,6 +37,8 @@ ALTEntitlement const ALTEntitlementInterAppAudio = @"IAD53UNK2F";
     }
     
     self = [self initWithData:data];
+    _identifier = [identifier copy];
+    
     return self;
 }
 
@@ -58,7 +66,7 @@ ALTEntitlement const ALTEntitlementInterAppAudio = @"IAD53UNK2F";
         }
         
         NSString *name = dictionary[@"Name"];
-        NSString *identifier = dictionary[@"UUID"];
+        NSUUID *UUID = [[NSUUID alloc] initWithUUIDString:dictionary[@"UUID"]];
         
         NSString *teamIdentifier = [dictionary[@"TeamIdentifier"] firstObject];
         
@@ -68,7 +76,7 @@ ALTEntitlement const ALTEntitlementInterAppAudio = @"IAD53UNK2F";
         NSDictionary<ALTEntitlement, id> *entitlements = dictionary[@"Entitlements"];
         NSArray<NSString *> *deviceIDs = dictionary[@"ProvisionedDevices"];
         
-        if (name == nil || identifier == nil || teamIdentifier == nil || creationDate == nil || expirationDate == nil || entitlements == nil || deviceIDs == nil)
+        if (name == nil || UUID == nil || teamIdentifier == nil || creationDate == nil || expirationDate == nil || entitlements == nil || deviceIDs == nil)
         {
             return nil;
         }
@@ -76,7 +84,7 @@ ALTEntitlement const ALTEntitlementInterAppAudio = @"IAD53UNK2F";
         _data = [data copy];
         
         _name = [name copy];
-        _identifier = [identifier copy];
+        _UUID = [UUID copy];
         
         _teamIdentifier = [teamIdentifier copy];
         
@@ -272,7 +280,7 @@ ALTEntitlement const ALTEntitlementInterAppAudio = @"IAD53UNK2F";
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"<%@: %p, Name: %@, UUID: %@, App BundleID: %@>", NSStringFromClass([self class]), self, self.name, self.identifier, self.bundleIdentifier];
+    return [NSString stringWithFormat:@"<%@: %p, Name: %@, UUID: %@, App BundleID: %@>", NSStringFromClass([self class]), self, self.name, self.UUID, self.bundleIdentifier];
 }
 
 - (BOOL)isEqual:(id)object
@@ -283,13 +291,13 @@ ALTEntitlement const ALTEntitlementInterAppAudio = @"IAD53UNK2F";
         return NO;
     }
     
-    BOOL isEqual = (self.identifier == profile.identifier && self.data == profile.data);
+    BOOL isEqual = ([self.UUID isEqual:profile.UUID] && self.data == profile.data);
     return isEqual;
 }
 
 - (NSUInteger)hash
 {
-    return self.identifier.hash ^ self.data.hash;
+    return self.UUID.hash ^ self.data.hash;
 }
 
 @end

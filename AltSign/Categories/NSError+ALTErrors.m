@@ -93,6 +93,12 @@ NSErrorDomain const ALTAppleAPIErrorDomain = @"com.rileytestut.ALTAppleAPI";
             
         case ALTAppleAPIErrorAppIDDoesNotExist:
             return NSLocalizedString(@"There is no App ID with the requested identifier on this team.", @"");
+            
+        case ALTAppleAPIErrorInvalidProvisioningProfileIdentifier:
+            return NSLocalizedString(@"The identifier for the requested provisioning profile is invalid.", @"");
+            
+        case ALTAppleAPIErrorProvisioningProfileDoesNotExist:
+            return NSLocalizedString(@"There is no provisioning profile with the requested identifier on this team.", @"");
     }
     
     return nil;

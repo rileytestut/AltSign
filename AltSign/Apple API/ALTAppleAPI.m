@@ -514,6 +514,40 @@ NS_ASSUME_NONNULL_END
     }];
 }
 
+- (void)deleteProvisioningProfile:(ALTProvisioningProfile *)provisioningProfile forTeam:(ALTTeam *)team completionHandler:(void (^)(BOOL, NSError * _Nullable))completionHandler
+{
+    NSURL *URL = [NSURL URLWithString:@"ios/deleteProvisioningProfile.action" relativeToURL:self.baseURL];
+    
+    [self sendRequestWithURL:URL additionalParameters:@{@"provisioningProfileId": provisioningProfile.identifier,
+                                                        @"teamId": team.identifier}
+                     account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
+        if (responseDictionary == nil)
+        {
+            completionHandler(NO, requestError);
+            return;
+        }
+        
+        NSError *error = nil;
+        id value = [self processResponse:responseDictionary parseHandler:^id _Nullable{
+            NSNumber *result = responseDictionary[@"resultCode"];
+            return [result integerValue] == 0 ? result : nil;
+        } resultCodeHandler:^NSError * _Nullable(NSInteger resultCode) {
+            switch (resultCode)
+            {
+                case 35:
+                    return [NSError errorWithDomain:ALTAppleAPIErrorDomain code:ALTAppleAPIErrorInvalidProvisioningProfileIdentifier userInfo:nil];
+                    
+                case 8101:
+                    return [NSError errorWithDomain:ALTAppleAPIErrorDomain code:ALTAppleAPIErrorProvisioningProfileDoesNotExist userInfo:nil];
+                    
+                default: return nil;
+            }
+        } error:&error];
+        
+        completionHandler(value != nil, error);
+    }];
+}
+
 #pragma mark - Requests -
 
 - (void)sendRequestWithURL:(NSURL *)requestURL additionalParameters:(nullable NSDictionary *)additionalParameters account:(ALTAccount *)account team:(nullable ALTTeam *)team completionHandler:(void (^)(NSDictionary *responseDictionary, NSError *error))completionHandler

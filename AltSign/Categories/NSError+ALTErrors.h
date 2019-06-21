@@ -37,6 +37,9 @@ typedef NS_ERROR_ENUM(ALTAppleAPIErrorDomain, ALTAppleAPIError)
     ALTAppleAPIErrorInvalidBundleIdentifier,
     ALTAppleAPIErrorBundleIdentifierUnavailable,
     ALTAppleAPIErrorAppIDDoesNotExist,
+    
+    ALTAppleAPIErrorInvalidProvisioningProfileIdentifier,
+    ALTAppleAPIErrorProvisioningProfileDoesNotExist,
 };
 
 NS_ASSUME_NONNULL_BEGIN

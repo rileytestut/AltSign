@@ -64,6 +64,9 @@ NS_SWIFT_NAME(revoke(_:for:completionHandler:));
 - (void)fetchProvisioningProfileForAppID:(ALTAppID *)appID team:(ALTTeam *)team
                        completionHandler:(void (^)(ALTProvisioningProfile *_Nullable provisioningProfile, NSError *_Nullable error))completionHandler;
 
+- (void)deleteProvisioningProfile:(ALTProvisioningProfile *)provisioningProfile forTeam:(ALTTeam *)team
+  completionHandler:(void (^)(BOOL success, NSError *_Nullable error))completionHandler;
+
 @end
 
 NS_ASSUME_NONNULL_END

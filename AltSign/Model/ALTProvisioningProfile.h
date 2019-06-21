@@ -23,7 +23,8 @@ extern ALTEntitlement const ALTEntitlementInterAppAudio;
 @interface ALTProvisioningProfile : NSObject
 
 @property (copy, nonatomic, readonly) NSString *name;
-@property (copy, nonatomic, readonly) NSString *identifier;
+@property (copy, nonatomic, readonly, nullable) NSString *identifier;
+@property (copy, nonatomic, readonly) NSUUID *UUID;
 
 @property (copy, nonatomic, readonly) NSString *bundleIdentifier;
 @property (copy, nonatomic, readonly) NSString *teamIdentifier;
