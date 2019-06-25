@@ -23,6 +23,9 @@
 #import <AltSign/NSError+ALTErrors.h>
 #import <AltSign/NSFileManager+Apps.h>
 
+// Capabilities
+#import <AltSign/ALTCapabilities.h>
+
 //! Project version number for AltSign.
 FOUNDATION_EXPORT double AltSignVersionNumber;
 

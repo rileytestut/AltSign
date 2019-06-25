@@ -10,7 +10,7 @@
 
 @implementation ALTAppID
 
-- (instancetype)initWithName:(NSString *)name identifier:(NSString *)identifier bundleIdentifier:(NSString *)bundleIdentifier
+- (instancetype)initWithName:(NSString *)name identifier:(NSString *)identifier bundleIdentifier:(NSString *)bundleIdentifier features:(NSDictionary<ALTFeature, id> *)features
 {
     self = [super init];
     if (self)
@@ -18,6 +18,7 @@
         _name = [name copy];
         _identifier = [identifier copy];
         _bundleIdentifier = [bundleIdentifier copy];
+        _features = [features copy];
     }
     
     return self;
@@ -29,12 +30,22 @@
     NSString *identifier = responseDictionary[@"appIdId"];
     NSString *bundleIdentifier = responseDictionary[@"identifier"];
     
-    if (name == nil || identifier == nil || bundleIdentifier == nil)
+    NSDictionary *allFeatures = responseDictionary[@"features"];
+    NSArray *enabledFeatures = responseDictionary[@"enabledFeatures"];
+    
+    if (name == nil || identifier == nil || bundleIdentifier == nil || allFeatures == nil || enabledFeatures == nil)
     {
         return nil;
     }
     
-    self = [self initWithName:name identifier:identifier bundleIdentifier:bundleIdentifier];
+    NSMutableDictionary *features = [NSMutableDictionary dictionary];
+    for (ALTFeature feature in enabledFeatures)
+    {
+        id value = allFeatures[feature];
+        features[feature] = value;
+    }
+
+    self = [self initWithName:name identifier:identifier bundleIdentifier:bundleIdentifier features:features];
     return self;
 }
 
@@ -66,7 +77,7 @@
 
 - (nonnull id)copyWithZone:(nullable NSZone *)zone
 {
-    ALTAppID *appID = [[ALTAppID alloc] initWithName:self.name identifier:self.identifier bundleIdentifier:self.bundleIdentifier];
+    ALTAppID *appID = [[ALTAppID alloc] initWithName:self.name identifier:self.identifier bundleIdentifier:self.bundleIdentifier features:self.features];
     return appID;
 }
 

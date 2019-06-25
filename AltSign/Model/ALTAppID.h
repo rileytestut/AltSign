@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+#import "ALTCapabilities.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface ALTAppID : NSObject <NSCopying>
@@ -16,6 +18,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (copy, nonatomic) NSString *identifier;
 
 @property (copy, nonatomic) NSString *bundleIdentifier;
+
+@property (copy, nonatomic) NSDictionary<ALTFeature, id> *features;
 
 @end
 

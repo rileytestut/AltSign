@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+#import "ALTCapabilities.h"
+
 @class ALTAccount;
 @class ALTTeam;
 @class ALTDevice;
@@ -57,6 +59,9 @@ NS_SWIFT_NAME(revoke(_:for:completionHandler:));
 
 - (void)addAppIDWithName:(NSString *)name bundleIdentifier:(NSString *)bundleIdentifier team:(ALTTeam *)team
        completionHandler:(void (^)(ALTAppID *_Nullable appID, NSError *_Nullable error))completionHandler;
+
+- (void)updateAppID:(ALTAppID *)appID team:(ALTTeam *)team
+  completionHandler:(void (^)(ALTAppID * _Nullable appID, NSError * _Nullable error))completionHandler;
 
 - (void)deleteAppID:(ALTAppID *)appID forTeam:(ALTTeam *)team
   completionHandler:(void (^)(BOOL success, NSError *_Nullable error))completionHandler;

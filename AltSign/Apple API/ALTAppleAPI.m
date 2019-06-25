@@ -448,6 +448,55 @@ NS_ASSUME_NONNULL_END
     }];
 }
 
+- (void)updateAppID:(ALTAppID *)appID team:(ALTTeam *)team completionHandler:(void (^)(ALTAppID * _Nullable, NSError * _Nullable))completionHandler
+{
+    NSURL *URL = [NSURL URLWithString:@"ios/updateAppId.action" relativeToURL:self.baseURL];
+    
+    NSMutableDictionary *parameters = [@{@"appIdId": appID.identifier} mutableCopy];
+    
+    for (ALTFeature feature in appID.features)
+    {
+        parameters[feature] = appID.features[feature];
+    }
+    
+    [self sendRequestWithURL:URL additionalParameters:parameters
+                     account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
+        if (responseDictionary == nil)
+        {
+            completionHandler(nil, requestError);
+            return;
+        }
+        
+        NSError *error = nil;
+        ALTAppID *appID = [self processResponse:responseDictionary parseHandler:^id _Nullable{
+            NSDictionary *dictionary = responseDictionary[@"appId"];
+            if (dictionary == nil)
+            {
+                return nil;
+            }
+            
+            ALTAppID *appID = [[ALTAppID alloc] initWithResponseDictionary:dictionary];
+            return appID;
+        } resultCodeHandler:^NSError * _Nullable(NSInteger resultCode) {
+            switch (resultCode)
+            {
+                case 35:
+                    return [NSError errorWithDomain:ALTAppleAPIErrorDomain code:ALTAppleAPIErrorInvalidAppIDName userInfo:nil];
+                    
+                case 9100:
+                    return [NSError errorWithDomain:ALTAppleAPIErrorDomain code:ALTAppleAPIErrorAppIDDoesNotExist userInfo:nil];
+                    
+                case 9412:
+                    return [NSError errorWithDomain:ALTAppleAPIErrorDomain code:ALTAppleAPIErrorInvalidBundleIdentifier userInfo:nil];
+                    
+                default: return nil;
+            }
+        } error:&error];
+        
+        completionHandler(appID, error);
+    }];
+}
+
 - (void)deleteAppID:(ALTAppID *)appID forTeam:(ALTTeam *)team completionHandler:(void (^)(BOOL, NSError * _Nullable))completionHandler
 {
     NSURL *URL = [NSURL URLWithString:@"ios/deleteAppId.action" relativeToURL:self.baseURL];

@@ -8,17 +8,12 @@
 
 #import <Foundation/Foundation.h>
 
+#import "ALTCapabilities.h"
+
 @class ALTAppID;
 @class ALTCertificate;
 
 NS_ASSUME_NONNULL_BEGIN
-
-typedef NSString *ALTEntitlement NS_TYPED_EXTENSIBLE_ENUM;
-extern ALTEntitlement const ALTEntitlementApplicationIdentifier;
-extern ALTEntitlement const ALTEntitlementKeychainAccessGroups;
-extern ALTEntitlement const ALTEntitlementGetTaskAllow;
-extern ALTEntitlement const ALTEntitlementTeamIdentifier;
-extern ALTEntitlement const ALTEntitlementInterAppAudio;
 
 @interface ALTProvisioningProfile : NSObject
 

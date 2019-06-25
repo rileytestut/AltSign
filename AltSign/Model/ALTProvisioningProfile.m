@@ -9,12 +9,6 @@
 #import "ALTProvisioningProfile.h"
 #import "ALTCertificate.h"
 
-ALTEntitlement const ALTEntitlementApplicationIdentifier = @"application-identifier";
-ALTEntitlement const ALTEntitlementKeychainAccessGroups = @"keychain-access-groups";
-ALTEntitlement const ALTEntitlementGetTaskAllow = @"get-task-allow";
-ALTEntitlement const ALTEntitlementTeamIdentifier = @"com.apple.developer.team-identifier";
-ALTEntitlement const ALTEntitlementInterAppAudio = @"IAD53UNK2F";
-
 #define ASN1_SEQUENCE 0x30
 #define ASN1_CONTAINER 0xA0
 #define ASN1_OBJECT_IDENTIFIER 0x06
