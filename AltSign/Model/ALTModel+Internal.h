@@ -6,13 +6,14 @@
 //  Copyright © 2019 Riley Testut. All rights reserved.
 //
 
-#include "ALTAccount.h"
-#include "ALTTeam.h"
-#include "ALTDevice.h"
-#include "ALTCertificate.h"
-#include "ALTCertificateRequest.h"
-#include "ALTAppID.h"
-#include "ALTProvisioningProfile.h"
+#import "ALTAccount.h"
+#import "ALTTeam.h"
+#import "ALTDevice.h"
+#import "ALTCertificate.h"
+#import "ALTCertificateRequest.h"
+#import "ALTAppID.h"
+#import "ALTAppGroup.h"
+#import "ALTProvisioningProfile.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -34,6 +35,10 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface ALTAppID ()
+- (nullable instancetype)initWithResponseDictionary:(NSDictionary *)responseDictionary;
+@end
+
+@interface ALTAppGroup ()
 - (nullable instancetype)initWithResponseDictionary:(NSDictionary *)responseDictionary;
 @end
 

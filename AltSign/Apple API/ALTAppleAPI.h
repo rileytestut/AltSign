@@ -13,6 +13,7 @@
 @class ALTDevice;
 @class ALTCertificate;
 @class ALTAppID;
+@class ALTAppGroup;
 @class ALTProvisioningProfile;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -59,6 +60,16 @@ NS_SWIFT_NAME(revoke(_:for:completionHandler:));
 
 - (void)deleteAppID:(ALTAppID *)appID forTeam:(ALTTeam *)team
   completionHandler:(void (^)(BOOL success, NSError *_Nullable error))completionHandler;
+
+/* App Groups */
+- (void)fetchAppGroupsForTeam:(ALTTeam *)team
+            completionHandler:(void (^)(NSArray<ALTAppGroup *> *_Nullable groups, NSError *_Nullable error))completionHandler;
+
+- (void)addAppGroupWithName:(NSString *)name groupIdentifier:(NSString *)groupIdentifier team:(ALTTeam *)team
+       completionHandler:(void (^)(ALTAppGroup *_Nullable group, NSError *_Nullable error))completionHandler;
+
+- (void)addAppID:(ALTAppID *)appID toGroup:(ALTAppGroup *)group team:(ALTTeam *)team
+completionHandler:(void (^)(BOOL success, NSError *_Nullable error))completionHandler;
 
 /* Provisioning Profiles */
 - (void)fetchProvisioningProfileForAppID:(ALTAppID *)appID team:(ALTTeam *)team

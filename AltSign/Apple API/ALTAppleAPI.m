@@ -477,6 +477,114 @@ NS_ASSUME_NONNULL_END
     }];
 }
 
+#pragma mark - App Groups -
+
+- (void)fetchAppGroupsForTeam:(ALTTeam *)team completionHandler:(void (^)(NSArray<ALTAppGroup *> *_Nullable appIDs, NSError *_Nullable error))completionHandler
+{
+    NSURL *URL = [NSURL URLWithString:@"ios/listApplicationGroups.action" relativeToURL:self.baseURL];
+    
+    [self sendRequestWithURL:URL additionalParameters:nil account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
+        if (responseDictionary == nil)
+        {
+            completionHandler(nil, requestError);
+            return;
+        }
+        
+        NSError *error = nil;
+        NSArray *groups = [self processResponse:responseDictionary parseHandler:^id _Nullable{
+            NSArray *array = responseDictionary[@"applicationGroupList"];
+            if (array == nil)
+            {
+                return nil;
+            }
+            
+            NSMutableArray *groups = [NSMutableArray array];
+            for (NSDictionary *dictionary in array)
+            {
+                ALTAppGroup *group = [[ALTAppGroup alloc] initWithResponseDictionary:dictionary];
+                if (group == nil)
+                {
+                    return nil;
+                }
+                
+                [groups addObject:group];
+            }
+            return groups;
+        } resultCodeHandler:nil error:&error];
+        
+        completionHandler(groups, error);
+    }];
+}
+
+- (void)addAppGroupWithName:(NSString *)name groupIdentifier:(NSString *)groupIdentifier team:(ALTTeam *)team completionHandler:(void (^)(ALTAppGroup * _Nullable, NSError * _Nullable))completionHandler
+{
+    NSURL *URL = [NSURL URLWithString:@"ios/addApplicationGroup.action" relativeToURL:self.baseURL];
+    
+    [self sendRequestWithURL:URL additionalParameters:@{@"identifier": groupIdentifier, @"name": name} account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
+        if (responseDictionary == nil)
+        {
+            completionHandler(nil, requestError);
+            return;
+        }
+        
+        NSError *error = nil;
+        ALTAppGroup *group = [self processResponse:responseDictionary parseHandler:^id _Nullable{
+            NSDictionary *dictionary = responseDictionary[@"applicationGroup"];
+            if (dictionary == nil)
+            {
+                return nil;
+            }
+            
+            ALTAppGroup *group = [[ALTAppGroup alloc] initWithResponseDictionary:dictionary];
+            return group;
+        } resultCodeHandler:^NSError * _Nullable(NSInteger resultCode) {
+            switch (resultCode)
+            {
+                case 35:
+                    // Doesn't distinguish between different validation failures via resultCode unfortunately.
+                    return [NSError errorWithDomain:ALTAppleAPIErrorDomain code:ALTAppleAPIErrorInvalidAppGroup userInfo:nil];
+                    
+                default: return nil;
+            }
+        } error:&error];
+        
+        completionHandler(group, error);
+    }];
+}
+
+- (void)addAppID:(ALTAppID *)appID toGroup:(ALTAppGroup *)group team:(ALTTeam *)team completionHandler:(void (^)(BOOL, NSError * _Nullable))completionHandler
+{
+    NSURL *URL = [NSURL URLWithString:@"ios/assignApplicationGroupToAppId.action" relativeToURL:self.baseURL];
+    
+    [self sendRequestWithURL:URL additionalParameters:@{@"appIdId": appID.identifier, @"applicationGroups": group.identifier}
+                     account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
+        if (responseDictionary == nil)
+        {
+            completionHandler(NO, requestError);
+            return;
+        }
+        
+        NSError *error = nil;
+        id value = [self processResponse:responseDictionary parseHandler:^id _Nullable{
+            NSNumber *result = responseDictionary[@"resultCode"];
+            return [result integerValue] == 0 ? result : nil;
+        } resultCodeHandler:^NSError * _Nullable(NSInteger resultCode) {
+            switch (resultCode)
+            {
+                case 9115:
+                    return [NSError errorWithDomain:ALTAppleAPIErrorDomain code:ALTAppleAPIErrorAppIDDoesNotExist userInfo:nil];
+                    
+                case 35:
+                    return [NSError errorWithDomain:ALTAppleAPIErrorDomain code:ALTAppleAPIErrorAppGroupDoesNotExist userInfo:nil];
+                    
+                default: return nil;
+            }
+        } error:&error];
+        
+        completionHandler(value != nil, error);
+    }];
+}
+
 #pragma mark - Provisioning Profiles -
 
 - (void)fetchProvisioningProfileForAppID:(ALTAppID *)appID team:(ALTTeam *)team completionHandler:(void (^)(ALTProvisioningProfile * _Nullable, NSError * _Nullable))completionHandler

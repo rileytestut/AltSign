@@ -38,6 +38,9 @@ typedef NS_ERROR_ENUM(ALTAppleAPIErrorDomain, ALTAppleAPIError)
     ALTAppleAPIErrorBundleIdentifierUnavailable,
     ALTAppleAPIErrorAppIDDoesNotExist,
     
+    ALTAppleAPIErrorInvalidAppGroup,
+    ALTAppleAPIErrorAppGroupDoesNotExist,
+    
     ALTAppleAPIErrorInvalidProvisioningProfileIdentifier,
     ALTAppleAPIErrorProvisioningProfileDoesNotExist,
 };

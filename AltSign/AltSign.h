@@ -16,6 +16,7 @@
 #import <AltSign/ALTDevice.h>
 #import <AltSign/ALTCertificate.h>
 #import <AltSign/ALTAppID.h>
+#import <AltSign/ALTAppGroup.h>
 #import <AltSign/ALTProvisioningProfile.h>
 
 // Categories
