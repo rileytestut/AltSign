@@ -38,6 +38,11 @@
 		BF50E7B922C161630070E17B /* ALTAppGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = BF50E7B622C161630070E17B /* ALTAppGroup.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BF50E7BA22C161630070E17B /* ALTAppGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = BF50E7B722C161630070E17B /* ALTAppGroup.m */; };
 		BF50E7BB22C161630070E17B /* ALTAppGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = BF50E7B722C161630070E17B /* ALTAppGroup.m */; };
+		BF50E7BF22C163DC0070E17B /* ALTApplication.h in Headers */ = {isa = PBXBuildFile; fileRef = BF50E7BD22C163DC0070E17B /* ALTApplication.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BF50E7C022C163DC0070E17B /* ALTApplication.h in Headers */ = {isa = PBXBuildFile; fileRef = BF50E7BD22C163DC0070E17B /* ALTApplication.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BF50E7C122C163DC0070E17B /* ALTApplication.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF50E7BE22C163DC0070E17B /* ALTApplication.mm */; };
+		BF50E7C222C163DC0070E17B /* ALTApplication.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF50E7BE22C163DC0070E17B /* ALTApplication.mm */; };
+		BF50E7C622C169290070E17B /* ldid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF50E7C322C1690B0070E17B /* ldid.cpp */; };
 		BF50E7CF22C28F8B0070E17B /* ALTCapabilities.h in Headers */ = {isa = PBXBuildFile; fileRef = BF50E7CD22C28F8B0070E17B /* ALTCapabilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BF50E7D022C28F8B0070E17B /* ALTCapabilities.h in Headers */ = {isa = PBXBuildFile; fileRef = BF50E7CD22C28F8B0070E17B /* ALTCapabilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BF50E7D122C28F8B0070E17B /* ALTCapabilities.m in Sources */ = {isa = PBXBuildFile; fileRef = BF50E7CE22C28F8B0070E17B /* ALTCapabilities.m */; };
@@ -112,7 +117,6 @@
 		BFBAC88C2295D90F00587369 /* ALTProvisioningProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = BFBAC88A2295D90F00587369 /* ALTProvisioningProfile.m */; };
 		BFBAC8912295E05600587369 /* ALTAppleAPI.h in Headers */ = {isa = PBXBuildFile; fileRef = BFBAC88F2295E05600587369 /* ALTAppleAPI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BFBAC8922295E05600587369 /* ALTAppleAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = BFBAC8902295E05600587369 /* ALTAppleAPI.m */; };
-		BFBAC8E32295ED6C00587369 /* ldid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFBAC8DF2295ED6C00587369 /* ldid.cpp */; };
 		BFBAC8E42295ED6C00587369 /* lookup2.c in Sources */ = {isa = PBXBuildFile; fileRef = BFBAC8E22295ED6C00587369 /* lookup2.c */; };
 		BFBAC8F32295EF0500587369 /* libxml2.2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = BFBAC8F22295EF0500587369 /* libxml2.2.tbd */; };
 		BFBAC8F42295EFE300587369 /* libldid.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BFBAC8AA2295ED1900587369 /* libldid.a */; };
@@ -201,6 +205,10 @@
 		BF48CFF522944FC60004760B /* ALTAppID.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALTAppID.m; sourceTree = "<group>"; };
 		BF50E7B622C161630070E17B /* ALTAppGroup.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALTAppGroup.h; sourceTree = "<group>"; };
 		BF50E7B722C161630070E17B /* ALTAppGroup.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALTAppGroup.m; sourceTree = "<group>"; };
+		BF50E7BD22C163DC0070E17B /* ALTApplication.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALTApplication.h; sourceTree = "<group>"; };
+		BF50E7BE22C163DC0070E17B /* ALTApplication.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ALTApplication.mm; sourceTree = "<group>"; };
+		BF50E7C322C1690B0070E17B /* ldid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ldid.cpp; sourceTree = "<group>"; };
+		BF50E7C822C169560070E17B /* ldid.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ldid.hpp; sourceTree = "<group>"; };
 		BF50E7CD22C28F8B0070E17B /* ALTCapabilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALTCapabilities.h; sourceTree = "<group>"; };
 		BF50E7CE22C28F8B0070E17B /* ALTCapabilities.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALTCapabilities.m; sourceTree = "<group>"; };
 		BF5AB3992285FDB200DC914B /* AltSign.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AltSign.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -311,6 +319,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		BF50E7C722C1694A0070E17B /* ldid */ = {
+			isa = PBXGroup;
+			children = (
+				BF50E7C822C169560070E17B /* ldid.hpp */,
+				BF50E7C322C1690B0070E17B /* ldid.cpp */,
+			);
+			path = ldid;
+			sourceTree = "<group>";
+		};
 		BF50E7D322C293F80070E17B /* Capabilities */ = {
 			isa = PBXGroup;
 			children = (
@@ -318,6 +335,30 @@
 				BF50E7CE22C28F8B0070E17B /* ALTCapabilities.m */,
 			);
 			path = Capabilities;
+			sourceTree = "<group>";
+		};
+		BF50E7D422C29BBF0070E17B /* Apple API */ = {
+			isa = PBXGroup;
+			children = (
+				BF9B633E229DC27C002F0A62 /* ALTModel+Internal.h */,
+				BF5AB3B72286024D00DC914B /* ALTAccount.h */,
+				BF5AB3B82286024D00DC914B /* ALTAccount.m */,
+				BF5AB3C32286157F00DC914B /* ALTTeam.h */,
+				BF5AB3C42286157F00DC914B /* ALTTeam.m */,
+				BF5AB3C72286269B00DC914B /* ALTDevice.h */,
+				BF5AB3C82286269B00DC914B /* ALTDevice.m */,
+				BF5AB3CB228645DF00DC914B /* ALTCertificate.h */,
+				BF5AB3CC228645DF00DC914B /* ALTCertificate.m */,
+				BF48CFEC229437580004760B /* ALTCertificateRequest.h */,
+				BF48CFED229437580004760B /* ALTCertificateRequest.m */,
+				BF48CFF422944FC60004760B /* ALTAppID.h */,
+				BF48CFF522944FC60004760B /* ALTAppID.m */,
+				BF50E7B622C161630070E17B /* ALTAppGroup.h */,
+				BF50E7B722C161630070E17B /* ALTAppGroup.m */,
+				BFBAC8892295D90F00587369 /* ALTProvisioningProfile.h */,
+				BFBAC88A2295D90F00587369 /* ALTProvisioningProfile.m */,
+			);
+			path = "Apple API";
 			sourceTree = "<group>";
 		};
 		BF5AB38F2285FDB200DC914B = {
@@ -349,6 +390,7 @@
 				BF5AB3C2228604E700DC914B /* Model */,
 				BF9B6418229E0DF4002F0A62 /* Signing */,
 				BF50E7D322C293F80070E17B /* Capabilities */,
+				BF50E7C722C1694A0070E17B /* ldid */,
 				BF5AB3C12286040800DC914B /* Categories */,
 				BF9B641B229E0DF4002F0A62 /* Resources */,
 				BF48CFE0229435CB0004760B /* Dependencies */,
@@ -371,23 +413,9 @@
 		BF5AB3C2228604E700DC914B /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				BF9B633E229DC27C002F0A62 /* ALTModel+Internal.h */,
-				BF5AB3B72286024D00DC914B /* ALTAccount.h */,
-				BF5AB3B82286024D00DC914B /* ALTAccount.m */,
-				BF5AB3C32286157F00DC914B /* ALTTeam.h */,
-				BF5AB3C42286157F00DC914B /* ALTTeam.m */,
-				BF5AB3C72286269B00DC914B /* ALTDevice.h */,
-				BF5AB3C82286269B00DC914B /* ALTDevice.m */,
-				BF5AB3CB228645DF00DC914B /* ALTCertificate.h */,
-				BF5AB3CC228645DF00DC914B /* ALTCertificate.m */,
-				BF48CFEC229437580004760B /* ALTCertificateRequest.h */,
-				BF48CFED229437580004760B /* ALTCertificateRequest.m */,
-				BF48CFF422944FC60004760B /* ALTAppID.h */,
-				BF48CFF522944FC60004760B /* ALTAppID.m */,
-				BF50E7B622C161630070E17B /* ALTAppGroup.h */,
-				BF50E7B722C161630070E17B /* ALTAppGroup.m */,
-				BFBAC8892295D90F00587369 /* ALTProvisioningProfile.h */,
-				BFBAC88A2295D90F00587369 /* ALTProvisioningProfile.m */,
+				BF50E7BD22C163DC0070E17B /* ALTApplication.h */,
+				BF50E7BE22C163DC0070E17B /* ALTApplication.mm */,
+				BF50E7D422C29BBF0070E17B /* Apple API */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -503,6 +531,7 @@
 				BF9B6400229E0AA0002F0A62 /* crypt.h in Headers */,
 				BFBAC88B2295D90F00587369 /* ALTProvisioningProfile.h in Headers */,
 				BF5AB3B92286024D00DC914B /* ALTAccount.h in Headers */,
+				BF50E7BF22C163DC0070E17B /* ALTApplication.h in Headers */,
 				BF5AB3BF2286040400DC914B /* NSError+ALTErrors.h in Headers */,
 				BF5AB3CD228645DF00DC914B /* ALTCertificate.h in Headers */,
 				BF48CFEE229437580004760B /* ALTCertificateRequest.h in Headers */,
@@ -530,6 +559,7 @@
 				BF9B6401229E0AA0002F0A62 /* crypt.h in Headers */,
 				BF9B637F229DCF3A002F0A62 /* ALTProvisioningProfile.h in Headers */,
 				BF9B6380229DCF3A002F0A62 /* ALTAccount.h in Headers */,
+				BF50E7C022C163DC0070E17B /* ALTApplication.h in Headers */,
 				BF9B6381229DCF3A002F0A62 /* NSError+ALTErrors.h in Headers */,
 				BF9B6382229DCF3A002F0A62 /* ALTCertificate.h in Headers */,
 				BF9B6383229DCF3A002F0A62 /* ALTCertificateRequest.h in Headers */,
@@ -703,6 +733,7 @@
 				BF9B640A229E0AA0002F0A62 /* unzip.c in Sources */,
 				BF5AB3CE228645DF00DC914B /* ALTCertificate.m in Sources */,
 				BF5AB3BA2286024D00DC914B /* ALTAccount.m in Sources */,
+				BF50E7C122C163DC0070E17B /* ALTApplication.mm in Sources */,
 				BF9B6402229E0AA0002F0A62 /* ioapi.c in Sources */,
 				BF9B640C229E0AA0002F0A62 /* zip.c in Sources */,
 				BF5AB3C02286040400DC914B /* NSError+ALTErrors.m in Sources */,
@@ -727,6 +758,7 @@
 				BF9B640B229E0AA0002F0A62 /* unzip.c in Sources */,
 				BF9B6390229DCF3A002F0A62 /* ALTCertificate.m in Sources */,
 				BF9B6391229DCF3A002F0A62 /* ALTAccount.m in Sources */,
+				BF50E7C222C163DC0070E17B /* ALTApplication.mm in Sources */,
 				BF9B6403229E0AA0002F0A62 /* ioapi.c in Sources */,
 				BF9B640D229E0AA0002F0A62 /* zip.c in Sources */,
 				BF9B6392229DCF3A002F0A62 /* NSError+ALTErrors.m in Sources */,
@@ -746,6 +778,7 @@
 				BF0C4EB022A1B3BF009A2DD7 /* ptrarray.c in Sources */,
 				BF0C4EA622A1B3BF009A2DD7 /* Structure.cpp in Sources */,
 				BF0C4EAF22A1B3BF009A2DD7 /* Integer.cpp in Sources */,
+				BF50E7C622C169290070E17B /* ldid.cpp in Sources */,
 				BF0C4EA822A1B3BF009A2DD7 /* base64.c in Sources */,
 				BF0C4EA022A1B3BF009A2DD7 /* Uid.cpp in Sources */,
 				BFBAC8E42295ED6C00587369 /* lookup2.c in Sources */,
@@ -754,7 +787,6 @@
 				BF0C4EA922A1B3BF009A2DD7 /* Array.cpp in Sources */,
 				BF0C4EA422A1B3BF009A2DD7 /* bytearray.c in Sources */,
 				BF0C4EAB22A1B3BF009A2DD7 /* Boolean.cpp in Sources */,
-				BFBAC8E32295ED6C00587369 /* ldid.cpp in Sources */,
 				BF0C4EA722A1B3BF009A2DD7 /* plist.c in Sources */,
 				BF0C4EB922A1B3CC009A2DD7 /* node_list.c in Sources */,
 				BF0C4EA322A1B3BF009A2DD7 /* Date.cpp in Sources */,

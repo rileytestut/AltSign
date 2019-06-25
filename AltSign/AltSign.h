@@ -11,6 +11,7 @@
 #import <AltSign/ALTSigner.h>
 
 // Model
+#import <AltSign/ALTApplication.h>
 #import <AltSign/ALTAccount.h>
 #import <AltSign/ALTTeam.h>
 #import <AltSign/ALTDevice.h>
