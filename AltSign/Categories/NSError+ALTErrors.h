@@ -12,8 +12,10 @@ extern NSErrorDomain const AltSignErrorDomain;
 typedef NS_ERROR_ENUM(AltSignErrorDomain, ALTError)
 {
     ALTErrorUnknown,
+    ALTErrorInvalidApp,
     ALTErrorMissingAppBundle,
     ALTErrorMissingInfoPlist,
+    ALTErrorMissingProvisioningProfile,
 };
 
 extern NSErrorDomain const ALTAppleAPIErrorDomain;

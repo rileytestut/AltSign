@@ -23,8 +23,17 @@
             return nil;
         }
         
-        NSString *name = [bundle objectForInfoDictionaryKey:@"CFBundleName"];
-        NSString *bundleIdentifier = bundle.bundleIdentifier;
+        // Load info dictionary directly from disk, since NSBundle caches values
+        // that might not reflect the updated values on disk (such as bundle identifier).
+        NSURL *infoPlistURL = [bundle.bundleURL URLByAppendingPathComponent:@"Info.plist"];
+        NSDictionary *infoDictionary = [NSDictionary dictionaryWithContentsOfURL:infoPlistURL];
+        if (infoDictionary == nil)
+        {
+            return nil;
+        }
+        
+        NSString *name = infoDictionary[(NSString *)kCFBundleNameKey];
+        NSString *bundleIdentifier = infoDictionary[(NSString *)kCFBundleIdentifierKey];
         
         if (name == nil || bundleIdentifier == nil)
         {

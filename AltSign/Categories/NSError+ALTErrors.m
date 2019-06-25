@@ -41,11 +41,17 @@ NSErrorDomain const ALTAppleAPIErrorDomain = @"com.rileytestut.ALTAppleAPI";
         case ALTErrorUnknown:
             return NSLocalizedString(@"An unknown error occured.", @"");
             
+        case ALTErrorInvalidApp:
+            return NSLocalizedString(@"The app is invalid.", @"");
+            
         case ALTErrorMissingAppBundle:
             return NSLocalizedString(@"The provided .ipa does not contain an app bundle.", @"");
             
         case ALTErrorMissingInfoPlist:
             return NSLocalizedString(@"The provided app is missing its Info.plist.", @"");
+            
+        case ALTErrorMissingProvisioningProfile:
+            return NSLocalizedString(@"Could not find matching provisioning profile.", @"");
     }
     
     return nil;

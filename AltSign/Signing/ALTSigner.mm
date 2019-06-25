@@ -11,8 +11,10 @@
 #import "ALTTeam.h"
 #import "ALTCertificate.h"
 #import "ALTProvisioningProfile.h"
+#import "ALTApplication.h"
 
 #import "NSFileManager+Apps.h"
+#import "NSError+ALTErrors.h"
 
 #include "ldid.hpp"
 
@@ -92,8 +94,8 @@ std::string CertificatesContent(ALTCertificate *altCertificate)
     return self;
 }
 
-- (NSProgress *)signAppAtURL:(NSURL *)appURL provisioningProfile:(ALTProvisioningProfile *)profile completionHandler:(void (^)(BOOL success, NSError *error))completionHandler
-{
+- (NSProgress *)signAppAtURL:(NSURL *)appURL provisioningProfiles:(NSArray<ALTProvisioningProfile *> *)profiles completionHandler:(void (^)(BOOL success, NSError *error))completionHandler
+{    
     NSProgress *progress = [NSProgress discreteProgressWithTotalUnitCount:1];
     
     NSURL *ipaURL = nil;
@@ -128,13 +130,27 @@ std::string CertificatesContent(ALTCertificate *altCertificate)
         appBundleURL = [[NSFileManager defaultManager] unzipAppBundleAtURL:appURL toDirectory:outputDirectoryURL error:&error];
         if (appBundleURL == nil)
         {
-            finish(NO, error);
+            finish(NO, [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorMissingAppBundle userInfo:@{NSUnderlyingErrorKey: error}]);
             return progress;
         }
     }
     else
     {
         appBundleURL = appURL;
+    }
+    
+    NSBundle *appBundle = [NSBundle bundleWithURL:appBundleURL];
+    if (appBundle == nil)
+    {
+        finish(NO, [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorInvalidApp userInfo:nil]);
+        return progress;
+    }
+    
+    ALTApplication *application = [[ALTApplication alloc] initWithFileURL:appBundleURL];
+    if (application == nil)
+    {
+        finish(NO, [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorInvalidApp userInfo:nil]);
+        return progress;
     }
     
     NSDirectoryEnumerator *countEnumerator = [[NSFileManager defaultManager] enumeratorAtURL:appURL
@@ -170,49 +186,108 @@ std::string CertificatesContent(ALTCertificate *altCertificate)
     progress.totalUnitCount = totalCount;
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSURL *infoPlistURL = [appBundleURL URLByAppendingPathComponent:@"Info.plist"];
         
-        NSMutableDictionary *infoPlist = [NSMutableDictionary dictionaryWithContentsOfURL:infoPlistURL];
-        infoPlist[(NSString *)kCFBundleIdentifierKey] = profile.bundleIdentifier;
-        [infoPlist writeToURL:infoPlistURL atomically:YES];
+        NSMutableDictionary<NSURL *, NSString *> *entitlementsByFileURL = [NSMutableDictionary dictionary];
         
-        NSURL *profileURL = [appBundleURL URLByAppendingPathComponent:@"embedded.mobileprovision"];
-        [profile.data writeToURL:profileURL atomically:YES];
+        ALTProvisioningProfile *(^profileForApp)(ALTApplication *) = ^ALTProvisioningProfile *(ALTApplication *app) {
+            // Assume for now that apps don't have 100s of app extensions 🤷‍♂️
+            for (ALTProvisioningProfile *profile in profiles)
+            {
+                if ([profile.bundleIdentifier isEqualToString:app.bundleIdentifier])
+                {
+                    return profile;
+                }
+            }
+            
+            return nil;
+        };
         
-        NSString *applicationIdentifier = [NSString stringWithFormat:@"%@.%@", self.team.identifier, profile.bundleIdentifier];
-        NSString *keychainAccessGroup = [NSString stringWithFormat:@"%@.*", self.team.identifier];
+        NSError * (^prepareApp)(ALTApplication *) = ^NSError *(ALTApplication *app) {
+            ALTProvisioningProfile *profile = profileForApp(app);
+            if (profile == nil)
+            {
+                return [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorMissingProvisioningProfile userInfo:nil];
+            }
+            
+            NSURL *profileURL = [app.fileURL URLByAppendingPathComponent:@"embedded.mobileprovision"];
+            [profile.data writeToURL:profileURL atomically:YES];
+            
+            NSData *entitlementsData = [NSPropertyListSerialization dataWithPropertyList:profile.entitlements format:NSPropertyListXMLFormat_v1_0 options:0 error:&error];
+            if (entitlementsData == nil)
+            {
+                return error;
+            }
+            
+            NSString *entitlements = [[NSString alloc] initWithData:entitlementsData encoding:NSUTF8StringEncoding];
+            entitlementsByFileURL[app.fileURL] = entitlements;
+            
+            return nil;
+        };
         
-        NSDictionary<NSString *, id> *entitlements = @{@"application-identifier": applicationIdentifier,
-                                                       @"com.apple.developer.team-identifier": self.team.identifier,
-                                                       @"keychain-access-groups": @[keychainAccessGroup],
-                                                       @"get-task-allow": @YES,
-                                                       };
-        
-        NSData *entitlementsData = [NSPropertyListSerialization dataWithPropertyList:entitlements format:NSPropertyListXMLFormat_v1_0 options:0 error:&error];
-        if (entitlementsData == nil)
+        NSError *prepareError = prepareApp(application);
+        if (prepareError != nil)
         {
-            finish(NO, error);
+            finish(NO, prepareError);
             return;
         }
         
-        NSString *entitlementsContents = [[NSString alloc] initWithData:entitlementsData encoding:NSUTF8StringEncoding];
+        NSURL *pluginsURL = [appBundle builtInPlugInsURL];
         
-        // Sign bundle
-        ldid::DiskFolder appBundle(appBundleURL.fileSystemRepresentation);
+        NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtURL:pluginsURL
+                                                                 includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsSubdirectoryDescendants errorHandler:nil];
         
+        for (NSURL *extensionURL in enumerator)
+        {
+            ALTApplication *appExtension = [[ALTApplication alloc] initWithFileURL:extensionURL];
+            if (appExtension == nil)
+            {
+                prepareError = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorInvalidApp userInfo:nil];
+                break;
+            }
+            
+            NSError *error = prepareApp(appExtension);
+            if (error != nil)
+            {
+                prepareError = error;
+                break;
+            }
+        }
+        
+        if (prepareError != nil)
+        {
+            finish(NO, prepareError);
+            return;
+        }
+        
+        
+        // Sign application
+        ldid::DiskFolder appBundle(application.fileURL.fileSystemRepresentation);
         std::string key = CertificatesContent(self.certificate);
-        std::string entitlementsString(entitlementsContents.UTF8String);
         
         ldid::Sign("", appBundle, key, "",
-                   ldid::fun([&](const std::string &a, const std::string &b) -> std::string {
-            return entitlementsString;
+                   ldid::fun([&](const std::string &path, const std::string &binaryEntitlements) -> std::string {
+            NSString *filename = [NSString stringWithCString:path.c_str() encoding:NSUTF8StringEncoding];
+            
+            NSURL *fileURL = nil;
+            
+            if (filename.length == 0)
+            {
+                fileURL = application.fileURL;
+            }
+            else
+            {
+                fileURL = [application.fileURL URLByAppendingPathComponent:filename isDirectory:YES];
+            }
+            
+            NSString *entitlements = entitlementsByFileURL[fileURL];
+            return entitlements.UTF8String;
         }),
                    ldid::fun([&](const std::string &string) {
             progress.completedUnitCount += 1;
         }),
                    ldid::fun([&](const double signingProgress) {
-            
         }));
+        
         
         // Dispatch after to allow time to finish signing binary.
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
