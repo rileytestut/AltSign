@@ -142,7 +142,7 @@ NSString *ALTCertificatePEMSuffix = @"-----END CERTIFICATE-----";
         return NO;
     }
     
-    BOOL isEqual = (self.serialNumber == certificate.serialNumber);
+    BOOL isEqual = [self.serialNumber isEqualToString:certificate.serialNumber];
     return isEqual;
 }
 

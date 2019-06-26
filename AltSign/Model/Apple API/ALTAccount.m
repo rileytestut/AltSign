@@ -51,7 +51,7 @@
         return NO;
     }
     
-    BOOL isEqual = (self.identifier == account.identifier);
+    BOOL isEqual = [self.identifier isEqualToString:account.identifier];
     return isEqual;
 }
 

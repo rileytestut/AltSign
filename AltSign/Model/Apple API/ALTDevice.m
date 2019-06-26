@@ -51,7 +51,7 @@
         return NO;
     }
     
-    BOOL isEqual = (self.identifier == device.identifier);
+    BOOL isEqual = [self.identifier isEqualToString:device.identifier];
     return isEqual;
 }
 

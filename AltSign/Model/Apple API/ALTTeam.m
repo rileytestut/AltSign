@@ -81,7 +81,7 @@
         return NO;
     }
     
-    BOOL isEqual = (self.identifier == team.identifier);
+    BOOL isEqual = [self.identifier isEqualToString:team.identifier];
     return isEqual;
 }
 

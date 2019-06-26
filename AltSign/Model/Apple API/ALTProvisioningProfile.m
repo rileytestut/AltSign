@@ -285,7 +285,7 @@
         return NO;
     }
     
-    BOOL isEqual = ([self.UUID isEqual:profile.UUID] && self.data == profile.data);
+    BOOL isEqual = ([self.UUID isEqual:profile.UUID] && [self.data isEqualToData:profile.data]);
     return isEqual;
 }
 

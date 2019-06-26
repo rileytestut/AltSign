@@ -64,7 +64,7 @@
         return NO;
     }
     
-    BOOL isEqual = (self.identifier == appID.identifier && self.bundleIdentifier == appID.bundleIdentifier);
+    BOOL isEqual = ([self.identifier isEqualToString:appID.identifier] && [self.bundleIdentifier isEqualToString:appID.bundleIdentifier]);
     return isEqual;
 }
 
