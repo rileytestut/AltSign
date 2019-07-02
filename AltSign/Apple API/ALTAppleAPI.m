@@ -820,7 +820,8 @@ NS_ASSUME_NONNULL_END
         
         if (tempError == nil)
         {
-            NSString *localizedDescription = [responseDictionary objectForKey:@"userString"] ?: [responseDictionary objectForKey:@"resultString"];
+            NSString *errorDescription = [responseDictionary objectForKey:@"userString"] ?: [responseDictionary objectForKey:@"resultString"];
+            NSString *localizedDescription = [NSString stringWithFormat:@"%@ (%@)", errorDescription, @(resultCode)];
             
             NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
             userInfo[NSLocalizedDescriptionKey] = localizedDescription;
