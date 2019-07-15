@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_END
 
 @implementation ALTAppleAPI
 
-+ (instancetype)shared
++ (instancetype)sharedAPI
 {
     static ALTAppleAPI *_appleAPI = nil;
     static dispatch_once_t onceToken;

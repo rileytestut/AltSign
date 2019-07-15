@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ALTAppleAPI : NSObject
 
-@property (class, nonatomic, readonly) ALTAppleAPI *shared;
+@property (class, nonatomic, readonly) ALTAppleAPI *sharedAPI;
 
 /* Authentication */
 - (void)authenticateWithAppleID:(NSString *)appleID password:(NSString *)password
