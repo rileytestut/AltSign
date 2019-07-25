@@ -34,11 +34,23 @@
         
         NSString *name = infoDictionary[(NSString *)kCFBundleNameKey];
         NSString *bundleIdentifier = infoDictionary[(NSString *)kCFBundleIdentifierKey];
+        NSString *minimumVersionString = infoDictionary[@"MinimumOSVersion"];
         
-        if (name == nil || bundleIdentifier == nil)
+        if (name == nil || bundleIdentifier == nil || minimumVersionString == nil)
         {
             return nil;
         }
+        
+        NSArray *versionComponents = [minimumVersionString componentsSeparatedByString:@"."];
+        
+        NSInteger majorVersion = [versionComponents.firstObject integerValue];
+        NSInteger minorVersion = (versionComponents.count > 1) ? [versionComponents[1] integerValue] : 0;
+        NSInteger patchVersion = (versionComponents.count > 2) ? [versionComponents[2] integerValue] : 0;
+        
+        NSOperatingSystemVersion minimumVersion;
+        minimumVersion.majorVersion = majorVersion;
+        minimumVersion.minorVersion = minorVersion;
+        minimumVersion.patchVersion = patchVersion;
         
         NSDictionary<NSString *, id> *appEntitlements = @{};
         
@@ -64,6 +76,7 @@
         _name = [name copy];
         _bundleIdentifier = [bundleIdentifier copy];
         _entitlements = [appEntitlements copy];
+        _minimumiOSVersion = minimumVersion;
     }
     
     return self;
