@@ -35,9 +35,10 @@
         
         NSString *name = infoDictionary[(NSString *)kCFBundleNameKey];
         NSString *bundleIdentifier = infoDictionary[(NSString *)kCFBundleIdentifierKey];
+        NSString *version = infoDictionary[@"CFBundleShortVersionString"];
         NSString *minimumVersionString = infoDictionary[@"MinimumOSVersion"];
         
-        if (name == nil || bundleIdentifier == nil || minimumVersionString == nil)
+        if (name == nil || bundleIdentifier == nil || version == nil || minimumVersionString == nil)
         {
             return nil;
         }
@@ -56,6 +57,7 @@
         _fileURL = [fileURL copy];
         _name = [name copy];
         _bundleIdentifier = [bundleIdentifier copy];
+        _version = [version copy];
         _minimumiOSVersion = minimumVersion;
     }
     
