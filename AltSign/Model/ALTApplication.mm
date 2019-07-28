@@ -11,6 +11,7 @@
 #include "ldid.hpp"
 
 @implementation ALTApplication
+@synthesize entitlements = _entitlements;
 
 - (instancetype)initWithFileURL:(NSURL *)fileURL
 {
@@ -52,9 +53,22 @@
         minimumVersion.minorVersion = minorVersion;
         minimumVersion.patchVersion = patchVersion;
         
+        _fileURL = [fileURL copy];
+        _name = [name copy];
+        _bundleIdentifier = [bundleIdentifier copy];
+        _minimumiOSVersion = minimumVersion;
+    }
+    
+    return self;
+}
+
+- (NSDictionary<ALTEntitlement,id> *)entitlements
+{
+    if (_entitlements == nil)
+    {
         NSDictionary<NSString *, id> *appEntitlements = @{};
         
-        std::string rawEntitlements = ldid::Entitlements(fileURL.fileSystemRepresentation);
+        std::string rawEntitlements = ldid::Entitlements(self.fileURL.fileSystemRepresentation);
         if (rawEntitlements.size() != 0)
         {
             NSData *entitlementsData = [NSData dataWithBytes:rawEntitlements.c_str() length:rawEntitlements.size()];
@@ -72,14 +86,11 @@
             }
         }
         
-        _fileURL = [fileURL copy];
-        _name = [name copy];
-        _bundleIdentifier = [bundleIdentifier copy];
-        _entitlements = [appEntitlements copy];
-        _minimumiOSVersion = minimumVersion;
+        _entitlements = appEntitlements;
     }
     
-    return self;
+    return _entitlements;
+}
 }
 
 @end
