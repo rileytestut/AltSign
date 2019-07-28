@@ -11,6 +11,12 @@
 
 #include "ldid.hpp"
 
+@interface ALTApplication ()
+
+@property (nonatomic, copy, nullable, readonly) NSString *iconName;
+
+@end
+
 @implementation ALTApplication
 @synthesize entitlements = _entitlements;
 @synthesize provisioningProfile = _provisioningProfile;
@@ -56,15 +62,41 @@
         minimumVersion.minorVersion = minorVersion;
         minimumVersion.patchVersion = patchVersion;
         
+        NSDictionary *icons = infoDictionary[@"CFBundleIcons"];
+        NSDictionary *primaryIcon = icons[@"CFBundlePrimaryIcon"];
+        NSArray *iconFiles = primaryIcon[@"CFBundleIconFiles"];
+        
         _fileURL = [fileURL copy];
         _name = [name copy];
         _bundleIdentifier = [bundleIdentifier copy];
         _version = [version copy];
         _minimumiOSVersion = minimumVersion;
+        
+        _iconName = [[iconFiles lastObject] copy];
     }
     
     return self;
 }
+
+#if TARGET_OS_IPHONE
+- (UIImage *)icon
+{
+    NSBundle *bundle = [NSBundle bundleWithURL:self.fileURL];
+    if (bundle == nil)
+    {
+        return nil;
+    }
+    
+    NSString *iconName = self.iconName;
+    if (iconName == nil)
+    {
+        return nil;
+    }
+    
+    UIImage *icon = [UIImage imageNamed:iconName inBundle:bundle compatibleWithTraitCollection:nil];
+    return icon;
+}
+#endif
 
 - (NSDictionary<ALTEntitlement,id> *)entitlements
 {

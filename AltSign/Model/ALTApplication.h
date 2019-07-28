@@ -8,6 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
+#if TARGET_OS_IPHONE
+#import <UIKit/UIKit.h>
+#endif
+
 #import "ALTCapabilities.h"
 
 @class ALTProvisioningProfile;
@@ -20,6 +24,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, readonly) NSString *bundleIdentifier;
 @property (nonatomic, copy, readonly) NSString *version;
 
+#if TARGET_OS_IPHONE
+@property (nonatomic, readonly) UIImage *icon;
+#endif
 
 @property (nonatomic, readonly, nullable) ALTProvisioningProfile *provisioningProfile;
 

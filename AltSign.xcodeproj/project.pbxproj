@@ -30,6 +30,7 @@
 		BF0C4EB722A1B3CC009A2DD7 /* node.c in Sources */ = {isa = PBXBuildFile; fileRef = BF0C4EB422A1B3CC009A2DD7 /* node.c */; };
 		BF0C4EB822A1B3CC009A2DD7 /* cnary.c in Sources */ = {isa = PBXBuildFile; fileRef = BF0C4EB522A1B3CC009A2DD7 /* cnary.c */; };
 		BF0C4EB922A1B3CC009A2DD7 /* node_list.c in Sources */ = {isa = PBXBuildFile; fileRef = BF0C4EB622A1B3CC009A2DD7 /* node_list.c */; };
+		BF17BB7322EA839500D7D842 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF17BB7222EA839400D7D842 /* UIKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		BF48CFEE229437580004760B /* ALTCertificateRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = BF48CFEC229437580004760B /* ALTCertificateRequest.h */; };
 		BF48CFF0229438C10004760B /* ALTCertificateRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = BF48CFED229437580004760B /* ALTCertificateRequest.m */; };
 		BF48CFF622944FC60004760B /* ALTAppID.h in Headers */ = {isa = PBXBuildFile; fileRef = BF48CFF422944FC60004760B /* ALTAppID.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -198,6 +199,7 @@
 		BF0C4EB422A1B3CC009A2DD7 /* node.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = node.c; path = Dependencies/ldid/libplist/libcnary/node.c; sourceTree = SOURCE_ROOT; };
 		BF0C4EB522A1B3CC009A2DD7 /* cnary.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = cnary.c; path = Dependencies/ldid/libplist/libcnary/cnary.c; sourceTree = SOURCE_ROOT; };
 		BF0C4EB622A1B3CC009A2DD7 /* node_list.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = node_list.c; path = Dependencies/ldid/libplist/libcnary/node_list.c; sourceTree = SOURCE_ROOT; };
+		BF17BB7222EA839400D7D842 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		BF48CFE1229435DB0004760B /* OpenSSL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OpenSSL.xcodeproj; path = Dependencies/OpenSSL/OpenSSL.xcodeproj; sourceTree = SOURCE_ROOT; };
 		BF48CFEC229437580004760B /* ALTCertificateRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALTCertificateRequest.h; sourceTree = "<group>"; };
 		BF48CFED229437580004760B /* ALTCertificateRequest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALTCertificateRequest.m; sourceTree = "<group>"; };
@@ -261,6 +263,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BF17BB7322EA839500D7D842 /* UIKit.framework in Frameworks */,
 				BF9B6375229DCD4D002F0A62 /* libz.tbd in Frameworks */,
 				BF9B6340229DC9DD002F0A62 /* openssl.framework in Frameworks */,
 				BFBAC93A2295FCB500587369 /* libxml2.2.tbd in Frameworks */,
@@ -311,6 +314,7 @@
 		BF48CFEA229435F50004760B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BF17BB7222EA839400D7D842 /* UIKit.framework */,
 				BF9B6376229DCDAC002F0A62 /* libbz2.tbd */,
 				BF9B6373229DCD2A002F0A62 /* libzip_iOS.framework */,
 				BFBAC9302295F64600587369 /* libz.tbd */,
