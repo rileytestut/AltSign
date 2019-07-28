@@ -7,11 +7,13 @@
 //
 
 #import "ALTApplication.h"
+#import "ALTProvisioningProfile.h"
 
 #include "ldid.hpp"
 
 @implementation ALTApplication
 @synthesize entitlements = _entitlements;
+@synthesize provisioningProfile = _provisioningProfile;
 
 - (instancetype)initWithFileURL:(NSURL *)fileURL
 {
@@ -93,6 +95,16 @@
     
     return _entitlements;
 }
+
+- (ALTProvisioningProfile *)provisioningProfile
+{
+    if (_provisioningProfile == nil)
+    {
+        NSURL *provisioningProfileURL = [self.fileURL URLByAppendingPathComponent:@"embedded.mobileprovision"];
+        _provisioningProfile = [[ALTProvisioningProfile alloc] initWithURL:provisioningProfileURL];
+    }
+    
+    return _provisioningProfile;
 }
 
 @end

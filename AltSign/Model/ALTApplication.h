@@ -10,6 +10,8 @@
 
 #import "ALTCapabilities.h"
 
+@class ALTProvisioningProfile;
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface ALTApplication : NSObject
@@ -17,6 +19,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, readonly) NSString *name;
 @property (nonatomic, copy, readonly) NSString *bundleIdentifier;
 @property (nonatomic, copy, readonly) NSString *version;
+
+
+@property (nonatomic, readonly, nullable) ALTProvisioningProfile *provisioningProfile;
 
 @property (nonatomic, readonly) NSOperatingSystemVersion minimumiOSVersion;
 
