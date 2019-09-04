@@ -30,10 +30,10 @@
     NSString *identifier = responseDictionary[@"appIdId"];
     NSString *bundleIdentifier = responseDictionary[@"identifier"];
     
-    NSDictionary *allFeatures = responseDictionary[@"features"];
-    NSArray *enabledFeatures = responseDictionary[@"enabledFeatures"];
+    NSDictionary *allFeatures = responseDictionary[@"features"] ?: @{};
+    NSArray *enabledFeatures = responseDictionary[@"enabledFeatures"] ?: @[];
     
-    if (name == nil || identifier == nil || bundleIdentifier == nil || allFeatures == nil || enabledFeatures == nil)
+    if (name == nil || identifier == nil || bundleIdentifier == nil)
     {
         return nil;
     }
