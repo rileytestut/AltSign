@@ -45,6 +45,9 @@ NSString *ALTCertificatePEMSuffix = @"-----END CERTIFICATE-----";
         self = [self initWithName:name serialNumber:serialNumber data:nil];
     }
     
+    NSString *machineName = responseDictionary[@"machineName"];
+    _machineName = [machineName copy];
+    
     return self;
 }
 

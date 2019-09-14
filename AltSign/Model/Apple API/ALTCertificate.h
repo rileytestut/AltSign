@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, copy) NSString *name;
 @property (nonatomic, copy) NSString *serialNumber;
+@property (nonatomic, copy, nullable) NSString *machineName;
 
 @property (nonatomic, copy, nullable) NSData *data;
 @property (nonatomic, copy, nullable) NSData *privateKey;
