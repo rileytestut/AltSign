@@ -271,43 +271,6 @@ std::string CertificatesContent(ALTCertificate *altCertificate)
             }
         }
         
-        NSURL *frameworksURL = [appBundle privateFrameworksURL];
-        
-        NSDirectoryEnumerator *frameworksEnumerator = [[NSFileManager defaultManager] enumeratorAtURL:frameworksURL
-                                                                 includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsSubdirectoryDescendants errorHandler:nil];
-        
-        for (NSURL *frameworkURL in frameworksEnumerator)
-        {
-            NSURL *frameworkBinaryURL = nil;
-            
-            /* The Frameworks could contain dylibs that need to be signed */
-            if ([[frameworkURL pathExtension] isEqualToString:@"dylib"])
-            {
-                frameworkBinaryURL = frameworkURL;
-            }
-            else
-            {
-                ALTApplication *framework = [[ALTApplication alloc] initWithFileURL:frameworkURL];
-                if (framework) {
-                    frameworkBinaryURL = framework.fileURL;
-                }
-            }
-            
-            if (frameworkBinaryURL == nil)
-            {
-                prepareError = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorInvalidApp userInfo:nil];
-                break;
-            }
-            
-            NSError *error = prepareFramework(frameworkBinaryURL, application);
-            
-            if (error != nil)
-            {
-                prepareError = error;
-                break;
-            }
-        }
-        
         if (prepareError != nil)
         {
             finish(NO, prepareError);
@@ -333,6 +296,11 @@ std::string CertificatesContent(ALTCertificate *altCertificate)
             }
             
             NSString *entitlements = entitlementsByFileURL[fileURL];
+            
+            /* Frameworks should have same entitlements as main app */
+            if (entitlements == nil && [filename hasPrefix:@"Frameworks/"]) {
+                entitlements = entitlementsByFileURL[application.fileURL];
+            }
             
             return entitlements.UTF8String;
         }),
