@@ -224,7 +224,7 @@ std::string CertificatesContent(ALTCertificate *altCertificate)
             return nil;
         };
         
-        NSError * (^prepareFramework)(ALTApplication *,ALTApplication *) = ^NSError *(ALTApplication *framework, ALTApplication *application) {
+        NSError * (^prepareFramework)(NSURL *,ALTApplication *) = ^NSError *(NSURL *frameworkBinaryURL, ALTApplication *application) {
             ALTProvisioningProfile *profile = profileForApp(application);
             if (profile == nil)
             {
@@ -238,7 +238,7 @@ std::string CertificatesContent(ALTCertificate *altCertificate)
             }
             
             NSString *entitlements = [[NSString alloc] initWithData:entitlementsData encoding:NSUTF8StringEncoding];
-            entitlementsByFileURL[framework.fileURL] = entitlements;
+            entitlementsByFileURL[frameworkBinaryURL] = entitlements;
             
             return nil;
         };
@@ -278,14 +278,28 @@ std::string CertificatesContent(ALTCertificate *altCertificate)
         
         for (NSURL *frameworkURL in frameworksEnumerator)
         {
-            ALTApplication *framework = [[ALTApplication alloc] initWithFileURL:frameworkURL];
-            if (framework == nil)
+            NSURL *frameworkBinaryURL = nil;
+            
+            /* The Frameworks could contain dylibs that need to be signed */
+            if ([[frameworkURL pathExtension] isEqualToString:@"dylib"])
+            {
+                frameworkBinaryURL = frameworkURL;
+            }
+            else
+            {
+                ALTApplication *framework = [[ALTApplication alloc] initWithFileURL:frameworkURL];
+                if (framework) {
+                    frameworkBinaryURL = framework.fileURL;
+                }
+            }
+            
+            if (frameworkBinaryURL == nil)
             {
                 prepareError = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorInvalidApp userInfo:nil];
                 break;
             }
             
-            NSError *error = prepareFramework(framework, application);
+            NSError *error = prepareFramework(frameworkBinaryURL, application);
             
             if (error != nil)
             {
