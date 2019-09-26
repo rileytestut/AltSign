@@ -224,6 +224,25 @@ std::string CertificatesContent(ALTCertificate *altCertificate)
             return nil;
         };
         
+        NSError * (^prepareFramework)(ALTApplication *,ALTApplication *) = ^NSError *(ALTApplication *framework, ALTApplication *application) {
+            ALTProvisioningProfile *profile = profileForApp(application);
+            if (profile == nil)
+            {
+                return [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorMissingProvisioningProfile userInfo:nil];
+            }
+            
+            NSData *entitlementsData = [NSPropertyListSerialization dataWithPropertyList:profile.entitlements format:NSPropertyListXMLFormat_v1_0 options:0 error:&error];
+            if (entitlementsData == nil)
+            {
+                return error;
+            }
+            
+            NSString *entitlements = [[NSString alloc] initWithData:entitlementsData encoding:NSUTF8StringEncoding];
+            entitlementsByFileURL[framework.fileURL] = entitlements;
+            
+            return nil;
+        };
+        
         NSError *prepareError = prepareApp(application);
         if (prepareError != nil)
         {
@@ -232,7 +251,6 @@ std::string CertificatesContent(ALTCertificate *altCertificate)
         }
         
         NSURL *pluginsURL = [appBundle builtInPlugInsURL];
-        
         NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtURL:pluginsURL
                                                                  includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsSubdirectoryDescendants errorHandler:nil];
         
@@ -253,6 +271,29 @@ std::string CertificatesContent(ALTCertificate *altCertificate)
             }
         }
         
+        NSURL *frameworksURL = [appBundle privateFrameworksURL];
+        
+        NSDirectoryEnumerator *frameworksEnumerator = [[NSFileManager defaultManager] enumeratorAtURL:frameworksURL
+                                                                 includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsSubdirectoryDescendants errorHandler:nil];
+        
+        for (NSURL *frameworkURL in frameworksEnumerator)
+        {
+            ALTApplication *framework = [[ALTApplication alloc] initWithFileURL:frameworkURL];
+            if (framework == nil)
+            {
+                prepareError = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorInvalidApp userInfo:nil];
+                break;
+            }
+            
+            NSError *error = prepareFramework(framework, application);
+            
+            if (error != nil)
+            {
+                prepareError = error;
+                break;
+            }
+        }
+        
         if (prepareError != nil)
         {
             finish(NO, prepareError);
@@ -264,10 +305,8 @@ std::string CertificatesContent(ALTCertificate *altCertificate)
         ldid::DiskFolder appBundle(application.fileURL.fileSystemRepresentation);
         std::string key = CertificatesContent(self.certificate);
         
-        ldid::Sign("", appBundle, key, "",
-                   ldid::fun([&](const std::string &path, const std::string &binaryEntitlements) -> std::string {
+        ldid::Sign("", appBundle, key, "",ldid::fun([&](const std::string &path, const std::string &binaryEntitlements) -> std::string {
             NSString *filename = [NSString stringWithCString:path.c_str() encoding:NSUTF8StringEncoding];
-            
             NSURL *fileURL = nil;
             
             if (filename.length == 0)
@@ -280,6 +319,7 @@ std::string CertificatesContent(ALTCertificate *altCertificate)
             }
             
             NSString *entitlements = entitlementsByFileURL[fileURL];
+            
             return entitlements.UTF8String;
         }),
                    ldid::fun([&](const std::string &string) {
@@ -287,7 +327,6 @@ std::string CertificatesContent(ALTCertificate *altCertificate)
         }),
                    ldid::fun([&](const double signingProgress) {
         }));
-        
         
         // Dispatch after to allow time to finish signing binary.
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
