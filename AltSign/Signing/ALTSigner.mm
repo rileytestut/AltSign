@@ -224,25 +224,6 @@ std::string CertificatesContent(ALTCertificate *altCertificate)
             return nil;
         };
         
-        NSError * (^prepareFramework)(NSURL *,ALTApplication *) = ^NSError *(NSURL *frameworkBinaryURL, ALTApplication *application) {
-            ALTProvisioningProfile *profile = profileForApp(application);
-            if (profile == nil)
-            {
-                return [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorMissingProvisioningProfile userInfo:nil];
-            }
-            
-            NSData *entitlementsData = [NSPropertyListSerialization dataWithPropertyList:profile.entitlements format:NSPropertyListXMLFormat_v1_0 options:0 error:&error];
-            if (entitlementsData == nil)
-            {
-                return error;
-            }
-            
-            NSString *entitlements = [[NSString alloc] initWithData:entitlementsData encoding:NSUTF8StringEncoding];
-            entitlementsByFileURL[frameworkBinaryURL] = entitlements;
-            
-            return nil;
-        };
-        
         NSError *prepareError = prepareApp(application);
         if (prepareError != nil)
         {
