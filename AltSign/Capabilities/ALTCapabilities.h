@@ -25,7 +25,7 @@ extern ALTFeature const ALTFeatureGameCenter;
 extern ALTFeature const ALTFeatureAppGroups;
 extern ALTFeature const ALTFeatureInterAppAudio;
 
-_Nullable ALTEntitlement ALTEntitlementForFeature(ALTFeature feature) NS_SWIFT_NAME(ALTEntitlement.init(_:));
-_Nullable ALTFeature ALTFeatureForEntitlement(ALTEntitlement entitlement) NS_SWIFT_NAME(ALTFeature.init(_:));
+_Nullable ALTEntitlement ALTEntitlementForFeature(ALTFeature feature) NS_SWIFT_NAME(ALTEntitlement.init(feature:));
+_Nullable ALTFeature ALTFeatureForEntitlement(ALTEntitlement entitlement) NS_SWIFT_NAME(ALTFeature.init(entitlement:));
 
 NS_ASSUME_NONNULL_END
