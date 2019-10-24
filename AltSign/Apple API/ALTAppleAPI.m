@@ -411,7 +411,12 @@ NS_ASSUME_NONNULL_END
 {
     NSURL *URL = [NSURL URLWithString:@"ios/addAppId.action" relativeToURL:self.baseURL];
     
-    [self sendRequestWithURL:URL additionalParameters:@{@"identifier": bundleIdentifier, @"name": name} account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
+    NSMutableCharacterSet *allowedCharacters = [NSMutableCharacterSet alphanumericCharacterSet];
+    [allowedCharacters formUnionWithCharacterSet:[NSCharacterSet whitespaceCharacterSet]];
+    
+    NSString *sanitizedName = [[name componentsSeparatedByCharactersInSet:[allowedCharacters invertedSet]] componentsJoinedByString:@""];
+    
+    [self sendRequestWithURL:URL additionalParameters:@{@"identifier": bundleIdentifier, @"name": sanitizedName} account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
         if (responseDictionary == nil)
         {
             completionHandler(nil, requestError);
