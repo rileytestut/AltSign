@@ -64,15 +64,25 @@
         
         NSDictionary *icons = infoDictionary[@"CFBundleIcons"];
         NSDictionary *primaryIcon = icons[@"CFBundlePrimaryIcon"];
+        
         NSArray *iconFiles = primaryIcon[@"CFBundleIconFiles"];
+        if (iconFiles == nil)
+        {
+            iconFiles = infoDictionary[@"CFBundleIconFiles"];
+        }
+        
+        NSString *iconName = [iconFiles lastObject];
+        if (iconName == nil)
+        {
+            iconName = infoDictionary[@"CFBundleIconFile"];
+        }
         
         _fileURL = [fileURL copy];
         _name = [name copy];
         _bundleIdentifier = [bundleIdentifier copy];
         _version = [version copy];
         _minimumiOSVersion = minimumVersion;
-        
-        _iconName = [[iconFiles lastObject] copy];
+        _iconName = [iconName copy];
     }
     
     return self;
