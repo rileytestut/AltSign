@@ -32,6 +32,8 @@ NSString *ALTCertificatePEMSuffix = @"-----END CERTIFICATE-----";
 - (instancetype)initWithResponseDictionary:(NSDictionary *)responseDictionary
 {
     NSData *data = responseDictionary[@"certContent"];
+    NSString *machineName = responseDictionary[@"machineName"];
+    NSString *machineIdentifier = responseDictionary[@"machineId"];
     
     if (data != nil)
     {
@@ -45,8 +47,11 @@ NSString *ALTCertificatePEMSuffix = @"-----END CERTIFICATE-----";
         self = [self initWithName:name serialNumber:serialNumber data:nil];
     }
     
-    NSString *machineName = responseDictionary[@"machineName"];
-    _machineName = [machineName copy];
+    if (self)
+    {
+        _machineName = [machineName copy];
+        _machineIdentifier = [machineIdentifier copy];
+    }
     
     return self;
 }
