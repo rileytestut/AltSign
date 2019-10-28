@@ -56,6 +56,47 @@ NSString *ALTCertificatePEMSuffix = @"-----END CERTIFICATE-----";
     return self;
 }
 
+- (nullable instancetype)initWithP12Data:(NSData *)p12Data password:(nullable NSString *)password
+{
+    BIO *inputP12Buffer = BIO_new(BIO_s_mem());
+    BIO_write(inputP12Buffer, p12Data.bytes, (int)p12Data.length);
+    
+    PKCS12 *inputP12 = d2i_PKCS12_bio(inputP12Buffer, NULL);
+    
+    // Extract key + certificate from .p12.
+    EVP_PKEY *key;
+    X509 *certificate;
+    PKCS12_parse(inputP12, password.UTF8String, &key, &certificate, NULL);
+    
+    if (key == nil || certificate == nil)
+    {
+        return nil;
+    }
+    
+    BIO *pemBuffer = BIO_new(BIO_s_mem());
+    PEM_write_bio_X509(pemBuffer, certificate);
+    
+    BIO *privateKeyBuffer = BIO_new(BIO_s_mem());
+    PEM_write_bio_PrivateKey(privateKeyBuffer, key, NULL, NULL, 0, NULL, NULL);
+    
+    char *pemBytes = NULL;
+    NSUInteger pemSize = BIO_get_mem_data(pemBuffer, &pemBytes);
+    
+    char *privateKeyBytes = NULL;
+    NSUInteger privateKeySize = BIO_get_mem_data(privateKeyBuffer, &privateKeyBytes);
+    
+    NSData *pemData = [NSData dataWithBytes:pemBytes length:pemSize];
+    NSData *privateKey = [NSData dataWithBytes:privateKeyBytes length:privateKeySize];
+    
+    self = [self initWithData:pemData];
+    if (self)
+    {
+        _privateKey = [privateKey copy];
+    }
+    
+    return self;
+}
+
 - (nullable instancetype)initWithData:(NSData *)data
 {
     NSData *pemData = data;
@@ -163,6 +204,11 @@ NSString *ALTCertificatePEMSuffix = @"-----END CERTIFICATE-----";
 
 - (nullable NSData *)p12Data
 {
+    return [self encryptedP12DataWithPassword:@""];
+}
+
+- (nullable NSData *)encryptedP12DataWithPassword:(NSString *)password
+{
     BIO *certificateBuffer = BIO_new(BIO_s_mem());
     BIO *privateKeyBuffer = BIO_new(BIO_s_mem());
     
@@ -176,8 +222,7 @@ NSString *ALTCertificatePEMSuffix = @"-----END CERTIFICATE-----";
     PEM_read_bio_PrivateKey(privateKeyBuffer, &privateKey, 0, 0);
     
     char emptyString[] = "";
-    char password[] = "";
-    PKCS12 *outputP12 = PKCS12_create(password, emptyString, privateKey, certificate, NULL, 0, 0, 0, 0, 0);
+    PKCS12 *outputP12 = PKCS12_create((char *)password.UTF8String, emptyString, privateKey, certificate, NULL, 0, 0, 0, 0, 0);
     
     BIO *p12Buffer = BIO_new(BIO_s_mem());
     i2d_PKCS12_bio(p12Buffer, outputP12);

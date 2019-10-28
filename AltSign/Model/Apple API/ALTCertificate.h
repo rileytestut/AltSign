@@ -21,8 +21,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, nullable) NSData *privateKey;
 
 - (nullable instancetype)initWithData:(NSData *)data;
+- (nullable instancetype)initWithP12Data:(NSData *)p12Data password:(nullable NSString *)password;
 
 - (nullable NSData *)p12Data;
+- (nullable NSData *)encryptedP12DataWithPassword:(NSString *)password;
 
 @end
 
