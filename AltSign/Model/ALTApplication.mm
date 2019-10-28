@@ -41,7 +41,7 @@
             return nil;
         }
         
-        NSString *name = infoDictionary[(NSString *)kCFBundleNameKey];
+        NSString *name = infoDictionary[@"CFBundleDisplayName"] ?: infoDictionary[(NSString *)kCFBundleNameKey];
         NSString *bundleIdentifier = infoDictionary[(NSString *)kCFBundleIdentifierKey];
         NSString *version = infoDictionary[@"CFBundleShortVersionString"];
         NSString *minimumVersionString = infoDictionary[@"MinimumOSVersion"];
