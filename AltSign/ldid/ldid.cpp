@@ -76,35 +76,38 @@ namespace ldid
                 }
             }
             
-            uint32_t data = mach_header.Swap(signature->dataoff);
-            
-            uint8_t *top = reinterpret_cast<uint8_t *>(mach_header.GetBase());
-            uint8_t *blob = top + data;
-            struct SuperBlob *super = reinterpret_cast<struct SuperBlob *>(blob);
-            
-            for (size_t index(0); index != Swap(super->count); ++index)
+            if (signature != NULL)
             {
-                if (Swap(super->index[index].type) == CSSLOT_ENTITLEMENTS)
+                uint32_t data = mach_header.Swap(signature->dataoff);
+                
+                uint8_t *top = reinterpret_cast<uint8_t *>(mach_header.GetBase());
+                uint8_t *blob = top + data;
+                struct SuperBlob *super = reinterpret_cast<struct SuperBlob *>(blob);
+                
+                for (size_t index(0); index != Swap(super->count); ++index)
                 {
-                    uint32_t begin = Swap(super->index[index].offset);
-                    struct Blob *entitlements = reinterpret_cast<struct Blob *>(blob + begin);
-                    
-                    char *bytes = (char *)(entitlements + 1);
-                    int size = Swap(entitlements->length) - sizeof(*entitlements);
-                    
-                    for (int i = 0; i < size; i++)
+                    if (Swap(super->index[index].type) == CSSLOT_ENTITLEMENTS)
                     {
-                        char byte = bytes[i];
-                        stringstream << byte;
-                    }
-                    
-                    if (size > 0)
-                    {
-                        auto entitlementsString = stringstream.str();
+                        uint32_t begin = Swap(super->index[index].offset);
+                        struct Blob *entitlements = reinterpret_cast<struct Blob *>(blob + begin);
                         
-                        // One valid mach_header is all we need to retrieve entitlements, so return to stop iterating over the next ones.
-                        return entitlementsString;
-                    }                
+                        char *bytes = (char *)(entitlements + 1);
+                        int size = Swap(entitlements->length) - sizeof(*entitlements);
+                        
+                        for (int i = 0; i < size; i++)
+                        {
+                            char byte = bytes[i];
+                            stringstream << byte;
+                        }
+                        
+                        if (size > 0)
+                        {
+                            auto entitlementsString = stringstream.str();
+                            
+                            // One valid mach_header is all we need to retrieve entitlements, so return to stop iterating over the next ones.
+                            return entitlementsString;
+                        }
+                    }
                 }
             }
         }
