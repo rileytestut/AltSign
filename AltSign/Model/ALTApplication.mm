@@ -43,13 +43,14 @@
         
         NSString *name = infoDictionary[@"CFBundleDisplayName"] ?: infoDictionary[(NSString *)kCFBundleNameKey];
         NSString *bundleIdentifier = infoDictionary[(NSString *)kCFBundleIdentifierKey];
-        NSString *version = infoDictionary[@"CFBundleShortVersionString"];
-        NSString *minimumVersionString = infoDictionary[@"MinimumOSVersion"];
-        
-        if (name == nil || bundleIdentifier == nil || version == nil || minimumVersionString == nil)
+                
+        if (name == nil || bundleIdentifier == nil)
         {
             return nil;
         }
+        
+        NSString *version = infoDictionary[@"CFBundleShortVersionString"] ?: @"1.0";
+        NSString *minimumVersionString = infoDictionary[@"MinimumOSVersion"] ?: @"1.0";
         
         NSArray *versionComponents = [minimumVersionString componentsSeparatedByString:@"."];
         
