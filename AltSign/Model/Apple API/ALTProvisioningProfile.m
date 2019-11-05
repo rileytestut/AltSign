@@ -75,6 +75,8 @@
             return nil;
         }
         
+        BOOL isFreeProvisioningProfile = [dictionary[@"LocalProvision"] boolValue];
+        
         _data = [data copy];
         
         _name = [name copy];
@@ -87,6 +89,8 @@
         
         _entitlements = [entitlements copy];
         _deviceIDs = [deviceIDs copy];
+        
+        _isFreeProvisioningProfile = isFreeProvisioningProfile;
         
         [entitlements enumerateKeysAndObjectsUsingBlock:^(ALTEntitlement entitlement, id value, BOOL *stop) {
             if (![entitlement isEqualToString:ALTEntitlementApplicationIdentifier])

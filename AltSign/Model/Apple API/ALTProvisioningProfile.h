@@ -31,6 +31,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (copy, nonatomic, readonly) NSArray<ALTCertificate *> *certificates;
 @property (copy, nonatomic, readonly) NSArray<NSString *> *deviceIDs;
 
+@property (readonly) BOOL isFreeProvisioningProfile;
+
 @property (copy, nonatomic, readonly) NSData *data;
 
 - (nullable instancetype)initWithData:(NSData *)data NS_DESIGNATED_INITIALIZER;
