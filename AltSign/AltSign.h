@@ -13,6 +13,7 @@
 // Model
 #import <AltSign/ALTApplication.h>
 #import <AltSign/ALTAccount.h>
+#import <AltSign/ALTAnisetteData.h>
 #import <AltSign/ALTTeam.h>
 #import <AltSign/ALTDevice.h>
 #import <AltSign/ALTCertificate.h>

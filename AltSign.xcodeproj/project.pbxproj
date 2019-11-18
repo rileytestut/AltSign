@@ -122,6 +122,10 @@
 		BFBAC8F32295EF0500587369 /* libxml2.2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = BFBAC8F22295EF0500587369 /* libxml2.2.tbd */; };
 		BFBAC8F42295EFE300587369 /* libldid.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BFBAC8AA2295ED1900587369 /* libldid.a */; };
 		BFBAC93A2295FCB500587369 /* libxml2.2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = BFBAC8F22295EF0500587369 /* libxml2.2.tbd */; };
+		BFE20E07237C932600409FF7 /* ALTAnisetteData.h in Headers */ = {isa = PBXBuildFile; fileRef = BFE20E05237C932600409FF7 /* ALTAnisetteData.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BFE20E08237C932600409FF7 /* ALTAnisetteData.h in Headers */ = {isa = PBXBuildFile; fileRef = BFE20E05237C932600409FF7 /* ALTAnisetteData.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BFE20E09237C932600409FF7 /* ALTAnisetteData.m in Sources */ = {isa = PBXBuildFile; fileRef = BFE20E06237C932600409FF7 /* ALTAnisetteData.m */; };
+		BFE20E0A237C932600409FF7 /* ALTAnisetteData.m in Sources */ = {isa = PBXBuildFile; fileRef = BFE20E06237C932600409FF7 /* ALTAnisetteData.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -256,6 +260,8 @@
 		BFBAC8E22295ED6C00587369 /* lookup2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lookup2.c; path = Dependencies/ldid/lookup2.c; sourceTree = SOURCE_ROOT; };
 		BFBAC8F22295EF0500587369 /* libxml2.2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.2.tbd; path = usr/lib/libxml2.2.tbd; sourceTree = SDKROOT; };
 		BFBAC9302295F64600587369 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		BFE20E05237C932600409FF7 /* ALTAnisetteData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALTAnisetteData.h; sourceTree = "<group>"; };
+		BFE20E06237C932600409FF7 /* ALTAnisetteData.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALTAnisetteData.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -347,6 +353,8 @@
 				BF9B633E229DC27C002F0A62 /* ALTModel+Internal.h */,
 				BF5AB3B72286024D00DC914B /* ALTAccount.h */,
 				BF5AB3B82286024D00DC914B /* ALTAccount.m */,
+				BFE20E05237C932600409FF7 /* ALTAnisetteData.h */,
+				BFE20E06237C932600409FF7 /* ALTAnisetteData.m */,
 				BF5AB3C32286157F00DC914B /* ALTTeam.h */,
 				BF5AB3C42286157F00DC914B /* ALTTeam.m */,
 				BF5AB3C72286269B00DC914B /* ALTDevice.h */,
@@ -532,6 +540,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BFBAC8912295E05600587369 /* ALTAppleAPI.h in Headers */,
+				BFE20E07237C932600409FF7 /* ALTAnisetteData.h in Headers */,
 				BF9B6400229E0AA0002F0A62 /* crypt.h in Headers */,
 				BFBAC88B2295D90F00587369 /* ALTProvisioningProfile.h in Headers */,
 				BF5AB3B92286024D00DC914B /* ALTAccount.h in Headers */,
@@ -560,6 +569,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BF9B637E229DCF3A002F0A62 /* ALTAppleAPI.h in Headers */,
+				BFE20E08237C932600409FF7 /* ALTAnisetteData.h in Headers */,
 				BF9B6401229E0AA0002F0A62 /* crypt.h in Headers */,
 				BF9B637F229DCF3A002F0A62 /* ALTProvisioningProfile.h in Headers */,
 				BF9B6380229DCF3A002F0A62 /* ALTAccount.h in Headers */,
@@ -740,6 +750,7 @@
 				BF50E7C122C163DC0070E17B /* ALTApplication.mm in Sources */,
 				BF9B6402229E0AA0002F0A62 /* ioapi.c in Sources */,
 				BF9B640C229E0AA0002F0A62 /* zip.c in Sources */,
+				BFE20E09237C932600409FF7 /* ALTAnisetteData.m in Sources */,
 				BF5AB3C02286040400DC914B /* NSError+ALTErrors.m in Sources */,
 				BF50E7D122C28F8B0070E17B /* ALTCapabilities.m in Sources */,
 			);
@@ -765,6 +776,7 @@
 				BF50E7C222C163DC0070E17B /* ALTApplication.mm in Sources */,
 				BF9B6403229E0AA0002F0A62 /* ioapi.c in Sources */,
 				BF9B640D229E0AA0002F0A62 /* zip.c in Sources */,
+				BFE20E0A237C932600409FF7 /* ALTAnisetteData.m in Sources */,
 				BF9B6392229DCF3A002F0A62 /* NSError+ALTErrors.m in Sources */,
 				BF50E7D222C28F8B0070E17B /* ALTCapabilities.m in Sources */,
 			);
