@@ -59,6 +59,10 @@
 		BF5AB3CA2286269B00DC914B /* ALTDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = BF5AB3C82286269B00DC914B /* ALTDevice.m */; };
 		BF5AB3CD228645DF00DC914B /* ALTCertificate.h in Headers */ = {isa = PBXBuildFile; fileRef = BF5AB3CB228645DF00DC914B /* ALTCertificate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BF5AB3CE228645DF00DC914B /* ALTCertificate.m in Sources */ = {isa = PBXBuildFile; fileRef = BF5AB3CC228645DF00DC914B /* ALTCertificate.m */; };
+		BF5D43F6237F53BB00EC8745 /* ALTAppleAPISession.h in Headers */ = {isa = PBXBuildFile; fileRef = BF5D43F4237F53BB00EC8745 /* ALTAppleAPISession.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BF5D43F7237F53BB00EC8745 /* ALTAppleAPISession.h in Headers */ = {isa = PBXBuildFile; fileRef = BF5D43F4237F53BB00EC8745 /* ALTAppleAPISession.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BF5D43F8237F53BB00EC8745 /* ALTAppleAPISession.m in Sources */ = {isa = PBXBuildFile; fileRef = BF5D43F5237F53BB00EC8745 /* ALTAppleAPISession.m */; };
+		BF5D43F9237F53BB00EC8745 /* ALTAppleAPISession.m in Sources */ = {isa = PBXBuildFile; fileRef = BF5D43F5237F53BB00EC8745 /* ALTAppleAPISession.m */; };
 		BF9B633F229DC27C002F0A62 /* ALTModel+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = BF9B633E229DC27C002F0A62 /* ALTModel+Internal.h */; };
 		BF9B6340229DC9DD002F0A62 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF48CFE7229435DB0004760B /* openssl.framework */; };
 		BF9B6375229DCD4D002F0A62 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = BFBAC9302295F64600587369 /* libz.tbd */; };
@@ -122,6 +126,12 @@
 		BFBAC8F32295EF0500587369 /* libxml2.2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = BFBAC8F22295EF0500587369 /* libxml2.2.tbd */; };
 		BFBAC8F42295EFE300587369 /* libldid.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BFBAC8AA2295ED1900587369 /* libldid.a */; };
 		BFBAC93A2295FCB500587369 /* libxml2.2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = BFBAC8F22295EF0500587369 /* libxml2.2.tbd */; };
+		BFD80D4F23809EE100B9C227 /* ALTAppleAPI+Authentication.h in Headers */ = {isa = PBXBuildFile; fileRef = BFD80D4D23809EE100B9C227 /* ALTAppleAPI+Authentication.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BFD80D5023809EE100B9C227 /* ALTAppleAPI+Authentication.h in Headers */ = {isa = PBXBuildFile; fileRef = BFD80D4D23809EE100B9C227 /* ALTAppleAPI+Authentication.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BFD80D5123809EE100B9C227 /* ALTAppleAPI+Authentication.m in Sources */ = {isa = PBXBuildFile; fileRef = BFD80D4E23809EE100B9C227 /* ALTAppleAPI+Authentication.m */; };
+		BFD80D5223809EE100B9C227 /* ALTAppleAPI+Authentication.m in Sources */ = {isa = PBXBuildFile; fileRef = BFD80D4E23809EE100B9C227 /* ALTAppleAPI+Authentication.m */; };
+		BFD80D542380A00B00B9C227 /* ALTAppleAPI_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = BFD80D532380A00B00B9C227 /* ALTAppleAPI_Private.h */; };
+		BFD80D552380A00B00B9C227 /* ALTAppleAPI_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = BFD80D532380A00B00B9C227 /* ALTAppleAPI_Private.h */; };
 		BFE20E07237C932600409FF7 /* ALTAnisetteData.h in Headers */ = {isa = PBXBuildFile; fileRef = BFE20E05237C932600409FF7 /* ALTAnisetteData.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BFE20E08237C932600409FF7 /* ALTAnisetteData.h in Headers */ = {isa = PBXBuildFile; fileRef = BFE20E05237C932600409FF7 /* ALTAnisetteData.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BFE20E09237C932600409FF7 /* ALTAnisetteData.m in Sources */ = {isa = PBXBuildFile; fileRef = BFE20E06237C932600409FF7 /* ALTAnisetteData.m */; };
@@ -230,6 +240,8 @@
 		BF5AB3C82286269B00DC914B /* ALTDevice.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALTDevice.m; sourceTree = "<group>"; };
 		BF5AB3CB228645DF00DC914B /* ALTCertificate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALTCertificate.h; sourceTree = "<group>"; };
 		BF5AB3CC228645DF00DC914B /* ALTCertificate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALTCertificate.m; sourceTree = "<group>"; };
+		BF5D43F4237F53BB00EC8745 /* ALTAppleAPISession.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALTAppleAPISession.h; sourceTree = "<group>"; };
+		BF5D43F5237F53BB00EC8745 /* ALTAppleAPISession.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALTAppleAPISession.m; sourceTree = "<group>"; };
 		BF9B633E229DC27C002F0A62 /* ALTModel+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ALTModel+Internal.h"; sourceTree = "<group>"; };
 		BF9B6373229DCD2A002F0A62 /* libzip_iOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = libzip_iOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BF9B6376229DCDAC002F0A62 /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = usr/lib/libbz2.tbd; sourceTree = SDKROOT; };
@@ -260,8 +272,87 @@
 		BFBAC8E22295ED6C00587369 /* lookup2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lookup2.c; path = Dependencies/ldid/lookup2.c; sourceTree = SOURCE_ROOT; };
 		BFBAC8F22295EF0500587369 /* libxml2.2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.2.tbd; path = usr/lib/libxml2.2.tbd; sourceTree = SDKROOT; };
 		BFBAC9302295F64600587369 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		BFD80D4D23809EE100B9C227 /* ALTAppleAPI+Authentication.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ALTAppleAPI+Authentication.h"; sourceTree = "<group>"; };
+		BFD80D4E23809EE100B9C227 /* ALTAppleAPI+Authentication.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "ALTAppleAPI+Authentication.m"; sourceTree = "<group>"; };
+		BFD80D532380A00B00B9C227 /* ALTAppleAPI_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALTAppleAPI_Private.h; sourceTree = "<group>"; };
 		BFE20E05237C932600409FF7 /* ALTAnisetteData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALTAnisetteData.h; sourceTree = "<group>"; };
 		BFE20E06237C932600409FF7 /* ALTAnisetteData.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALTAnisetteData.m; sourceTree = "<group>"; };
+		BFE20E0E237CAA3A00409FF7 /* ccder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccder.h; path = Dependencies/corecrypto/ccder.h; sourceTree = SOURCE_ROOT; };
+		BFE20E0F237CAA3A00409FF7 /* ccec25519.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccec25519.h; path = Dependencies/corecrypto/ccec25519.h; sourceTree = SOURCE_ROOT; };
+		BFE20E10237CAA3A00409FF7 /* ccmode_siv_priv.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccmode_siv_priv.h; path = Dependencies/corecrypto/ccmode_siv_priv.h; sourceTree = SOURCE_ROOT; };
+		BFE20E11237CAA3A00409FF7 /* cchkdf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = cchkdf.h; path = Dependencies/corecrypto/cchkdf.h; sourceTree = SOURCE_ROOT; };
+		BFE20E12237CAA3A00409FF7 /* ccec_priv.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccec_priv.h; path = Dependencies/corecrypto/ccec_priv.h; sourceTree = SOURCE_ROOT; };
+		BFE20E13237CAA3A00409FF7 /* ccansikdf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccansikdf.h; path = Dependencies/corecrypto/ccansikdf.h; sourceTree = SOURCE_ROOT; };
+		BFE20E14237CAA3A00409FF7 /* ccpbkdf2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccpbkdf2.h; path = Dependencies/corecrypto/ccpbkdf2.h; sourceTree = SOURCE_ROOT; };
+		BFE20E15237CAA3A00409FF7 /* ccrc4.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccrc4.h; path = Dependencies/corecrypto/ccrc4.h; sourceTree = SOURCE_ROOT; };
+		BFE20E16237CAA3B00409FF7 /* ccder_priv.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccder_priv.h; path = Dependencies/corecrypto/ccder_priv.h; sourceTree = SOURCE_ROOT; };
+		BFE20E17237CAA3B00409FF7 /* ccrng_ecfips_test.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccrng_ecfips_test.h; path = Dependencies/corecrypto/ccrng_ecfips_test.h; sourceTree = SOURCE_ROOT; };
+		BFE20E18237CAA3B00409FF7 /* ccrng_test.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccrng_test.h; path = Dependencies/corecrypto/ccrng_test.h; sourceTree = SOURCE_ROOT; };
+		BFE20E19237CAA3B00409FF7 /* ccrsa_priv.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccrsa_priv.h; path = Dependencies/corecrypto/ccrsa_priv.h; sourceTree = SOURCE_ROOT; };
+		BFE20E1A237CAA3B00409FF7 /* ccrng_priv.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccrng_priv.h; path = Dependencies/corecrypto/ccrng_priv.h; sourceTree = SOURCE_ROOT; };
+		BFE20E1B237CAA3B00409FF7 /* ccdrbg.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccdrbg.h; path = Dependencies/corecrypto/ccdrbg.h; sourceTree = SOURCE_ROOT; };
+		BFE20E1C237CAA3B00409FF7 /* ccz.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccz.h; path = Dependencies/corecrypto/ccz.h; sourceTree = SOURCE_ROOT; };
+		BFE20E1D237CAA3B00409FF7 /* ccmd5.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccmd5.h; path = Dependencies/corecrypto/ccmd5.h; sourceTree = SOURCE_ROOT; };
+		BFE20E1E237CAA3B00409FF7 /* ccec25519_priv.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccec25519_priv.h; path = Dependencies/corecrypto/ccec25519_priv.h; sourceTree = SOURCE_ROOT; };
+		BFE20E1F237CAA3B00409FF7 /* ccsha1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccsha1.h; path = Dependencies/corecrypto/ccsha1.h; sourceTree = SOURCE_ROOT; };
+		BFE20E20237CAA3B00409FF7 /* ccsha2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccsha2.h; path = Dependencies/corecrypto/ccsha2.h; sourceTree = SOURCE_ROOT; };
+		BFE20E21237CAA3B00409FF7 /* ccasn1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccasn1.h; path = Dependencies/corecrypto/ccasn1.h; sourceTree = SOURCE_ROOT; };
+		BFE20E22237CAA3B00409FF7 /* ccrng_system.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccrng_system.h; path = Dependencies/corecrypto/ccrng_system.h; sourceTree = SOURCE_ROOT; };
+		BFE20E23237CAA3B00409FF7 /* ccdes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccdes.h; path = Dependencies/corecrypto/ccdes.h; sourceTree = SOURCE_ROOT; };
+		BFE20E24237CAA3B00409FF7 /* ccripemd.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccripemd.h; path = Dependencies/corecrypto/ccripemd.h; sourceTree = SOURCE_ROOT; };
+		BFE20E25237CAA3B00409FF7 /* ccder_decode_eckey.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccder_decode_eckey.h; path = Dependencies/corecrypto/ccder_decode_eckey.h; sourceTree = SOURCE_ROOT; };
+		BFE20E26237CAA3B00409FF7 /* ccn_priv.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccn_priv.h; path = Dependencies/corecrypto/ccn_priv.h; sourceTree = SOURCE_ROOT; };
+		BFE20E27237CAA3B00409FF7 /* ccz_priv.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccz_priv.h; path = Dependencies/corecrypto/ccz_priv.h; sourceTree = SOURCE_ROOT; };
+		BFE20E28237CAA3B00409FF7 /* cc_config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = cc_config.h; path = Dependencies/corecrypto/cc_config.h; sourceTree = SOURCE_ROOT; };
+		BFE20E29237CAA3B00409FF7 /* cctest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = cctest.h; path = Dependencies/corecrypto/cctest.h; sourceTree = SOURCE_ROOT; };
+		BFE20E2A237CAA3B00409FF7 /* ccpad.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccpad.h; path = Dependencies/corecrypto/ccpad.h; sourceTree = SOURCE_ROOT; };
+		BFE20E2B237CAA3C00409FF7 /* ccdh_priv.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccdh_priv.h; path = Dependencies/corecrypto/ccdh_priv.h; sourceTree = SOURCE_ROOT; };
+		BFE20E2C237CAA3C00409FF7 /* ccrsa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccrsa.h; path = Dependencies/corecrypto/ccrsa.h; sourceTree = SOURCE_ROOT; };
+		BFE20E2D237CAA3C00409FF7 /* ccrng_pbkdf2_prng.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccrng_pbkdf2_prng.h; path = Dependencies/corecrypto/ccrng_pbkdf2_prng.h; sourceTree = SOURCE_ROOT; };
+		BFE20E2E237CAA3C00409FF7 /* ccdrbg_impl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccdrbg_impl.h; path = Dependencies/corecrypto/ccdrbg_impl.h; sourceTree = SOURCE_ROOT; };
+		BFE20E2F237CAA3C00409FF7 /* cccast.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = cccast.h; path = Dependencies/corecrypto/cccast.h; sourceTree = SOURCE_ROOT; };
+		BFE20E30237CAA3C00409FF7 /* ccchacha20poly1305.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccchacha20poly1305.h; path = Dependencies/corecrypto/ccchacha20poly1305.h; sourceTree = SOURCE_ROOT; };
+		BFE20E31237CAA3C00409FF7 /* cc_priv.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = cc_priv.h; path = Dependencies/corecrypto/cc_priv.h; sourceTree = SOURCE_ROOT; };
+		BFE20E32237CAA3C00409FF7 /* ccder_rsa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccder_rsa.h; path = Dependencies/corecrypto/ccder_rsa.h; sourceTree = SOURCE_ROOT; };
+		BFE20E33237CAA3C00409FF7 /* cchmac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = cchmac.h; path = Dependencies/corecrypto/cchmac.h; sourceTree = SOURCE_ROOT; };
+		BFE20E34237CAA3C00409FF7 /* ccrng_drbg.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccrng_drbg.h; path = Dependencies/corecrypto/ccrng_drbg.h; sourceTree = SOURCE_ROOT; };
+		BFE20E35237CAA3C00409FF7 /* ccrng_sequence.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccrng_sequence.h; path = Dependencies/corecrypto/ccrng_sequence.h; sourceTree = SOURCE_ROOT; };
+		BFE20E36237CAA3C00409FF7 /* ccdigest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccdigest.h; path = Dependencies/corecrypto/ccdigest.h; sourceTree = SOURCE_ROOT; };
+		BFE20E37237CAA3C00409FF7 /* ccdh.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccdh.h; path = Dependencies/corecrypto/ccdh.h; sourceTree = SOURCE_ROOT; };
+		BFE20E38237CAA3C00409FF7 /* ccmd4.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccmd4.h; path = Dependencies/corecrypto/ccmd4.h; sourceTree = SOURCE_ROOT; };
+		BFE20E39237CAA3C00409FF7 /* ccec.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccec.h; path = Dependencies/corecrypto/ccec.h; sourceTree = SOURCE_ROOT; };
+		BFE20E3A237CAA3C00409FF7 /* ccperf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccperf.h; path = Dependencies/corecrypto/ccperf.h; sourceTree = SOURCE_ROOT; };
+		BFE20E3B237CAA3C00409FF7 /* fipspost.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = fipspost.h; path = Dependencies/corecrypto/fipspost.h; sourceTree = SOURCE_ROOT; };
+		BFE20E3C237CAA3C00409FF7 /* ccnistkdf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccnistkdf.h; path = Dependencies/corecrypto/ccnistkdf.h; sourceTree = SOURCE_ROOT; };
+		BFE20E3D237CAA3D00409FF7 /* ccdrbg_factory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccdrbg_factory.h; path = Dependencies/corecrypto/ccdrbg_factory.h; sourceTree = SOURCE_ROOT; };
+		BFE20E3E237CAA3D00409FF7 /* ccrng_rsafips_test.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccrng_rsafips_test.h; path = Dependencies/corecrypto/ccrng_rsafips_test.h; sourceTree = SOURCE_ROOT; };
+		BFE20E3F237CAA3D00409FF7 /* ccmode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccmode.h; path = Dependencies/corecrypto/ccmode.h; sourceTree = SOURCE_ROOT; };
+		BFE20E40237CAA3D00409FF7 /* ccmode_siv.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccmode_siv.h; path = Dependencies/corecrypto/ccmode_siv.h; sourceTree = SOURCE_ROOT; };
+		BFE20E41237CAA3D00409FF7 /* cc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = cc.h; path = Dependencies/corecrypto/cc.h; sourceTree = SOURCE_ROOT; };
+		BFE20E42237CAA3D00409FF7 /* ccsrp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccsrp.h; path = Dependencies/corecrypto/ccsrp.h; sourceTree = SOURCE_ROOT; };
+		BFE20E43237CAA3D00409FF7 /* ccaes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccaes.h; path = Dependencies/corecrypto/ccaes.h; sourceTree = SOURCE_ROOT; };
+		BFE20E44237CAA3D00409FF7 /* cc_memory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = cc_memory.h; path = Dependencies/corecrypto/cc_memory.h; sourceTree = SOURCE_ROOT; };
+		BFE20E45237CAA3D00409FF7 /* cc_debug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = cc_debug.h; path = Dependencies/corecrypto/cc_debug.h; sourceTree = SOURCE_ROOT; };
+		BFE20E46237CAA3D00409FF7 /* ccdh_gp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccdh_gp.h; path = Dependencies/corecrypto/ccdh_gp.h; sourceTree = SOURCE_ROOT; };
+		BFE20E47237CAA3D00409FF7 /* cccmac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = cccmac.h; path = Dependencies/corecrypto/cccmac.h; sourceTree = SOURCE_ROOT; };
+		BFE20E48237CAA3D00409FF7 /* ccmode_factory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccmode_factory.h; path = Dependencies/corecrypto/ccmode_factory.h; sourceTree = SOURCE_ROOT; };
+		BFE20E49237CAA3E00409FF7 /* ccn.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccn.h; path = Dependencies/corecrypto/ccn.h; sourceTree = SOURCE_ROOT; };
+		BFE20E4A237CAA3E00409FF7 /* ccchacha20poly1305_priv.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccchacha20poly1305_priv.h; path = Dependencies/corecrypto/ccchacha20poly1305_priv.h; sourceTree = SOURCE_ROOT; };
+		BFE20E4B237CAA3E00409FF7 /* ccecies_priv.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccecies_priv.h; path = Dependencies/corecrypto/ccecies_priv.h; sourceTree = SOURCE_ROOT; };
+		BFE20E4C237CAA3E00409FF7 /* ccblowfish.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccblowfish.h; path = Dependencies/corecrypto/ccblowfish.h; sourceTree = SOURCE_ROOT; };
+		BFE20E4D237CAA3E00409FF7 /* ccdigest_priv.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccdigest_priv.h; path = Dependencies/corecrypto/ccdigest_priv.h; sourceTree = SOURCE_ROOT; };
+		BFE20E4E237CAA3E00409FF7 /* ccprime.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccprime.h; path = Dependencies/corecrypto/ccprime.h; sourceTree = SOURCE_ROOT; };
+		BFE20E4F237CAA3E00409FF7 /* ccwrap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccwrap.h; path = Dependencies/corecrypto/ccwrap.h; sourceTree = SOURCE_ROOT; };
+		BFE20E50237CAA3E00409FF7 /* ccrc2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccrc2.h; path = Dependencies/corecrypto/ccrc2.h; sourceTree = SOURCE_ROOT; };
+		BFE20E51237CAA3E00409FF7 /* ccecies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccecies.h; path = Dependencies/corecrypto/ccecies.h; sourceTree = SOURCE_ROOT; };
+		BFE20E52237CAA3E00409FF7 /* ccrng.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccrng.h; path = Dependencies/corecrypto/ccrng.h; sourceTree = SOURCE_ROOT; };
+		BFE20E53237CAA3E00409FF7 /* cc_runtime_config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = cc_runtime_config.h; path = Dependencies/corecrypto/cc_runtime_config.h; sourceTree = SOURCE_ROOT; };
+		BFE20E54237CAA3E00409FF7 /* ccder_encode_eckey.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccder_encode_eckey.h; path = Dependencies/corecrypto/ccder_encode_eckey.h; sourceTree = SOURCE_ROOT; };
+		BFE20E55237CAA3E00409FF7 /* cczp_priv.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = cczp_priv.h; path = Dependencies/corecrypto/cczp_priv.h; sourceTree = SOURCE_ROOT; };
+		BFE20E56237CAA3E00409FF7 /* ccmode_impl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccmode_impl.h; path = Dependencies/corecrypto/ccmode_impl.h; sourceTree = SOURCE_ROOT; };
+		BFE20E57237CAA3E00409FF7 /* cczp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = cczp.h; path = Dependencies/corecrypto/cczp.h; sourceTree = SOURCE_ROOT; };
+		BFE20E58237CAA3E00409FF7 /* ccsrp_gp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccsrp_gp.h; path = Dependencies/corecrypto/ccsrp_gp.h; sourceTree = SOURCE_ROOT; };
+		BFE20E59237CAA3E00409FF7 /* ccmd2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccmd2.h; path = Dependencies/corecrypto/ccmd2.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -302,6 +393,7 @@
 		BF48CFE0229435CB0004760B /* Dependencies */ = {
 			isa = PBXGroup;
 			children = (
+				BFE20E0D237CAA2500409FF7 /* corecrypto-headers */,
 				BF48CFE1229435DB0004760B /* OpenSSL.xcodeproj */,
 				BF9B63D3229DD8E8002F0A62 /* minizip */,
 			);
@@ -469,7 +561,12 @@
 			isa = PBXGroup;
 			children = (
 				BFBAC88F2295E05600587369 /* ALTAppleAPI.h */,
+				BFD80D532380A00B00B9C227 /* ALTAppleAPI_Private.h */,
 				BFBAC8902295E05600587369 /* ALTAppleAPI.m */,
+				BFD80D4D23809EE100B9C227 /* ALTAppleAPI+Authentication.h */,
+				BFD80D4E23809EE100B9C227 /* ALTAppleAPI+Authentication.m */,
+				BF5D43F4237F53BB00EC8745 /* ALTAppleAPISession.h */,
+				BF5D43F5237F53BB00EC8745 /* ALTAppleAPISession.m */,
 			);
 			path = "Apple API";
 			sourceTree = "<group>";
@@ -532,6 +629,89 @@
 			name = libcnary;
 			sourceTree = "<group>";
 		};
+		BFE20E0D237CAA2500409FF7 /* corecrypto-headers */ = {
+			isa = PBXGroup;
+			children = (
+				BFE20E28237CAA3B00409FF7 /* cc_config.h */,
+				BFE20E45237CAA3D00409FF7 /* cc_debug.h */,
+				BFE20E44237CAA3D00409FF7 /* cc_memory.h */,
+				BFE20E31237CAA3C00409FF7 /* cc_priv.h */,
+				BFE20E53237CAA3E00409FF7 /* cc_runtime_config.h */,
+				BFE20E41237CAA3D00409FF7 /* cc.h */,
+				BFE20E43237CAA3D00409FF7 /* ccaes.h */,
+				BFE20E13237CAA3A00409FF7 /* ccansikdf.h */,
+				BFE20E21237CAA3B00409FF7 /* ccasn1.h */,
+				BFE20E4C237CAA3E00409FF7 /* ccblowfish.h */,
+				BFE20E2F237CAA3C00409FF7 /* cccast.h */,
+				BFE20E4A237CAA3E00409FF7 /* ccchacha20poly1305_priv.h */,
+				BFE20E30237CAA3C00409FF7 /* ccchacha20poly1305.h */,
+				BFE20E47237CAA3D00409FF7 /* cccmac.h */,
+				BFE20E25237CAA3B00409FF7 /* ccder_decode_eckey.h */,
+				BFE20E54237CAA3E00409FF7 /* ccder_encode_eckey.h */,
+				BFE20E16237CAA3B00409FF7 /* ccder_priv.h */,
+				BFE20E32237CAA3C00409FF7 /* ccder_rsa.h */,
+				BFE20E0E237CAA3A00409FF7 /* ccder.h */,
+				BFE20E23237CAA3B00409FF7 /* ccdes.h */,
+				BFE20E46237CAA3D00409FF7 /* ccdh_gp.h */,
+				BFE20E2B237CAA3C00409FF7 /* ccdh_priv.h */,
+				BFE20E37237CAA3C00409FF7 /* ccdh.h */,
+				BFE20E4D237CAA3E00409FF7 /* ccdigest_priv.h */,
+				BFE20E36237CAA3C00409FF7 /* ccdigest.h */,
+				BFE20E3D237CAA3D00409FF7 /* ccdrbg_factory.h */,
+				BFE20E2E237CAA3C00409FF7 /* ccdrbg_impl.h */,
+				BFE20E1B237CAA3B00409FF7 /* ccdrbg.h */,
+				BFE20E12237CAA3A00409FF7 /* ccec_priv.h */,
+				BFE20E39237CAA3C00409FF7 /* ccec.h */,
+				BFE20E1E237CAA3B00409FF7 /* ccec25519_priv.h */,
+				BFE20E0F237CAA3A00409FF7 /* ccec25519.h */,
+				BFE20E4B237CAA3E00409FF7 /* ccecies_priv.h */,
+				BFE20E51237CAA3E00409FF7 /* ccecies.h */,
+				BFE20E11237CAA3A00409FF7 /* cchkdf.h */,
+				BFE20E33237CAA3C00409FF7 /* cchmac.h */,
+				BFE20E59237CAA3E00409FF7 /* ccmd2.h */,
+				BFE20E38237CAA3C00409FF7 /* ccmd4.h */,
+				BFE20E1D237CAA3B00409FF7 /* ccmd5.h */,
+				BFE20E48237CAA3D00409FF7 /* ccmode_factory.h */,
+				BFE20E56237CAA3E00409FF7 /* ccmode_impl.h */,
+				BFE20E10237CAA3A00409FF7 /* ccmode_siv_priv.h */,
+				BFE20E40237CAA3D00409FF7 /* ccmode_siv.h */,
+				BFE20E3F237CAA3D00409FF7 /* ccmode.h */,
+				BFE20E26237CAA3B00409FF7 /* ccn_priv.h */,
+				BFE20E49237CAA3E00409FF7 /* ccn.h */,
+				BFE20E3C237CAA3C00409FF7 /* ccnistkdf.h */,
+				BFE20E2A237CAA3B00409FF7 /* ccpad.h */,
+				BFE20E14237CAA3A00409FF7 /* ccpbkdf2.h */,
+				BFE20E3A237CAA3C00409FF7 /* ccperf.h */,
+				BFE20E4E237CAA3E00409FF7 /* ccprime.h */,
+				BFE20E50237CAA3E00409FF7 /* ccrc2.h */,
+				BFE20E15237CAA3A00409FF7 /* ccrc4.h */,
+				BFE20E24237CAA3B00409FF7 /* ccripemd.h */,
+				BFE20E34237CAA3C00409FF7 /* ccrng_drbg.h */,
+				BFE20E17237CAA3B00409FF7 /* ccrng_ecfips_test.h */,
+				BFE20E2D237CAA3C00409FF7 /* ccrng_pbkdf2_prng.h */,
+				BFE20E1A237CAA3B00409FF7 /* ccrng_priv.h */,
+				BFE20E3E237CAA3D00409FF7 /* ccrng_rsafips_test.h */,
+				BFE20E35237CAA3C00409FF7 /* ccrng_sequence.h */,
+				BFE20E22237CAA3B00409FF7 /* ccrng_system.h */,
+				BFE20E18237CAA3B00409FF7 /* ccrng_test.h */,
+				BFE20E52237CAA3E00409FF7 /* ccrng.h */,
+				BFE20E19237CAA3B00409FF7 /* ccrsa_priv.h */,
+				BFE20E2C237CAA3C00409FF7 /* ccrsa.h */,
+				BFE20E1F237CAA3B00409FF7 /* ccsha1.h */,
+				BFE20E20237CAA3B00409FF7 /* ccsha2.h */,
+				BFE20E58237CAA3E00409FF7 /* ccsrp_gp.h */,
+				BFE20E42237CAA3D00409FF7 /* ccsrp.h */,
+				BFE20E29237CAA3B00409FF7 /* cctest.h */,
+				BFE20E4F237CAA3E00409FF7 /* ccwrap.h */,
+				BFE20E27237CAA3B00409FF7 /* ccz_priv.h */,
+				BFE20E1C237CAA3B00409FF7 /* ccz.h */,
+				BFE20E55237CAA3E00409FF7 /* cczp_priv.h */,
+				BFE20E57237CAA3E00409FF7 /* cczp.h */,
+				BFE20E3B237CAA3C00409FF7 /* fipspost.h */,
+			);
+			name = "corecrypto-headers";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -544,6 +724,7 @@
 				BF9B6400229E0AA0002F0A62 /* crypt.h in Headers */,
 				BFBAC88B2295D90F00587369 /* ALTProvisioningProfile.h in Headers */,
 				BF5AB3B92286024D00DC914B /* ALTAccount.h in Headers */,
+				BFD80D542380A00B00B9C227 /* ALTAppleAPI_Private.h in Headers */,
 				BF50E7BF22C163DC0070E17B /* ALTApplication.h in Headers */,
 				BF5AB3BF2286040400DC914B /* NSError+ALTErrors.h in Headers */,
 				BF5AB3CD228645DF00DC914B /* ALTCertificate.h in Headers */,
@@ -557,9 +738,11 @@
 				BF50E7B822C161630070E17B /* ALTAppGroup.h in Headers */,
 				BF9B6410229E0AA0002F0A62 /* unzip.h in Headers */,
 				BF9B6406229E0AA0002F0A62 /* ioapi.h in Headers */,
+				BFD80D4F23809EE100B9C227 /* ALTAppleAPI+Authentication.h in Headers */,
 				BF9B633F229DC27C002F0A62 /* ALTModel+Internal.h in Headers */,
 				BF5AB3B5228600D100DC914B /* AltSign.h in Headers */,
 				BF5AB3C52286157F00DC914B /* ALTTeam.h in Headers */,
+				BF5D43F6237F53BB00EC8745 /* ALTAppleAPISession.h in Headers */,
 				BF48CFF622944FC60004760B /* ALTAppID.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -573,6 +756,7 @@
 				BF9B6401229E0AA0002F0A62 /* crypt.h in Headers */,
 				BF9B637F229DCF3A002F0A62 /* ALTProvisioningProfile.h in Headers */,
 				BF9B6380229DCF3A002F0A62 /* ALTAccount.h in Headers */,
+				BFD80D552380A00B00B9C227 /* ALTAppleAPI_Private.h in Headers */,
 				BF50E7C022C163DC0070E17B /* ALTApplication.h in Headers */,
 				BF9B6381229DCF3A002F0A62 /* NSError+ALTErrors.h in Headers */,
 				BF9B6382229DCF3A002F0A62 /* ALTCertificate.h in Headers */,
@@ -586,9 +770,11 @@
 				BF50E7B922C161630070E17B /* ALTAppGroup.h in Headers */,
 				BF9B6411229E0AA0002F0A62 /* unzip.h in Headers */,
 				BF9B6407229E0AA0002F0A62 /* ioapi.h in Headers */,
+				BFD80D5023809EE100B9C227 /* ALTAppleAPI+Authentication.h in Headers */,
 				BF9B6385229DCF3A002F0A62 /* ALTModel+Internal.h in Headers */,
 				BF9B6386229DCF3A002F0A62 /* AltSign.h in Headers */,
 				BF9B6387229DCF3A002F0A62 /* ALTTeam.h in Headers */,
+				BF5D43F7237F53BB00EC8745 /* ALTAppleAPISession.h in Headers */,
 				BF9B6388229DCF3A002F0A62 /* ALTAppID.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -738,8 +924,10 @@
 				BF48CFF0229438C10004760B /* ALTCertificateRequest.m in Sources */,
 				BFBAC88C2295D90F00587369 /* ALTProvisioningProfile.m in Sources */,
 				BF5AB3C62286157F00DC914B /* ALTTeam.m in Sources */,
+				BF5D43F8237F53BB00EC8745 /* ALTAppleAPISession.m in Sources */,
 				BF5AB3CA2286269B00DC914B /* ALTDevice.m in Sources */,
 				BF9B640E229E0AA0002F0A62 /* mztools.c in Sources */,
+				BFD80D5123809EE100B9C227 /* ALTAppleAPI+Authentication.m in Sources */,
 				BFBAC8922295E05600587369 /* ALTAppleAPI.m in Sources */,
 				BF50E7BA22C161630070E17B /* ALTAppGroup.m in Sources */,
 				BF9B6416229E0CCE002F0A62 /* NSFileManager+Apps.m in Sources */,
@@ -764,8 +952,10 @@
 				BF9B638A229DCF3A002F0A62 /* ALTCertificateRequest.m in Sources */,
 				BF9B638B229DCF3A002F0A62 /* ALTProvisioningProfile.m in Sources */,
 				BF9B638C229DCF3A002F0A62 /* ALTTeam.m in Sources */,
+				BF5D43F9237F53BB00EC8745 /* ALTAppleAPISession.m in Sources */,
 				BF9B638D229DCF3A002F0A62 /* ALTDevice.m in Sources */,
 				BF9B640F229E0AA0002F0A62 /* mztools.c in Sources */,
+				BFD80D5223809EE100B9C227 /* ALTAppleAPI+Authentication.m in Sources */,
 				BF9B638E229DCF3A002F0A62 /* ALTAppleAPI.m in Sources */,
 				BF50E7BB22C161630070E17B /* ALTAppGroup.m in Sources */,
 				BF9B6417229E0CCE002F0A62 /* NSFileManager+Apps.m in Sources */,
@@ -882,7 +1072,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Dependencies/OpenSSL/ios/include\"";
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/Dependencies/OpenSSL/ios/include\"",
+					"\"$(SRCROOT)/Dependencies\"",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -940,7 +1133,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Dependencies/OpenSSL/ios/include\"";
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/Dependencies/OpenSSL/ios/include\"",
+					"\"$(SRCROOT)/Dependencies\"",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;

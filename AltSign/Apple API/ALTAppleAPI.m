@@ -6,7 +6,10 @@
 //  Copyright © 2019 Riley Testut. All rights reserved.
 //
 
-#import "ALTAppleAPI.h"
+#import "ALTAppleAPI_Private.h"
+#import "ALTAppleAPISession.h"
+
+#import "ALTAnisetteData.h"
 
 #import "ALTModel+Internal.h"
 
@@ -18,14 +21,6 @@ NSString *const ALTAuthenticationProtocolVersion = @"A1234";
 NSString *const ALTProtocolVersion = @"QH65B2";
 NSString *const ALTAppIDKey = @"ba2ec180e6ca6e6c6a542255453b24d6e6e5b2be0cc48bc1b0d8ad64cfe0228f";
 NSString *const ALTClientID = @"XABBG36SBA";
-
-@interface ALTAppleAPI ()
-
-@property (nonatomic, readonly) NSURLSession *session;
-
-@property (nonatomic, copy, readonly) NSURL *baseURL;
-
-@end
 
 NS_ASSUME_NONNULL_END
 
@@ -48,90 +43,22 @@ NS_ASSUME_NONNULL_END
     if (self)
     {
         _session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration ephemeralSessionConfiguration]];
+        _dateFormatter = [[NSISO8601DateFormatter alloc] init];
         
         _baseURL = [[NSURL URLWithString:[NSString stringWithFormat:@"https://developerservices2.apple.com/services/%@/", ALTProtocolVersion]] copy];
+        _servicesBaseURL = [[NSURL URLWithString:@"https://developerservices2.apple.com/services/v1/"] copy];
     }
     
     return self;
 }
 
-#pragma mark - Authentication -
-
-- (void)authenticateWithAppleID:(NSString *)appleID password:(NSString *)password completionHandler:(void (^)(ALTAccount *account, NSError *error))completionHandler
-{
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"https://idmsa.apple.com/IDMSWebAuth/clientDAW.cgi"]];
-    request.HTTPMethod = @"POST";
-    
-    NSString *encodedAppleID = [appleID stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet alphanumericCharacterSet]];
-    NSString *encodedPassword = [password stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet alphanumericCharacterSet]];
-    
-    NSString *body = [NSString stringWithFormat:@"format=plist&appIdKey=%@&appleId=%@&password=%@&userLocale=en_US&protocolVersion=%@",
-                      ALTAppIDKey, encodedAppleID, encodedPassword, ALTAuthenticationProtocolVersion];
-    
-    NSDictionary<NSString *, NSString *> *headers = @{
-                                                      @"Content-Type": @"application/x-www-form-urlencoded",
-                                                      @"User-Agent": @"Xcode",
-                                                      @"Accept": @"text/x-xml-plist",
-                                                      @"Accept-Language": @"en-us",
-                                                      @"Connection": @"keep-alive",
-                                                      };
-    
-    [headers enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *value, BOOL *stop) {
-        [request setValue:value forHTTPHeaderField:key];
-    }];
-    
-    NSData *encodedBody = [body dataUsingEncoding:NSUTF8StringEncoding];
-    request.HTTPBody = encodedBody;
-    
-    NSURLSessionDataTask *dataTask = [self.session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable requestError) {
-        if (data == nil)
-        {
-            completionHandler(nil, requestError);
-            return;
-        }
-        
-        NSError *parseError = nil;
-        NSDictionary *responseDictionary = [NSPropertyListSerialization propertyListWithData:data options:0 format:nil error:&parseError];
-        
-        if (responseDictionary == nil)
-        {
-            NSError *error = [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorBadServerResponse userInfo:@{NSUnderlyingErrorKey: parseError}];
-            completionHandler(nil, error);
-            return;
-        }
-        
-        NSError *error = nil;
-        ALTAccount *account = [self processResponse:responseDictionary parseHandler:^id {
-            ALTAccount *account = [[ALTAccount alloc] initWithAppleID:appleID responseDictionary:responseDictionary];
-            return account;
-        } resultCodeHandler:^NSError * _Nullable(NSInteger resultCode) {
-            switch (resultCode)
-            {
-            case -22910:
-            case -22938:
-                return [NSError errorWithDomain:ALTAppleAPIErrorDomain code:ALTAppleAPIErrorAppSpecificPasswordRequired userInfo:nil];
-                
-            case -1:
-            case -20101:
-                return [NSError errorWithDomain:ALTAppleAPIErrorDomain code:ALTAppleAPIErrorIncorrectCredentials userInfo:nil];
-                
-            default: return nil;
-            }
-        } error:&error];
-        
-        completionHandler(account, error);
-    }];
-    
-    [dataTask resume];
-}
-
 #pragma mark - Teams -
 
-- (void)fetchTeamsForAccount:(ALTAccount *)account completionHandler:(void (^)(NSArray<ALTTeam *> *teams, NSError *error))completionHandler
+- (void)fetchTeamsForAccount:(ALTAccount *)account session:(ALTAppleAPISession *)session completionHandler:(void (^)(NSArray<ALTTeam *> *teams, NSError *error))completionHandler
 {
     NSURL *URL = [NSURL URLWithString:@"listTeams.action" relativeToURL:self.baseURL];
     
-    [self sendRequestWithURL:URL additionalParameters:nil account:account team:nil completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
+    [self sendRequestWithURL:URL additionalParameters:nil session:session team:nil completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
         if (responseDictionary == nil)
         {
             completionHandler(nil, requestError);
@@ -173,11 +100,11 @@ NS_ASSUME_NONNULL_END
 
 #pragma mark - Devices -
 
-- (void)fetchDevicesForTeam:(ALTTeam *)team completionHandler:(void (^)(NSArray<ALTDevice *> * _Nullable, NSError * _Nullable))completionHandler
+- (void)fetchDevicesForTeam:(ALTTeam *)team session:(ALTAppleAPISession *)session completionHandler:(void (^)(NSArray<ALTDevice *> * _Nullable, NSError * _Nullable))completionHandler
 {
     NSURL *URL = [NSURL URLWithString:@"ios/listDevices.action" relativeToURL:self.baseURL];
     
-    [self sendRequestWithURL:URL additionalParameters:nil account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
+    [self sendRequestWithURL:URL additionalParameters:nil session:session team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
         if (responseDictionary == nil)
         {
             completionHandler(nil, requestError);
@@ -210,11 +137,11 @@ NS_ASSUME_NONNULL_END
     }];
 }
 
-- (void)registerDeviceWithName:(NSString *)name identifier:(NSString *)identifier team:(ALTTeam *)team completionHandler:(void (^)(ALTDevice * _Nullable, NSError * _Nullable))completionHandler
+- (void)registerDeviceWithName:(NSString *)name identifier:(NSString *)identifier team:(ALTTeam *)team session:(ALTAppleAPISession *)session completionHandler:(void (^)(ALTDevice * _Nullable, NSError * _Nullable))completionHandler
 {
     NSURL *URL = [NSURL URLWithString:@"ios/addDevice.action" relativeToURL:self.baseURL];
     
-    [self sendRequestWithURL:URL additionalParameters:@{@"deviceNumber": identifier, @"name": name} account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
+    [self sendRequestWithURL:URL additionalParameters:@{@"deviceNumber": identifier, @"name": name} session:session team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
         if (responseDictionary == nil)
         {
             completionHandler(nil, requestError);
@@ -254,11 +181,11 @@ NS_ASSUME_NONNULL_END
 
 #pragma mark - Certificates -
 
-- (void)fetchCertificatesForTeam:(ALTTeam *)team completionHandler:(void (^)(NSArray<ALTCertificate *> * _Nullable, NSError * _Nullable))completionHandler
+- (void)fetchCertificatesForTeam:(ALTTeam *)team session:(ALTAppleAPISession *)session completionHandler:(void (^)(NSArray<ALTCertificate *> * _Nullable, NSError * _Nullable))completionHandler
 {
     NSURL *URL = [NSURL URLWithString:@"ios/listAllDevelopmentCerts.action" relativeToURL:self.baseURL];
     
-    [self sendRequestWithURL:URL additionalParameters:nil account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
+    [self sendRequestWithURL:URL additionalParameters:nil session:session team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
         if (responseDictionary == nil)
         {
             completionHandler(nil, requestError);
@@ -291,7 +218,7 @@ NS_ASSUME_NONNULL_END
     }];
 }
 
-- (void)addCertificateWithMachineName:(NSString *)machineName toTeam:(ALTTeam *)team completionHandler:(void (^)(ALTCertificate * _Nullable, NSError * _Nullable))completionHandler
+- (void)addCertificateWithMachineName:(NSString *)machineName toTeam:(ALTTeam *)team session:(ALTAppleAPISession *)session completionHandler:(void (^)(ALTCertificate * _Nullable, NSError * _Nullable))completionHandler
 {
     ALTCertificateRequest *request = [[ALTCertificateRequest alloc] init];
     if (request == nil)
@@ -307,7 +234,7 @@ NS_ASSUME_NONNULL_END
     [self sendRequestWithURL:URL additionalParameters:@{@"csrContent": encodedCSR,
                                                         @"machineId": [[NSUUID UUID] UUIDString],
                                                         @"machineName": machineName}
-                     account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
+                     session:session team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
                          if (responseDictionary == nil)
                          {
                              completionHandler(nil, requestError);
@@ -339,11 +266,14 @@ NS_ASSUME_NONNULL_END
                      }];
 }
 
-- (void)revokeCertificate:(ALTCertificate *)certificate forTeam:(ALTTeam *)team completionHandler:(void (^)(BOOL, NSError * _Nullable))completionHandler
+- (void)revokeCertificate:(ALTCertificate *)certificate forTeam:(ALTTeam *)team session:(ALTAppleAPISession *)session completionHandler:(void (^)(BOOL, NSError * _Nullable))completionHandler
 {
-    NSURL *URL = [NSURL URLWithString:@"ios/revokeDevelopmentCert.action" relativeToURL:self.baseURL];
+    NSURL *URL = [NSURL URLWithString:[NSString stringWithFormat:@"certificates/%@", certificate.identifier] relativeToURL:self.servicesBaseURL];
     
-    [self sendRequestWithURL:URL additionalParameters:@{@"serialNumber": certificate.serialNumber} account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
+    request.HTTPMethod = @"DELETE";
+    
+    [self sendRequestWithURL:URL additionalParameters:nil session:session team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
         if (responseDictionary == nil)
         {
             completionHandler(NO, requestError);
@@ -352,11 +282,11 @@ NS_ASSUME_NONNULL_END
         
         NSError *error = nil;
         id result = [self processResponse:responseDictionary parseHandler:^id _Nullable{
-            return responseDictionary[@"certRequests"];
+            return responseDictionary;
         } resultCodeHandler:^NSError * _Nullable(NSInteger resultCode) {
             switch (resultCode)
             {
-                case 7252:
+                case 7252: return nil;
                     return [NSError errorWithDomain:ALTAppleAPIErrorDomain code:ALTAppleAPIErrorCertificateDoesNotExist userInfo:nil];
                     
                 default: return nil;
@@ -369,11 +299,11 @@ NS_ASSUME_NONNULL_END
 
 #pragma mark - App IDs -
 
-- (void)fetchAppIDsForTeam:(ALTTeam *)team completionHandler:(void (^)(NSArray<ALTAppID *> * _Nullable, NSError * _Nullable))completionHandler
+- (void)fetchAppIDsForTeam:(ALTTeam *)team session:(ALTAppleAPISession *)session completionHandler:(void (^)(NSArray<ALTAppID *> * _Nullable, NSError * _Nullable))completionHandler
 {
     NSURL *URL = [NSURL URLWithString:@"ios/listAppIds.action" relativeToURL:self.baseURL];
     
-    [self sendRequestWithURL:URL additionalParameters:nil account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
+    [self sendRequestWithURL:URL additionalParameters:nil session:session team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
         if (responseDictionary == nil)
         {
             completionHandler(nil, requestError);
@@ -406,7 +336,7 @@ NS_ASSUME_NONNULL_END
     }];
 }
 
-- (void)addAppIDWithName:(NSString *)name bundleIdentifier:(NSString *)bundleIdentifier team:(ALTTeam *)team
+- (void)addAppIDWithName:(NSString *)name bundleIdentifier:(NSString *)bundleIdentifier team:(ALTTeam *)team session:(ALTAppleAPISession *)session
        completionHandler:(void (^)(ALTAppID *_Nullable appID, NSError *_Nullable error))completionHandler
 {
     NSURL *URL = [NSURL URLWithString:@"ios/addAppId.action" relativeToURL:self.baseURL];
@@ -416,7 +346,7 @@ NS_ASSUME_NONNULL_END
     
     NSString *sanitizedName = [[name componentsSeparatedByCharactersInSet:[allowedCharacters invertedSet]] componentsJoinedByString:@""];
     
-    [self sendRequestWithURL:URL additionalParameters:@{@"identifier": bundleIdentifier, @"name": sanitizedName} account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
+    [self sendRequestWithURL:URL additionalParameters:@{@"identifier": bundleIdentifier, @"name": sanitizedName} session:session team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
         if (responseDictionary == nil)
         {
             completionHandler(nil, requestError);
@@ -453,7 +383,7 @@ NS_ASSUME_NONNULL_END
     }];
 }
 
-- (void)updateAppID:(ALTAppID *)appID team:(ALTTeam *)team completionHandler:(void (^)(ALTAppID * _Nullable, NSError * _Nullable))completionHandler
+- (void)updateAppID:(ALTAppID *)appID team:(ALTTeam *)team session:(ALTAppleAPISession *)session completionHandler:(void (^)(ALTAppID * _Nullable, NSError * _Nullable))completionHandler
 {
     NSURL *URL = [NSURL URLWithString:@"ios/updateAppId.action" relativeToURL:self.baseURL];
     
@@ -465,7 +395,7 @@ NS_ASSUME_NONNULL_END
     }
     
     [self sendRequestWithURL:URL additionalParameters:parameters
-                     account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
+                     session:session team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
         if (responseDictionary == nil)
         {
             completionHandler(nil, requestError);
@@ -502,11 +432,11 @@ NS_ASSUME_NONNULL_END
     }];
 }
 
-- (void)deleteAppID:(ALTAppID *)appID forTeam:(ALTTeam *)team completionHandler:(void (^)(BOOL, NSError * _Nullable))completionHandler
+- (void)deleteAppID:(ALTAppID *)appID forTeam:(ALTTeam *)team session:(ALTAppleAPISession *)session completionHandler:(void (^)(BOOL, NSError * _Nullable))completionHandler
 {
     NSURL *URL = [NSURL URLWithString:@"ios/deleteAppId.action" relativeToURL:self.baseURL];
     
-    [self sendRequestWithURL:URL additionalParameters:@{@"appIdId": appID.identifier} account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
+    [self sendRequestWithURL:URL additionalParameters:@{@"appIdId": appID.identifier} session:session team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
         if (responseDictionary == nil)
         {
             completionHandler(NO, requestError);
@@ -533,11 +463,11 @@ NS_ASSUME_NONNULL_END
 
 #pragma mark - App Groups -
 
-- (void)fetchAppGroupsForTeam:(ALTTeam *)team completionHandler:(void (^)(NSArray<ALTAppGroup *> *_Nullable appIDs, NSError *_Nullable error))completionHandler
+- (void)fetchAppGroupsForTeam:(ALTTeam *)team session:(ALTAppleAPISession *)session completionHandler:(void (^)(NSArray<ALTAppGroup *> *_Nullable appIDs, NSError *_Nullable error))completionHandler
 {
     NSURL *URL = [NSURL URLWithString:@"ios/listApplicationGroups.action" relativeToURL:self.baseURL];
     
-    [self sendRequestWithURL:URL additionalParameters:nil account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
+    [self sendRequestWithURL:URL additionalParameters:nil session:session team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
         if (responseDictionary == nil)
         {
             completionHandler(nil, requestError);
@@ -570,11 +500,11 @@ NS_ASSUME_NONNULL_END
     }];
 }
 
-- (void)addAppGroupWithName:(NSString *)name groupIdentifier:(NSString *)groupIdentifier team:(ALTTeam *)team completionHandler:(void (^)(ALTAppGroup * _Nullable, NSError * _Nullable))completionHandler
+- (void)addAppGroupWithName:(NSString *)name groupIdentifier:(NSString *)groupIdentifier team:(ALTTeam *)team session:(ALTAppleAPISession *)session completionHandler:(void (^)(ALTAppGroup * _Nullable, NSError * _Nullable))completionHandler
 {
     NSURL *URL = [NSURL URLWithString:@"ios/addApplicationGroup.action" relativeToURL:self.baseURL];
     
-    [self sendRequestWithURL:URL additionalParameters:@{@"identifier": groupIdentifier, @"name": name} account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
+    [self sendRequestWithURL:URL additionalParameters:@{@"identifier": groupIdentifier, @"name": name} session:session team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
         if (responseDictionary == nil)
         {
             completionHandler(nil, requestError);
@@ -606,12 +536,12 @@ NS_ASSUME_NONNULL_END
     }];
 }
 
-- (void)addAppID:(ALTAppID *)appID toGroup:(ALTAppGroup *)group team:(ALTTeam *)team completionHandler:(void (^)(BOOL, NSError * _Nullable))completionHandler
+- (void)addAppID:(ALTAppID *)appID toGroup:(ALTAppGroup *)group team:(ALTTeam *)team session:(ALTAppleAPISession *)session completionHandler:(void (^)(BOOL, NSError * _Nullable))completionHandler
 {
     NSURL *URL = [NSURL URLWithString:@"ios/assignApplicationGroupToAppId.action" relativeToURL:self.baseURL];
     
     [self sendRequestWithURL:URL additionalParameters:@{@"appIdId": appID.identifier, @"applicationGroups": group.identifier}
-                     account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
+                     session:session team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
         if (responseDictionary == nil)
         {
             completionHandler(NO, requestError);
@@ -641,11 +571,11 @@ NS_ASSUME_NONNULL_END
 
 #pragma mark - Provisioning Profiles -
 
-- (void)fetchProvisioningProfileForAppID:(ALTAppID *)appID team:(ALTTeam *)team completionHandler:(void (^)(ALTProvisioningProfile * _Nullable, NSError * _Nullable))completionHandler
+- (void)fetchProvisioningProfileForAppID:(ALTAppID *)appID team:(ALTTeam *)team session:(ALTAppleAPISession *)session completionHandler:(void (^)(ALTProvisioningProfile * _Nullable, NSError * _Nullable))completionHandler
 {
     NSURL *URL = [NSURL URLWithString:@"ios/downloadTeamProvisioningProfile.action" relativeToURL:self.baseURL];
     
-    [self sendRequestWithURL:URL additionalParameters:@{@"appIdId": appID.identifier} account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
+    [self sendRequestWithURL:URL additionalParameters:@{@"appIdId": appID.identifier} session:session team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
         if (responseDictionary == nil)
         {
             completionHandler(nil, requestError);
@@ -676,13 +606,13 @@ NS_ASSUME_NONNULL_END
     }];
 }
 
-- (void)deleteProvisioningProfile:(ALTProvisioningProfile *)provisioningProfile forTeam:(ALTTeam *)team completionHandler:(void (^)(BOOL, NSError * _Nullable))completionHandler
+- (void)deleteProvisioningProfile:(ALTProvisioningProfile *)provisioningProfile forTeam:(ALTTeam *)team session:(ALTAppleAPISession *)session completionHandler:(void (^)(BOOL, NSError * _Nullable))completionHandler
 {
     NSURL *URL = [NSURL URLWithString:@"ios/deleteProvisioningProfile.action" relativeToURL:self.baseURL];
     
     [self sendRequestWithURL:URL additionalParameters:@{@"provisioningProfileId": provisioningProfile.identifier,
                                                         @"teamId": team.identifier}
-                     account:team.account team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
+                     session:session team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
         if (responseDictionary == nil)
         {
             completionHandler(NO, requestError);
@@ -712,25 +642,19 @@ NS_ASSUME_NONNULL_END
 
 #pragma mark - Requests -
 
-- (void)sendRequestWithURL:(NSURL *)requestURL additionalParameters:(nullable NSDictionary *)additionalParameters account:(ALTAccount *)account team:(nullable ALTTeam *)team completionHandler:(void (^)(NSDictionary *responseDictionary, NSError *error))completionHandler
+- (void)sendRequestWithURL:(NSURL *)requestURL additionalParameters:(nullable NSDictionary *)additionalParameters session:(ALTAppleAPISession *)session team:(nullable ALTTeam *)team completionHandler:(void (^)(NSDictionary *responseDictionary, NSError *error))completionHandler
 {
     NSMutableDictionary<NSString *, NSString *> *parameters = [@{
                                                                  @"DTDK_Platform": @"ios",
                                                                  @"clientId": ALTClientID,
                                                                  @"protocolVersion": ALTProtocolVersion,
                                                                  @"requestId": [[[NSUUID UUID] UUIDString] uppercaseString],
-                                                                 @"myacinfo": account.cookie,
                                                                  @"userLocale": @[@"en_US"],
                                                                  } mutableCopy];
     
     if (team != nil)
     {
         parameters[@"teamId"] = team.identifier;
-    }
-    
-    if (account != nil)
-    {
-        parameters[@"myacinfo"] = account.cookie;
     }
     
     [additionalParameters enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *value, BOOL *stop) {
@@ -753,14 +677,24 @@ NS_ASSUME_NONNULL_END
     request.HTTPBody = bodyData;
     
     NSDictionary<NSString *, NSString *> *httpHeaders = @{
-                                                          @"Content-Type": @"text/x-xml-plist",
-                                                          @"User-Agent": @"Xcode",
-                                                          @"Accept": @"text/x-xml-plist",
-                                                          @"Accept-Language": @"en-us",
-                                                          @"Connection": @"keep-alive",
-                                                          @"X-Xcode-Version": @"7.0 (7A120f)",
-                                                          @"Cookie": [NSString stringWithFormat:@"myacinfo=%@", account.cookie],
-                                                          };
+        @"Content-Type": @"text/x-xml-plist",
+        @"User-Agent": @"Xcode",
+        @"Accept": @"text/x-xml-plist",
+        @"Accept-Language": @"en-us",
+        @"X-Apple-App-Info": @"com.apple.gs.xcode.auth",
+        @"X-Xcode-Version": @"11.2 (11B41)",
+        @"X-Apple-I-Identity-Id": session.dsid,
+        @"X-Apple-GS-Token": session.authToken,
+        @"X-Apple-I-MD-M": session.anisetteData.machineID,
+        @"X-Apple-I-MD": session.anisetteData.oneTimePassword,
+        @"X-Apple-I-MD-LU": session.anisetteData.localUserID,
+        @"X-Apple-I-MD-RINFO": [@(session.anisetteData.routingInfo) description],
+        @"X-Mme-Device-Id": session.anisetteData.deviceUniqueIdentifier,
+        @"X-MMe-Client-Info": session.anisetteData.deviceDescription,
+        @"X-Apple-I-Client-Time": [self.dateFormatter stringFromDate:session.anisetteData.date],
+        @"X-Apple-Locale": session.anisetteData.locale.localeIdentifier,
+        @"X-Apple-I-TimeZone": session.anisetteData.timeZone.abbreviation
+    };
     
     [httpHeaders enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *value, BOOL *stop) {
         [request setValue:value forHTTPHeaderField:key];

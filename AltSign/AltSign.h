@@ -6,8 +6,12 @@
 //  Copyright © 2019 Riley Testut. All rights reserved.
 //
 
-// Functionality
+// Apple API
 #import <AltSign/ALTAppleAPI.h>
+#import <AltSign/ALTAppleAPI+Authentication.h>
+#import <AltSign/ALTAppleAPISession.h>
+
+// Signing
 #import <AltSign/ALTSigner.h>
 
 // Model

@@ -10,27 +10,25 @@
 
 @implementation ALTAccount
 
-- (nullable instancetype)initWithAppleID:(NSString *)appleID responseDictionary:(NSDictionary *)responseDictionary
+- (nullable instancetype)initWithResponseDictionary:(NSDictionary *)responseDictionary
 {
     self = [super init];
     if (self)
     {
-        _appleID = [appleID copy];
-        
+        NSString *appleID = responseDictionary[@"email"];
         NSNumber *identifier = responseDictionary[@"personId"];
-        NSString *firstName = responseDictionary[@"firstName"];
-        NSString *lastName = responseDictionary[@"lastName"];
-        NSString *cookie = responseDictionary[@"myacinfo"];
+        NSString *firstName = responseDictionary[@"firstName"] ?: responseDictionary[@"dsFirstName"];
+        NSString *lastName = responseDictionary[@"lastName"] ?: responseDictionary[@"dsLastName"];
         
-        if (identifier == nil || firstName == nil || lastName == nil || cookie == nil)
+        if (appleID == nil || identifier == nil || firstName == nil || lastName == nil)
         {
             return nil;
         }
         
+        _appleID = [appleID copy];
         _identifier = [identifier.description copy];
         _firstName = [firstName copy];
         _lastName = [lastName copy];
-        _cookie = [cookie copy];
     }
     
     return self;

@@ -111,6 +111,15 @@ NSErrorDomain const ALTAppleAPIErrorDomain = @"com.rileytestut.ALTAppleAPI";
             
         case ALTAppleAPIErrorProvisioningProfileDoesNotExist:
             return NSLocalizedString(@"There is no provisioning profile with the requested identifier on this team.", @"");
+            
+        case ALTAppleAPIErrorRequiresTwoFactorAuthentication:
+            return NSLocalizedString(@"This account requires signing in with two-factor authentication.", @"");
+            
+        case ALTAppleAPIErrorIncorrectVerificationCode:
+            return NSLocalizedString(@"Incorrect verification code.", @"");
+            
+        case ALTAppleAPIErrorAuthenticationHandshakeFailed:
+            return NSLocalizedString(@"Failed to perform authentication handshake with server.", @"");
     }
     
     return nil;

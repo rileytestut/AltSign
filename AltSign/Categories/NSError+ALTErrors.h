@@ -45,6 +45,10 @@ typedef NS_ERROR_ENUM(ALTAppleAPIErrorDomain, ALTAppleAPIError)
     
     ALTAppleAPIErrorInvalidProvisioningProfileIdentifier,
     ALTAppleAPIErrorProvisioningProfileDoesNotExist,
+    
+    ALTAppleAPIErrorRequiresTwoFactorAuthentication,
+    ALTAppleAPIErrorIncorrectVerificationCode,
+    ALTAppleAPIErrorAuthenticationHandshakeFailed,
 };
 
 NS_ASSUME_NONNULL_BEGIN

@@ -18,7 +18,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface ALTAccount ()
-- (nullable instancetype)initWithAppleID:(NSString *)appleID responseDictionary:(NSDictionary *)responseDictionary;
+- (nullable instancetype)initWithResponseDictionary:(NSDictionary *)responseDictionary;
 @end
 
 @interface ALTTeam ()

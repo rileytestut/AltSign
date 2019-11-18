@@ -10,7 +10,10 @@
 
 #import "ALTCapabilities.h"
 
+@class ALTAppleAPISession;
+
 @class ALTAccount;
+@class ALTAnisetteData;
 @class ALTTeam;
 @class ALTDevice;
 @class ALTCertificate;
@@ -24,63 +27,58 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (class, nonatomic, readonly) ALTAppleAPI *sharedAPI;
 
-/* Authentication */
-- (void)authenticateWithAppleID:(NSString *)appleID password:(NSString *)password
-              completionHandler:(void (^)(ALTAccount *_Nullable account, NSError *_Nullable error))completionHandler
-NS_SWIFT_NAME(authenticate(appleID:password:completionHandler:));
-
 /* Teams */
-- (void)fetchTeamsForAccount:(ALTAccount *)account
+- (void)fetchTeamsForAccount:(ALTAccount *)account session:(ALTAppleAPISession *)session
            completionHandler:(void (^)(NSArray<ALTTeam *> *_Nullable teams, NSError *_Nullable error))completionHandler;
 
 /* Devices */
-- (void)fetchDevicesForTeam:(ALTTeam *)team
+- (void)fetchDevicesForTeam:(ALTTeam *)team session:(ALTAppleAPISession *)session
           completionHandler:(void (^)(NSArray<ALTDevice *> *_Nullable devices, NSError *_Nullable error))completionHandler;
 
-- (void)registerDeviceWithName:(NSString *)name identifier:(NSString *)identifier team:(ALTTeam *)team
+- (void)registerDeviceWithName:(NSString *)name identifier:(NSString *)identifier team:(ALTTeam *)team session:(ALTAppleAPISession *)session
              completionHandler:(void (^)(ALTDevice *_Nullable device, NSError *_Nullable error))completionHandler
-NS_SWIFT_NAME(registerDevice(name:identifier:team:completionHandler:));
+NS_SWIFT_NAME(registerDevice(name:identifier:team:session:completionHandler:));
 
 /* Certificates */
-- (void)fetchCertificatesForTeam:(ALTTeam *)team
+- (void)fetchCertificatesForTeam:(ALTTeam *)team session:(ALTAppleAPISession *)session
                completionHandler:(void (^)(NSArray<ALTCertificate *> *_Nullable certificates, NSError *_Nullable error))completionHandler;
 
-- (void)addCertificateWithMachineName:(NSString *)name toTeam:(ALTTeam *)team
+- (void)addCertificateWithMachineName:(NSString *)name toTeam:(ALTTeam *)team session:(ALTAppleAPISession *)session
                     completionHandler:(void (^)(ALTCertificate *_Nullable certificate, NSError *_Nullable error))completionHandler
-NS_SWIFT_NAME(addCertificate(machineName:to:completionHandler:));
+NS_SWIFT_NAME(addCertificate(machineName:to:session:completionHandler:));
 
-- (void)revokeCertificate:(ALTCertificate *)certificate forTeam:(ALTTeam *)team
+- (void)revokeCertificate:(ALTCertificate *)certificate forTeam:(ALTTeam *)team session:(ALTAppleAPISession *)session
         completionHandler:(void (^)(BOOL success, NSError *_Nullable error))completionHandler
-NS_SWIFT_NAME(revoke(_:for:completionHandler:));
+NS_SWIFT_NAME(revoke(_:for:session:completionHandler:));
 
 /* App IDs */
-- (void)fetchAppIDsForTeam:(ALTTeam *)team
+- (void)fetchAppIDsForTeam:(ALTTeam *)team session:(ALTAppleAPISession *)session
          completionHandler:(void (^)(NSArray<ALTAppID *> *_Nullable appIDs, NSError *_Nullable error))completionHandler;
 
-- (void)addAppIDWithName:(NSString *)name bundleIdentifier:(NSString *)bundleIdentifier team:(ALTTeam *)team
+- (void)addAppIDWithName:(NSString *)name bundleIdentifier:(NSString *)bundleIdentifier team:(ALTTeam *)team session:(ALTAppleAPISession *)session
        completionHandler:(void (^)(ALTAppID *_Nullable appID, NSError *_Nullable error))completionHandler;
 
-- (void)updateAppID:(ALTAppID *)appID team:(ALTTeam *)team
+- (void)updateAppID:(ALTAppID *)appID team:(ALTTeam *)team session:(ALTAppleAPISession *)session
   completionHandler:(void (^)(ALTAppID * _Nullable appID, NSError * _Nullable error))completionHandler;
 
-- (void)deleteAppID:(ALTAppID *)appID forTeam:(ALTTeam *)team
+- (void)deleteAppID:(ALTAppID *)appID forTeam:(ALTTeam *)team session:(ALTAppleAPISession *)session
   completionHandler:(void (^)(BOOL success, NSError *_Nullable error))completionHandler;
 
 /* App Groups */
-- (void)fetchAppGroupsForTeam:(ALTTeam *)team
+- (void)fetchAppGroupsForTeam:(ALTTeam *)team session:(ALTAppleAPISession *)session
             completionHandler:(void (^)(NSArray<ALTAppGroup *> *_Nullable groups, NSError *_Nullable error))completionHandler;
 
-- (void)addAppGroupWithName:(NSString *)name groupIdentifier:(NSString *)groupIdentifier team:(ALTTeam *)team
+- (void)addAppGroupWithName:(NSString *)name groupIdentifier:(NSString *)groupIdentifier team:(ALTTeam *)team session:(ALTAppleAPISession *)session
        completionHandler:(void (^)(ALTAppGroup *_Nullable group, NSError *_Nullable error))completionHandler;
 
-- (void)addAppID:(ALTAppID *)appID toGroup:(ALTAppGroup *)group team:(ALTTeam *)team
+- (void)addAppID:(ALTAppID *)appID toGroup:(ALTAppGroup *)group team:(ALTTeam *)team session:(ALTAppleAPISession *)session
 completionHandler:(void (^)(BOOL success, NSError *_Nullable error))completionHandler;
 
 /* Provisioning Profiles */
-- (void)fetchProvisioningProfileForAppID:(ALTAppID *)appID team:(ALTTeam *)team
+- (void)fetchProvisioningProfileForAppID:(ALTAppID *)appID team:(ALTTeam *)team session:(ALTAppleAPISession *)session
                        completionHandler:(void (^)(ALTProvisioningProfile *_Nullable provisioningProfile, NSError *_Nullable error))completionHandler;
 
-- (void)deleteProvisioningProfile:(ALTProvisioningProfile *)provisioningProfile forTeam:(ALTTeam *)team
+- (void)deleteProvisioningProfile:(ALTProvisioningProfile *)provisioningProfile forTeam:(ALTTeam *)team session:(ALTAppleAPISession *)session
   completionHandler:(void (^)(BOOL success, NSError *_Nullable error))completionHandler;
 
 @end
