@@ -31,9 +31,23 @@ NSString *ALTCertificatePEMSuffix = @"-----END CERTIFICATE-----";
 
 - (instancetype)initWithResponseDictionary:(NSDictionary *)responseDictionary
 {
-    NSData *data = responseDictionary[@"certContent"];
-    NSString *machineName = responseDictionary[@"machineName"];
-    NSString *machineIdentifier = responseDictionary[@"machineId"];
+    NSString *identifier = responseDictionary[@"id"];
+    
+    NSDictionary *attributesDictionary = responseDictionary[@"attributes"] ?: responseDictionary;
+                                              
+    NSData *data = nil;
+    if (attributesDictionary[@"certContent"] != nil)
+    {
+        data = attributesDictionary[@"certContent"];
+    }
+    else if (attributesDictionary[@"certificateContent"] != nil)
+    {
+        NSString *encodedData = attributesDictionary[@"certificateContent"];
+        data = [[NSData alloc] initWithBase64EncodedString:encodedData options:0];
+    }
+    
+    NSString *machineName = attributesDictionary[@"machineName"];
+    NSString *machineIdentifier = attributesDictionary[@"machineId"];
     
     if (data != nil)
     {
@@ -41,8 +55,8 @@ NSString *ALTCertificatePEMSuffix = @"-----END CERTIFICATE-----";
     }
     else
     {
-        NSString *name = responseDictionary[@"name"];
-        NSString *serialNumber = responseDictionary[@"serialNumber"] ?: responseDictionary[@"serialNum"];
+        NSString *name = attributesDictionary[@"name"];
+        NSString *serialNumber = attributesDictionary[@"serialNumber"] ?: attributesDictionary[@"serialNum"];
         
         self = [self initWithName:name serialNumber:serialNumber data:nil];
     }
@@ -51,6 +65,7 @@ NSString *ALTCertificatePEMSuffix = @"-----END CERTIFICATE-----";
     {
         _machineName = [machineName copy];
         _machineIdentifier = [machineIdentifier copy];
+        _identifier = [identifier copy];
     }
     
     return self;

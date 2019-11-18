@@ -183,9 +183,10 @@ NS_ASSUME_NONNULL_END
 
 - (void)fetchCertificatesForTeam:(ALTTeam *)team session:(ALTAppleAPISession *)session completionHandler:(void (^)(NSArray<ALTCertificate *> * _Nullable, NSError * _Nullable))completionHandler
 {
-    NSURL *URL = [NSURL URLWithString:@"ios/listAllDevelopmentCerts.action" relativeToURL:self.baseURL];
+    NSURL *URL = [NSURL URLWithString:@"certificates" relativeToURL:self.servicesBaseURL];
+    NSURLRequest *request = [NSURLRequest requestWithURL:URL];
     
-    [self sendRequestWithURL:URL additionalParameters:nil session:session team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
+    [self sendServicesRequest:request additionalParameters:nil session:session team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
         if (responseDictionary == nil)
         {
             completionHandler(nil, requestError);
@@ -194,7 +195,7 @@ NS_ASSUME_NONNULL_END
         
         NSError *error = nil;
         NSArray *certificates = [self processResponse:responseDictionary parseHandler:^id {
-            NSArray *array = responseDictionary[@"certificates"];
+            NSArray *array = responseDictionary[@"data"];
             if (array == nil)
             {
                 return nil;
@@ -273,7 +274,7 @@ NS_ASSUME_NONNULL_END
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
     request.HTTPMethod = @"DELETE";
     
-    [self sendRequestWithURL:URL additionalParameters:nil session:session team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
+    [self sendServicesRequest:request additionalParameters:nil session:session team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
         if (responseDictionary == nil)
         {
             completionHandler(NO, requestError);
@@ -716,6 +717,91 @@ NS_ASSUME_NONNULL_END
             completionHandler(nil, error);
             return;
         }
+        
+        completionHandler(responseDictionary, nil);
+    }];
+    
+    [dataTask resume];
+}
+
+- (void)sendServicesRequest:(NSURLRequest *)originalRequest additionalParameters:(nullable NSDictionary *)additionalParameters session:(ALTAppleAPISession *)session team:(ALTTeam *)team completionHandler:(void (^)(NSDictionary *responseDictionary, NSError *error))completionHandler
+{
+    NSMutableURLRequest *request = [originalRequest mutableCopy];
+    
+    NSMutableArray<NSURLQueryItem *> *queryItems = [@[[NSURLQueryItem queryItemWithName:@"teamId" value:team.identifier]] mutableCopy];
+    [additionalParameters enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *value, BOOL *stop) {
+        [queryItems addObject:[NSURLQueryItem queryItemWithName:key value:value]];
+    }];
+    
+    NSURLComponents *components = [[NSURLComponents alloc] init];
+    components.queryItems = queryItems;
+    
+    NSString *queryString = components.query ?: @"";
+    
+    NSError *serializationError = nil;
+    NSData *bodyData = [NSJSONSerialization dataWithJSONObject:@{@"urlEncodedQueryParams": queryString} options:0 error:&serializationError];
+    if (bodyData == nil)
+    {
+        NSError *error = [NSError errorWithDomain:ALTAppleAPIErrorDomain code:ALTAppleAPIErrorInvalidParameters userInfo:@{NSUnderlyingErrorKey: serializationError}];
+        completionHandler(nil, error);
+        return;
+    }
+        
+    request.HTTPBody = bodyData;
+    
+    NSString *HTTPMethodOverride = request.HTTPMethod;
+    request.HTTPMethod = @"POST";
+    
+    NSDictionary<NSString *, NSString *> *httpHeaders = @{
+        @"Content-Type": @"application/vnd.api+json",
+        @"User-Agent": @"Xcode",
+        @"Accept": @"application/vnd.api+json",
+        @"Accept-Language": @"en-us",
+        @"X-Apple-App-Info": @"com.apple.gs.xcode.auth",
+        @"X-Xcode-Version": @"11.2 (11B41)",
+        @"X-HTTP-Method-Override": HTTPMethodOverride,
+        @"X-Apple-I-Identity-Id": session.dsid,
+        @"X-Apple-GS-Token": session.authToken,
+        @"X-Apple-I-MD-M": session.anisetteData.machineID,
+        @"X-Apple-I-MD": session.anisetteData.oneTimePassword,
+        @"X-Apple-I-MD-LU": session.anisetteData.localUserID,
+        @"X-Apple-I-MD-RINFO": [@(session.anisetteData.routingInfo) description],
+        @"X-Mme-Device-Id": session.anisetteData.deviceUniqueIdentifier,
+        @"X-MMe-Client-Info": session.anisetteData.deviceDescription,
+        @"X-Apple-I-Client-Time": [self.dateFormatter stringFromDate:session.anisetteData.date],
+        @"X-Apple-Locale": session.anisetteData.locale.localeIdentifier,
+        @"X-Apple-I-TimeZone": session.anisetteData.timeZone.abbreviation
+    };
+    
+    [httpHeaders enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *value, BOOL *stop) {
+        [request setValue:value forHTTPHeaderField:key];
+    }];
+    
+    NSURLSessionDataTask *dataTask = [self.session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        if (data == nil)
+        {
+            completionHandler(nil, error);
+            return;
+        }
+        
+        NSDictionary *responseDictionary = nil;
+        
+        if (data.length == 0)
+        {
+            responseDictionary = @{};
+        }
+        else
+        {
+            NSError *parseError = nil;
+            responseDictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:&parseError];
+            
+            if (responseDictionary == nil)
+            {
+                NSError *error = [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorBadServerResponse userInfo:@{NSUnderlyingErrorKey: parseError}];
+                completionHandler(nil, error);
+                return;
+            }
+        }        
         
         completionHandler(responseDictionary, nil);
     }];
