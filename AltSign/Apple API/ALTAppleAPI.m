@@ -646,11 +646,9 @@ NS_ASSUME_NONNULL_END
 - (void)sendRequestWithURL:(NSURL *)requestURL additionalParameters:(nullable NSDictionary *)additionalParameters session:(ALTAppleAPISession *)session team:(nullable ALTTeam *)team completionHandler:(void (^)(NSDictionary *responseDictionary, NSError *error))completionHandler
 {
     NSMutableDictionary<NSString *, NSString *> *parameters = [@{
-                                                                 @"DTDK_Platform": @"ios",
                                                                  @"clientId": ALTClientID,
                                                                  @"protocolVersion": ALTProtocolVersion,
                                                                  @"requestId": [[[NSUUID UUID] UUIDString] uppercaseString],
-                                                                 @"userLocale": @[@"en_US"],
                                                                  } mutableCopy];
     
     if (team != nil)
@@ -694,6 +692,7 @@ NS_ASSUME_NONNULL_END
         @"X-MMe-Client-Info": session.anisetteData.deviceDescription,
         @"X-Apple-I-Client-Time": [self.dateFormatter stringFromDate:session.anisetteData.date],
         @"X-Apple-Locale": session.anisetteData.locale.localeIdentifier,
+        @"X-Apple-I-Locale": session.anisetteData.locale.localeIdentifier,
         @"X-Apple-I-TimeZone": session.anisetteData.timeZone.abbreviation
     };
     
