@@ -5,6 +5,8 @@
 //  Created by Riley Testut on 11/16/19.
 //  Copyright © 2019 Riley Testut. All rights reserved.
 //
+//  Heavily based on sample code provided by Kabir Oberai (https://github.com/kabiroberai)
+//
 
 #import "ALTAppleAPI+Authentication.h"
 #import "ALTAppleAPI_Private.h"
