@@ -186,7 +186,7 @@ NS_ASSUME_NONNULL_END
     NSURL *URL = [NSURL URLWithString:@"certificates" relativeToURL:self.servicesBaseURL];
     NSURLRequest *request = [NSURLRequest requestWithURL:URL];
     
-    [self sendServicesRequest:request additionalParameters:nil session:session team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
+    [self sendServicesRequest:request additionalParameters:@{@"filter[certificateType]": @"IOS_DEVELOPMENT"} session:session team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
         if (responseDictionary == nil)
         {
             completionHandler(nil, requestError);
