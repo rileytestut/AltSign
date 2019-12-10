@@ -345,7 +345,8 @@ NS_ASSUME_NONNULL_END
     NSMutableCharacterSet *allowedCharacters = [NSMutableCharacterSet alphanumericCharacterSet];
     [allowedCharacters formUnionWithCharacterSet:[NSCharacterSet whitespaceCharacterSet]];
     
-    NSString *sanitizedName = [[name componentsSeparatedByCharactersInSet:[allowedCharacters invertedSet]] componentsJoinedByString:@""];
+    NSString *sanitizedName = [name stringByFoldingWithOptions:NSDiacriticInsensitiveSearch locale:nil];
+    sanitizedName = [[sanitizedName componentsSeparatedByCharactersInSet:[allowedCharacters invertedSet]] componentsJoinedByString:@""];
     
     [self sendRequestWithURL:URL additionalParameters:@{@"identifier": bundleIdentifier, @"name": sanitizedName} session:session team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
         if (responseDictionary == nil)
