@@ -24,6 +24,8 @@
 #import <corecrypto/ccaes.h>
 #import <corecrypto/ccpad.h>
 
+static const char ALTHexCharacters[] = "0123456789abcdef";
+
 struct ccrng_state *ccDRBGGetRngState(void);
 
 void ALTDigestUpdateString(const struct ccdigest_info *di_info, struct ccdigest_ctx *di_ctx, NSString *string)
@@ -54,12 +56,11 @@ NSData *ALTPBKDF2SRP(const struct ccdigest_info *di_info, BOOL isS2k, NSString *
     }
     else
     {
-        // s2k_fo appears to be some sort of weird wchar (UTF-16LE) thing
-        for (size_t i = 0; i < password_di_info->output_size; i++)
+        for (int i = 0; i < password_di_info->output_size; i++)
         {
-            char digest_byte = digest_raw[i];
-            digest[i * 2] = digest_byte >> 4;
-            digest[i * 2 + 1] = digest_byte & 0x0F;
+            char byte = digest_raw[i];
+            digest[i * 2 + 0] = ALTHexCharacters[(byte >> 4) & 0x0F];
+            digest[i * 2 + 1] = ALTHexCharacters[(byte >> 0) & 0x0F];
         }
     }
 
