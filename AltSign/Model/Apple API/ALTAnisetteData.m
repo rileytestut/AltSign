@@ -45,8 +45,8 @@
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"Machine ID: %@\nOne-Time Password: %@\nLocal User ID: %@\nDevice UDID: %@\nDevice Description: %@\nDate: %@",
-            self.machineID, self.oneTimePassword, self.localUserID, self.deviceUniqueIdentifier, self.deviceDescription, self.date];
+    return [NSString stringWithFormat:@"Machine ID: %@\nOne-Time Password: %@\nLocal User ID: %@\nRouting Info: %@\nDevice UDID: %@\nDevice Serial Number: %@\nDevice Description: %@\nDate: %@\nLocale: %@\nTime Zone: %@",
+            self.machineID, self.oneTimePassword, self.localUserID, @(self.routingInfo), self.deviceUniqueIdentifier, self.deviceSerialNumber, self.deviceDescription, self.date, self.locale.localeIdentifier, self.timeZone];
 }
 
 - (BOOL)isEqual:(id)object
