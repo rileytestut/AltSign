@@ -180,7 +180,10 @@
     NSDate *date = [dateFormatter dateFromString:dateString];
     
     NSLocale *locale = [NSLocale localeWithLocaleIdentifier:localeIdentifier];
-    NSTimeZone *timeZone = [NSTimeZone timeZoneWithAbbreviation:timeZoneIdentifier];
+    
+    // There is not a perfect mapping between NSTimeZone's and their identifiers, so it's possible timeZoneWithAbbreviation: will return nil.
+    // In this case, we'll default to the local time zone since that's most likely correct, and if not it shouldn't matter regardless.
+    NSTimeZone *timeZone = [NSTimeZone timeZoneWithAbbreviation:timeZoneIdentifier] ?: [NSTimeZone localTimeZone];
     
     self = [self initWithMachineID:machineID
                    oneTimePassword:oneTimePassword
@@ -209,7 +212,9 @@
         @"deviceDescription": self.deviceDescription,
         @"date": [dateFormatter stringFromDate:self.date],
         @"locale": self.locale.localeIdentifier,
-        @"timeZone": self.timeZone.abbreviation
+        
+        // NSTimeZone.abbreviation may be nil, so provide defaults.
+        @"timeZone": self.timeZone.abbreviation ?: NSTimeZone.localTimeZone.abbreviation ?: @"PST"
     };
     
     return json;
