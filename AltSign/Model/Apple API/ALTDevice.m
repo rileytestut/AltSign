@@ -60,4 +60,12 @@
     return self.identifier.hash;
 }
 
+#pragma mark - <NSCopying> -
+
+- (nonnull id)copyWithZone:(nullable NSZone *)zone
+{
+    ALTDevice *device = [[ALTDevice alloc] initWithName:self.name identifier:self.identifier];
+    return device;
+}
+
 @end

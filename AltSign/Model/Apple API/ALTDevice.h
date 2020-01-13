@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ALTDevice : NSObject
+@interface ALTDevice : NSObject <NSCopying>
 
 @property (nonatomic, copy) NSString *name;
 @property (nonatomic, copy) NSString *identifier;
