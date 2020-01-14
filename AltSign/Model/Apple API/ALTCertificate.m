@@ -73,10 +73,9 @@ NSString *ALTCertificatePEMSuffix = @"-----END CERTIFICATE-----";
 
 - (nullable instancetype)initWithP12Data:(NSData *)p12Data password:(nullable NSString *)password
 {
-    BIO *inputP12Buffer = BIO_new(BIO_s_mem());
-    BIO_write(inputP12Buffer, p12Data.bytes, (int)p12Data.length);
-    
+    BIO *inputP12Buffer = BIO_new_mem_buf((const void *)p12Data.bytes, (int)p12Data.length);    
     PKCS12 *inputP12 = d2i_PKCS12_bio(inputP12Buffer, NULL);
+    BIO_free(inputP12Buffer);
     
     // Extract key + certificate from .p12.
     EVP_PKEY *key;
@@ -109,11 +108,41 @@ NSString *ALTCertificatePEMSuffix = @"-----END CERTIFICATE-----";
         _privateKey = [privateKey copy];
     }
     
+    BIO_free(pemBuffer);
+    BIO_free(privateKeyBuffer);
+    
     return self;
 }
 
 - (nullable instancetype)initWithData:(NSData *)data
 {
+    __block BIO *certificateBuffer = NULL;
+    __block X509 *certificate = NULL;
+    __block BIGNUM *number = NULL;
+    __block char *cSerialNumber = NULL;
+    
+    void (^cleanUp)(void) = ^{
+        if (certificateBuffer)
+        {
+            BIO_free(certificateBuffer);
+        }
+        
+        if (certificate)
+        {
+            X509_free(certificate);
+        }
+        
+        if (number)
+        {
+            BN_free(number);
+        }
+        
+        if (cSerialNumber)
+        {
+            free(cSerialNumber);
+        }
+    };
+    
     NSData *pemData = data;
     
     NSData *prefixData = [data subdataWithRange:NSMakeRange(0, MIN(data.length, ALTCertificatePEMPrefix.length))];
@@ -128,13 +157,11 @@ NSString *ALTCertificatePEMSuffix = @"-----END CERTIFICATE-----";
         pemData = [content dataUsingEncoding:NSUTF8StringEncoding];
     }
     
-    BIO *certificateBuffer = BIO_new(BIO_s_mem());
-    BIO_write(certificateBuffer, pemData.bytes, (int)pemData.length);
-    
-    X509 *certificate = nil;
+    certificateBuffer = BIO_new_mem_buf((const void *)pemData.bytes, (int)pemData.length);
     PEM_read_bio_X509(certificateBuffer, &certificate, 0, 0);
     if (certificate == nil)
     {
+        cleanUp();
         return nil;
     }
     
@@ -143,6 +170,7 @@ NSString *ALTCertificatePEMSuffix = @"-----END CERTIFICATE-----";
     int index = X509_NAME_get_index_by_NID(subject, NID_commonName, -1);
     if (index == -1)
     {
+        cleanUp();
         return nil;
     }
     
@@ -153,16 +181,18 @@ NSString *ALTCertificatePEMSuffix = @"-----END CERTIFICATE-----";
     
     /* Serial Number */
     ASN1_INTEGER *serialNumberData = X509_get_serialNumber(certificate);
-    BIGNUM *number = ASN1_INTEGER_to_BN(serialNumberData, NULL);
+    number = ASN1_INTEGER_to_BN(serialNumberData, NULL);
     if (number == nil)
     {
+        cleanUp();
         return nil;
     }
     
-    char *cSerialNumber = BN_bn2hex(number);
+    cSerialNumber = BN_bn2hex(number);
     
     if (cName == nil || cSerialNumber == nil)
     {
+        cleanUp();
         return nil;
     }
     
@@ -178,6 +208,8 @@ NSString *ALTCertificatePEMSuffix = @"-----END CERTIFICATE-----";
             break;
         }
     }
+    
+    cleanUp();
 
     if (location == NSNotFound)
     {
