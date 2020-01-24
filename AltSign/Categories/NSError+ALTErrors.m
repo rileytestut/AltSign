@@ -100,6 +100,9 @@ NSErrorDomain const ALTAppleAPIErrorDomain = @"com.rileytestut.ALTAppleAPI";
         case ALTAppleAPIErrorAppIDDoesNotExist:
             return NSLocalizedString(@"There is no App ID with the requested identifier on this team.", @"");
             
+        case ALTAppleAPIErrorMaximumAppIDLimitReached:
+            return NSLocalizedString(@"You may only register 10 App IDs every 7 days.", @"");
+            
         case ALTAppleAPIErrorInvalidAppGroup:
             return NSLocalizedString(@"The provided app group is invalid.", @"");
             

@@ -39,6 +39,7 @@ typedef NS_ERROR_ENUM(ALTAppleAPIErrorDomain, ALTAppleAPIError)
     ALTAppleAPIErrorInvalidBundleIdentifier,
     ALTAppleAPIErrorBundleIdentifierUnavailable,
     ALTAppleAPIErrorAppIDDoesNotExist,
+    ALTAppleAPIErrorMaximumAppIDLimitReached,
     
     ALTAppleAPIErrorInvalidAppGroup,
     ALTAppleAPIErrorAppGroupDoesNotExist,
