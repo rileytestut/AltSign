@@ -9,7 +9,7 @@
 #import "ALTApplication.h"
 #import "ALTProvisioningProfile.h"
 
-#include "ldid.hpp"
+#include "alt_ldid.hpp"
 
 @interface ALTApplication ()
 

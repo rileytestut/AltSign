@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "../../Dependencies/ldid/ldid.hpp"
+#include "ldid.hpp"
 
 namespace ldid
 {

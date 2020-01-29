@@ -43,7 +43,7 @@
 		BF50E7C022C163DC0070E17B /* ALTApplication.h in Headers */ = {isa = PBXBuildFile; fileRef = BF50E7BD22C163DC0070E17B /* ALTApplication.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BF50E7C122C163DC0070E17B /* ALTApplication.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF50E7BE22C163DC0070E17B /* ALTApplication.mm */; };
 		BF50E7C222C163DC0070E17B /* ALTApplication.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF50E7BE22C163DC0070E17B /* ALTApplication.mm */; };
-		BF50E7C622C169290070E17B /* ldid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF50E7C322C1690B0070E17B /* ldid.cpp */; };
+		BF50E7C622C169290070E17B /* alt_ldid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF50E7C322C1690B0070E17B /* alt_ldid.cpp */; };
 		BF50E7CF22C28F8B0070E17B /* ALTCapabilities.h in Headers */ = {isa = PBXBuildFile; fileRef = BF50E7CD22C28F8B0070E17B /* ALTCapabilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BF50E7D022C28F8B0070E17B /* ALTCapabilities.h in Headers */ = {isa = PBXBuildFile; fileRef = BF50E7CD22C28F8B0070E17B /* ALTCapabilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BF50E7D122C28F8B0070E17B /* ALTCapabilities.m in Sources */ = {isa = PBXBuildFile; fileRef = BF50E7CE22C28F8B0070E17B /* ALTCapabilities.m */; };
@@ -223,8 +223,8 @@
 		BF50E7B722C161630070E17B /* ALTAppGroup.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALTAppGroup.m; sourceTree = "<group>"; };
 		BF50E7BD22C163DC0070E17B /* ALTApplication.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALTApplication.h; sourceTree = "<group>"; };
 		BF50E7BE22C163DC0070E17B /* ALTApplication.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ALTApplication.mm; sourceTree = "<group>"; };
-		BF50E7C322C1690B0070E17B /* ldid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ldid.cpp; sourceTree = "<group>"; };
-		BF50E7C822C169560070E17B /* ldid.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ldid.hpp; sourceTree = "<group>"; };
+		BF50E7C322C1690B0070E17B /* alt_ldid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = alt_ldid.cpp; sourceTree = "<group>"; };
+		BF50E7C822C169560070E17B /* alt_ldid.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = alt_ldid.hpp; sourceTree = "<group>"; };
 		BF50E7CD22C28F8B0070E17B /* ALTCapabilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALTCapabilities.h; sourceTree = "<group>"; };
 		BF50E7CE22C28F8B0070E17B /* ALTCapabilities.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALTCapabilities.m; sourceTree = "<group>"; };
 		BF5AB3992285FDB200DC914B /* AltSign.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AltSign.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -246,7 +246,6 @@
 		BF9B6373229DCD2A002F0A62 /* libzip_iOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = libzip_iOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BF9B6376229DCDAC002F0A62 /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = usr/lib/libbz2.tbd; sourceTree = SDKROOT; };
 		BF9B639E229DCF3A002F0A62 /* AltSign.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AltSign.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		BF9B639F229DCF3A002F0A62 /* AltSign copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "AltSign copy-Info.plist"; path = "/Users/Riley/Library/Mobile Documents/com~apple~CloudDocs/Documents/Developer/Projects/Apps/Production/AltStore/Dependencies/AltSign/AltSign copy-Info.plist"; sourceTree = "<absolute>"; };
 		BF9B63F7229E0A9F002F0A62 /* crypt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = crypt.h; path = Dependencies/minizip/crypt.h; sourceTree = SOURCE_ROOT; };
 		BF9B63F8229E0A9F002F0A62 /* ioapi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ioapi.c; path = Dependencies/minizip/ioapi.c; sourceTree = SOURCE_ROOT; };
 		BF9B63F9229E0A9F002F0A62 /* zip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zip.h; path = Dependencies/minizip/zip.h; sourceTree = SOURCE_ROOT; };
@@ -424,8 +423,8 @@
 		BF50E7C722C1694A0070E17B /* ldid */ = {
 			isa = PBXGroup;
 			children = (
-				BF50E7C822C169560070E17B /* ldid.hpp */,
-				BF50E7C322C1690B0070E17B /* ldid.cpp */,
+				BF50E7C822C169560070E17B /* alt_ldid.hpp */,
+				BF50E7C322C1690B0070E17B /* alt_ldid.cpp */,
 			);
 			path = ldid;
 			sourceTree = "<group>";
@@ -472,7 +471,6 @@
 				BFBAC8AB2295ED1900587369 /* ldid */,
 				BF5AB39A2285FDB200DC914B /* Products */,
 				BF48CFEA229435F50004760B /* Frameworks */,
-				BF9B639F229DCF3A002F0A62 /* AltSign copy-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -984,7 +982,7 @@
 				BF0C4EB022A1B3BF009A2DD7 /* ptrarray.c in Sources */,
 				BF0C4EA622A1B3BF009A2DD7 /* Structure.cpp in Sources */,
 				BF0C4EAF22A1B3BF009A2DD7 /* Integer.cpp in Sources */,
-				BF50E7C622C169290070E17B /* ldid.cpp in Sources */,
+				BF50E7C622C169290070E17B /* alt_ldid.cpp in Sources */,
 				BF0C4EA822A1B3BF009A2DD7 /* base64.c in Sources */,
 				BF0C4EA022A1B3BF009A2DD7 /* Uid.cpp in Sources */,
 				BFBAC8E42295ED6C00587369 /* lookup2.c in Sources */,
