@@ -15,7 +15,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ALTProvisioningProfile : NSObject
+@interface ALTProvisioningProfile : NSObject <NSCopying>
 
 @property (copy, nonatomic, readonly) NSString *name;
 @property (copy, nonatomic, readonly, nullable) NSString *identifier;

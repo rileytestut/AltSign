@@ -14,6 +14,12 @@
 #define ASN1_OBJECT_IDENTIFIER 0x06
 #define ASN1_OCTET_STRING 0x04
 
+@interface ALTProvisioningProfile ()
+
+@property (copy, nonatomic, readwrite, nullable) NSString *identifier;
+
+@end
+
 @implementation ALTProvisioningProfile
 
 - (nullable instancetype)initWithResponseDictionary:(NSDictionary *)responseDictionary
@@ -131,6 +137,13 @@
     }
     
     return self;
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    ALTProvisioningProfile *profile = [[ALTProvisioningProfile alloc] initWithData:self.data];
+    profile.identifier = self.identifier;
+    return profile;
 }
 
 // Heavily inspired by libimobiledevice/ideviceprovision.c
