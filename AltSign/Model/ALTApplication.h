@@ -29,6 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 #endif
 
 @property (nonatomic, readonly, nullable) ALTProvisioningProfile *provisioningProfile;
+@property (nonatomic, readonly) NSSet<ALTApplication *> *appExtensions;
 
 @property (nonatomic, readonly) NSOperatingSystemVersion minimumiOSVersion;
 

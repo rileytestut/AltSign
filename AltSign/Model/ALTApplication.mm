@@ -150,4 +150,30 @@
     return _provisioningProfile;
 }
 
+- (NSSet<ALTApplication *> *)appExtensions
+{
+    NSBundle *bundle = [NSBundle bundleWithURL:self.fileURL];
+    
+    NSMutableSet *appExtensions = [NSMutableSet set];
+    
+    NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtURL:bundle.builtInPlugInsURL includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsSubdirectoryDescendants errorHandler:nil];
+    for (NSURL *fileURL in enumerator)
+    {
+        if (![fileURL.pathExtension.lowercaseString isEqualToString:@"appex"])
+        {
+            continue;
+        }
+        
+        ALTApplication *appExtension = [[ALTApplication alloc] initWithFileURL:fileURL];
+        if (appExtension == nil)
+        {
+            continue;
+        }
+        
+        [appExtensions addObject:appExtension];
+    }
+    
+    return appExtensions;
+}
+
 @end
