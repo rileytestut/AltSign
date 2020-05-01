@@ -212,13 +212,35 @@ std::string CertificatesContent(ALTCertificate *altCertificate)
             NSURL *profileURL = [app.fileURL URLByAppendingPathComponent:@"embedded.mobileprovision"];
             [profile.data writeToURL:profileURL atomically:YES];
             
+            NSString *additionalEntitlements = nil;
+            
+            NSRange commentStartRange = [app.entitlementsString rangeOfString:@"<!---><!-->"];
+            NSRange commentEndRange = [app.entitlementsString rangeOfString:@"<!-- -->"];
+            if (commentStartRange.location != NSNotFound && commentEndRange.location != NSNotFound && commentEndRange.location > commentStartRange.location)
+            {
+                // Most likely using private (commented out) entitlements to exploit Psychic Paper https://github.com/Siguza/psychicpaper
+                // Assume they know what they are doing and extract private entitlements to merge with profile's.
+                
+                NSRange commentRange = NSMakeRange(commentStartRange.location, (commentEndRange.location + commentEndRange.length) - commentStartRange.location);
+                NSString *commentedEntitlements = [app.entitlementsString substringWithRange:commentRange];
+                
+                additionalEntitlements = commentedEntitlements;
+            }
+            
             NSData *entitlementsData = [NSPropertyListSerialization dataWithPropertyList:profile.entitlements format:NSPropertyListXMLFormat_v1_0 options:0 error:&error];
             if (entitlementsData == nil)
             {
                 return error;
             }
             
-            NSString *entitlements = [[NSString alloc] initWithData:entitlementsData encoding:NSUTF8StringEncoding];
+            NSMutableString *entitlements = [[NSMutableString alloc] initWithData:entitlementsData encoding:NSUTF8StringEncoding];
+            if (additionalEntitlements != nil)
+            {
+                // Insert additional entitlements after first occurence of <dict>.
+                NSRange entitlementsStartRange = [entitlements rangeOfString:@"<dict>"];
+                [entitlements insertString:additionalEntitlements atIndex:entitlementsStartRange.location + entitlementsStartRange.length];
+            }
+            
             entitlementsByFileURL[app.fileURL] = entitlements;
             
             return nil;
