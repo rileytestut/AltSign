@@ -34,6 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) NSOperatingSystemVersion minimumiOSVersion;
 
 @property (nonatomic, copy, readonly) NSDictionary<ALTEntitlement, id> *entitlements;
+@property (nonatomic, copy, readonly) NSString *entitlementsString;
 
 @property (nonatomic, copy, readonly) NSURL *fileURL;
 

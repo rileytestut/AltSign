@@ -19,6 +19,7 @@
 
 @implementation ALTApplication
 @synthesize entitlements = _entitlements;
+@synthesize entitlementsString = _entitlementsString;
 @synthesize provisioningProfile = _provisioningProfile;
 
 - (instancetype)initWithFileURL:(NSURL *)fileURL
@@ -115,10 +116,9 @@
     {
         NSDictionary<NSString *, id> *appEntitlements = @{};
         
-        std::string rawEntitlements = ldid::Entitlements(self.fileURL.fileSystemRepresentation);
-        if (rawEntitlements.size() != 0)
+        if (self.entitlementsString.length != 0)
         {
-            NSData *entitlementsData = [NSData dataWithBytes:rawEntitlements.c_str() length:rawEntitlements.size()];
+            NSData *entitlementsData = [self.entitlementsString dataUsingEncoding:NSUTF8StringEncoding];
             
             NSError *error = nil;
             NSDictionary *entitlements = [NSPropertyListSerialization propertyListWithData:entitlementsData options:0 format:nil error:&error];
@@ -137,6 +137,17 @@
     }
     
     return _entitlements;
+}
+
+- (NSString *)entitlementsString
+{
+    if (_entitlementsString == nil)
+    {
+        std::string rawEntitlements = ldid::Entitlements(self.fileURL.fileSystemRepresentation);
+        _entitlementsString = @(rawEntitlements.c_str());
+    }
+    
+    return _entitlementsString;
 }
 
 - (ALTProvisioningProfile *)provisioningProfile
