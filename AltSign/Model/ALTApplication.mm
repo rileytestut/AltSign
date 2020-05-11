@@ -11,6 +11,17 @@
 
 #include "alt_ldid.hpp"
 
+ALTDeviceType ALTDeviceTypeFromUIDeviceFamily(NSInteger deviceFamily)
+{
+    switch (deviceFamily)
+    {
+        case 1: return ALTDeviceTypeiPhone;
+        case 2: return ALTDeviceTypeiPad;
+        case 3: return ALTDeviceTypeAppleTV;
+        default: return ALTDeviceTypeNone;
+    }
+}
+
 @interface ALTApplication ()
 
 @property (nonatomic, copy, nullable, readonly) NSString *iconName;
@@ -64,6 +75,27 @@
         minimumVersion.minorVersion = minorVersion;
         minimumVersion.patchVersion = patchVersion;
         
+        NSArray<NSNumber *> *deviceFamilies = infoDictionary[@"UIDeviceFamily"];
+        ALTDeviceType supportedDeviceTypes = ALTDeviceTypeNone;
+        
+        if ([deviceFamilies isKindOfClass:[NSNumber class]])
+        {
+            NSInteger rawDeviceFamily = [(NSNumber *)deviceFamilies integerValue];
+            supportedDeviceTypes = ALTDeviceTypeFromUIDeviceFamily(rawDeviceFamily);
+        }
+        else if ([deviceFamilies isKindOfClass:[NSArray class]] && deviceFamilies.count > 0)
+        {
+            for (NSNumber *deviceFamily in deviceFamilies)
+            {
+                NSInteger rawDeviceFamily = [deviceFamily integerValue];
+                supportedDeviceTypes |= ALTDeviceTypeFromUIDeviceFamily(rawDeviceFamily);
+            }
+        }
+        else
+        {
+            supportedDeviceTypes = ALTDeviceTypeiPhone;
+        }
+        
         NSDictionary *icons = infoDictionary[@"CFBundleIcons"];
         NSDictionary *primaryIcon = icons[@"CFBundlePrimaryIcon"];
         
@@ -84,6 +116,7 @@
         _bundleIdentifier = [bundleIdentifier copy];
         _version = [version copy];
         _minimumiOSVersion = minimumVersion;
+        _supportedDeviceTypes = supportedDeviceTypes;
         _iconName = [iconName copy];
     }
     

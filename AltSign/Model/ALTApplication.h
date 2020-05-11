@@ -13,6 +13,7 @@
 #endif
 
 #import "ALTCapabilities.h"
+#import "ALTDevice.h"
 
 @class ALTProvisioningProfile;
 
@@ -32,6 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) NSSet<ALTApplication *> *appExtensions;
 
 @property (nonatomic, readonly) NSOperatingSystemVersion minimumiOSVersion;
+@property (nonatomic, readonly) ALTDeviceType supportedDeviceTypes;
 
 @property (nonatomic, copy, readonly) NSDictionary<ALTEntitlement, id> *entitlements;
 @property (nonatomic, copy, readonly) NSString *entitlementsString;
