@@ -10,13 +10,14 @@
 
 @implementation ALTDevice
 
-- (instancetype)initWithName:(NSString *)name identifier:(NSString *)identifier
+- (instancetype)initWithName:(NSString *)name identifier:(NSString *)identifier type:(ALTDeviceType)type
 {
     self = [super init];
     if (self)
     {
         _name = [name copy];
         _identifier = [identifier copy];
+        _type = type;
     }
     
     return self;
@@ -32,7 +33,23 @@
         return nil;
     }
     
-    self = [self initWithName:name identifier:identifier];
+    ALTDeviceType deviceType = ALTDeviceTypeNone;
+    
+    NSString *deviceClass = responseDictionary[@"deviceClass"] ?: @"iphone";
+    if ([deviceClass isEqualToString:@"iphone"])
+    {
+        deviceType = ALTDeviceTypeiPhone;
+    }
+    else if ([deviceClass isEqualToString:@"ipad"])
+    {
+        deviceType = ALTDeviceTypeiPad;
+    }
+    else if ([deviceClass isEqualToString:@"tvOS"])
+    {
+        deviceType = ALTDeviceTypeAppleTV;
+    }
+    
+    self = [self initWithName:name identifier:identifier type:deviceType];
     return self;
 }
 
@@ -64,7 +81,7 @@
 
 - (nonnull id)copyWithZone:(nullable NSZone *)zone
 {
-    ALTDevice *device = [[ALTDevice alloc] initWithName:self.name identifier:self.identifier];
+    ALTDevice *device = [[ALTDevice alloc] initWithName:self.name identifier:self.identifier type:self.type];
     return device;
 }
 
