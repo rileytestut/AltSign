@@ -99,17 +99,26 @@ ALTDeviceType ALTDeviceTypeFromUIDeviceFamily(NSInteger deviceFamily)
         NSDictionary *icons = infoDictionary[@"CFBundleIcons"];
         NSDictionary *primaryIcon = icons[@"CFBundlePrimaryIcon"];
         
-        NSArray *iconFiles = primaryIcon[@"CFBundleIconFiles"];
-        if (iconFiles == nil)
-        {
-            iconFiles = infoDictionary[@"CFBundleIconFiles"];
-        }
+        NSString *iconName = nil;
         
-        NSString *iconName = [iconFiles lastObject];
-        if (iconName == nil)
+        if ([primaryIcon isKindOfClass:[NSString class]])
         {
-            iconName = infoDictionary[@"CFBundleIconFile"];
+            iconName = (NSString *)primaryIcon;
         }
+        else
+        {
+            NSArray *iconFiles = primaryIcon[@"CFBundleIconFiles"];
+            if (iconFiles == nil)
+            {
+                iconFiles = infoDictionary[@"CFBundleIconFiles"];
+            }
+            
+            iconName = [iconFiles lastObject];
+            if (iconName == nil)
+            {
+                iconName = infoDictionary[@"CFBundleIconFile"];
+            }
+        }        
         
         _fileURL = [fileURL copy];
         _name = [name copy];
