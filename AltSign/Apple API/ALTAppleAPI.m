@@ -541,11 +541,18 @@ NS_ASSUME_NONNULL_END
     }];
 }
 
-- (void)addAppID:(ALTAppID *)appID toGroup:(ALTAppGroup *)group team:(ALTTeam *)team session:(ALTAppleAPISession *)session completionHandler:(void (^)(BOOL, NSError * _Nullable))completionHandler
+- (void)assignAppID:(ALTAppID *)appID toGroups:(NSArray<ALTAppGroup *> *)groups team:(ALTTeam *)team session:(ALTAppleAPISession *)session
+  completionHandler:(void (^)(BOOL success, NSError *_Nullable error))completionHandler
 {
     NSURL *URL = [NSURL URLWithString:@"ios/assignApplicationGroupToAppId.action" relativeToURL:self.baseURL];
     
-    [self sendRequestWithURL:URL additionalParameters:@{@"appIdId": appID.identifier, @"applicationGroups": group.identifier}
+    NSMutableArray *groupIDs = [NSMutableArray arrayWithCapacity:groups.count];
+    for (ALTAppGroup *group in groups)
+    {
+        [groupIDs addObject:group.identifier];
+    }
+    
+    [self sendRequestWithURL:URL additionalParameters:@{@"appIdId": appID.identifier, @"applicationGroups": groupIDs}
                      session:session team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
         if (responseDictionary == nil)
         {

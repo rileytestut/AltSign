@@ -71,8 +71,8 @@ NS_SWIFT_NAME(revoke(_:for:session:completionHandler:));
 - (void)addAppGroupWithName:(NSString *)name groupIdentifier:(NSString *)groupIdentifier team:(ALTTeam *)team session:(ALTAppleAPISession *)session
        completionHandler:(void (^)(ALTAppGroup *_Nullable group, NSError *_Nullable error))completionHandler;
 
-- (void)addAppID:(ALTAppID *)appID toGroup:(ALTAppGroup *)group team:(ALTTeam *)team session:(ALTAppleAPISession *)session
-completionHandler:(void (^)(BOOL success, NSError *_Nullable error))completionHandler;
+- (void)assignAppID:(ALTAppID *)appID toGroups:(NSArray<ALTAppGroup *> *)groups team:(ALTTeam *)team session:(ALTAppleAPISession *)session
+  completionHandler:(void (^)(BOOL success, NSError *_Nullable error))completionHandler;
 
 /* Provisioning Profiles */
 - (void)fetchProvisioningProfileForAppID:(ALTAppID *)appID team:(ALTTeam *)team session:(ALTAppleAPISession *)session
