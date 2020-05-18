@@ -26,7 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, readonly) NSString *version;
 
 #if TARGET_OS_IPHONE
-@property (nonatomic, readonly) UIImage *icon;
+@property (nonatomic, readonly, nullable) UIImage *icon;
 #endif
 
 @property (nonatomic, readonly, nullable) ALTProvisioningProfile *provisioningProfile;
