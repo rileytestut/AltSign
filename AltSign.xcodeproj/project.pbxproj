@@ -59,6 +59,8 @@
 		BF5AB3CA2286269B00DC914B /* ALTDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = BF5AB3C82286269B00DC914B /* ALTDevice.m */; };
 		BF5AB3CD228645DF00DC914B /* ALTCertificate.h in Headers */ = {isa = PBXBuildFile; fileRef = BF5AB3CB228645DF00DC914B /* ALTCertificate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BF5AB3CE228645DF00DC914B /* ALTCertificate.m in Sources */ = {isa = PBXBuildFile; fileRef = BF5AB3CC228645DF00DC914B /* ALTCertificate.m */; };
+		BF5C690D24A5205E00C2F854 /* ccsrp.m in Sources */ = {isa = PBXBuildFile; fileRef = BF5C690C24A5205E00C2F854 /* ccsrp.m */; };
+		BF5C690E24A5205E00C2F854 /* ccsrp.m in Sources */ = {isa = PBXBuildFile; fileRef = BF5C690C24A5205E00C2F854 /* ccsrp.m */; };
 		BF5D43F6237F53BB00EC8745 /* ALTAppleAPISession.h in Headers */ = {isa = PBXBuildFile; fileRef = BF5D43F4237F53BB00EC8745 /* ALTAppleAPISession.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BF5D43F7237F53BB00EC8745 /* ALTAppleAPISession.h in Headers */ = {isa = PBXBuildFile; fileRef = BF5D43F4237F53BB00EC8745 /* ALTAppleAPISession.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BF5D43F8237F53BB00EC8745 /* ALTAppleAPISession.m in Sources */ = {isa = PBXBuildFile; fileRef = BF5D43F5237F53BB00EC8745 /* ALTAppleAPISession.m */; };
@@ -240,6 +242,7 @@
 		BF5AB3C82286269B00DC914B /* ALTDevice.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALTDevice.m; sourceTree = "<group>"; };
 		BF5AB3CB228645DF00DC914B /* ALTCertificate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALTCertificate.h; sourceTree = "<group>"; };
 		BF5AB3CC228645DF00DC914B /* ALTCertificate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALTCertificate.m; sourceTree = "<group>"; };
+		BF5C690C24A5205E00C2F854 /* ccsrp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ccsrp.m; path = Dependencies/corecrypto/ccsrp.m; sourceTree = SOURCE_ROOT; };
 		BF5D43F4237F53BB00EC8745 /* ALTAppleAPISession.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALTAppleAPISession.h; sourceTree = "<group>"; };
 		BF5D43F5237F53BB00EC8745 /* ALTAppleAPISession.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALTAppleAPISession.m; sourceTree = "<group>"; };
 		BF9B633E229DC27C002F0A62 /* ALTModel+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ALTModel+Internal.h"; sourceTree = "<group>"; };
@@ -392,7 +395,7 @@
 		BF48CFE0229435CB0004760B /* Dependencies */ = {
 			isa = PBXGroup;
 			children = (
-				BFE20E0D237CAA2500409FF7 /* corecrypto-headers */,
+				BFE20E0D237CAA2500409FF7 /* corecrypto */,
 				BF48CFE1229435DB0004760B /* OpenSSL.xcodeproj */,
 				BF9B63D3229DD8E8002F0A62 /* minizip */,
 			);
@@ -627,7 +630,7 @@
 			name = libcnary;
 			sourceTree = "<group>";
 		};
-		BFE20E0D237CAA2500409FF7 /* corecrypto-headers */ = {
+		BFE20E0D237CAA2500409FF7 /* corecrypto */ = {
 			isa = PBXGroup;
 			children = (
 				BFE20E28237CAA3B00409FF7 /* cc_config.h */,
@@ -699,6 +702,7 @@
 				BFE20E20237CAA3B00409FF7 /* ccsha2.h */,
 				BFE20E58237CAA3E00409FF7 /* ccsrp_gp.h */,
 				BFE20E42237CAA3D00409FF7 /* ccsrp.h */,
+				BF5C690C24A5205E00C2F854 /* ccsrp.m */,
 				BFE20E29237CAA3B00409FF7 /* cctest.h */,
 				BFE20E4F237CAA3E00409FF7 /* ccwrap.h */,
 				BFE20E27237CAA3B00409FF7 /* ccz_priv.h */,
@@ -707,7 +711,7 @@
 				BFE20E57237CAA3E00409FF7 /* cczp.h */,
 				BFE20E3B237CAA3C00409FF7 /* fipspost.h */,
 			);
-			name = "corecrypto-headers";
+			name = corecrypto;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -933,6 +937,7 @@
 				BF9B640A229E0AA0002F0A62 /* unzip.c in Sources */,
 				BF5AB3CE228645DF00DC914B /* ALTCertificate.m in Sources */,
 				BF5AB3BA2286024D00DC914B /* ALTAccount.m in Sources */,
+				BF5C690D24A5205E00C2F854 /* ccsrp.m in Sources */,
 				BF50E7C122C163DC0070E17B /* ALTApplication.mm in Sources */,
 				BF9B6402229E0AA0002F0A62 /* ioapi.c in Sources */,
 				BF9B640C229E0AA0002F0A62 /* zip.c in Sources */,
@@ -961,6 +966,7 @@
 				BF9B640B229E0AA0002F0A62 /* unzip.c in Sources */,
 				BF9B6390229DCF3A002F0A62 /* ALTCertificate.m in Sources */,
 				BF9B6391229DCF3A002F0A62 /* ALTAccount.m in Sources */,
+				BF5C690E24A5205E00C2F854 /* ccsrp.m in Sources */,
 				BF50E7C222C163DC0070E17B /* ALTApplication.mm in Sources */,
 				BF9B6403229E0AA0002F0A62 /* ioapi.c in Sources */,
 				BF9B640D229E0AA0002F0A62 /* zip.c in Sources */,
@@ -1078,6 +1084,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "-DCORECRYPTO_DONOT_USE_TRANSPARENT_UNION";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1138,6 +1145,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = "-DCORECRYPTO_DONOT_USE_TRANSPARENT_UNION";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				VALIDATE_PRODUCT = YES;

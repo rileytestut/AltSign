@@ -217,11 +217,10 @@ NSData *ALTCreateAppTokensChecksum(NSData *sk, NSString *adsid, NSArray<NSString
     ccdigest_init(di_info, di_ctx);
     
     const struct ccdigest_info *srp_di = ccsha256_di();
-    struct ccsrp_ctx_body *srp_ctx = (struct ccsrp_ctx_body *)malloc(ccsrp_sizeof_srp(di_info, gp));
+    struct ccsrp_ctx *srp_ctx = (struct ccsrp_ctx *)malloc(ccsrp_sizeof_srp(di_info, gp));
     ccsrp_ctx_init(srp_ctx, srp_di, gp);
-    
-    srp_ctx->hdr.blinding_rng = ccrng(NULL);
-    srp_ctx->hdr.flags.noUsernameInX = true;
+    ccsrp_client_set_noUsernameInX(srp_ctx, true);
+    SRP_RNG(srp_ctx) = ccrng(NULL);
     
     NSArray<NSString *> *ps = @[@"s2k", @"s2k_fo"];
     ALTDigestUpdateString(di_info, di_ctx, ps[0]);

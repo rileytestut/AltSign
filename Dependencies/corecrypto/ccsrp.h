@@ -128,13 +128,29 @@ struct ccsrp_ctx {
         unsigned int sessionkey:1;
         unsigned int variant:16;
     } flags;
+    cc_unit              ccn[1];
+}  CC_ALIGNED(16);
+typedef struct ccsrp_ctx *ccsrp_ctx_t;
+
+struct ccsrp_ctx_legacy {
+    const struct ccdigest_info *di;
+    ccsrp_const_gp_t gp;
+    struct ccrng_state *blinding_rng;
+    struct {
+        unsigned int authenticated:1;
+        unsigned int noUsernameInX:1;
+        unsigned int sessionkey:1;
+        unsigned int variant:16;
+    } flags;
     uint8_t           pad[CCSRP_HDR_PAD - (sizeof(struct ccdigest_info *)+
                                            sizeof(ccsrp_const_gp_t)+
                                            sizeof(struct ccrng_state *)+
                                            sizeof(bool))];
     cc_unit              ccn[1];
 }  CC_ALIGNED(16);
-typedef struct ccsrp_ctx *ccsrp_ctx_t;
+typedef struct ccsrp_ctx_legacy *ccsrp_ctx_t_legacy;
+
+cc_unit *srp_ccn(void *srp);
 
 #endif
 
@@ -175,7 +191,7 @@ typedef struct ccsrp_ctx *ccsrp_ctx_t;
 #define ccsrp_ctx_gp_l(KEY)   (ccdh_gp_l(ccsrp_ctx_gp(KEY)))
 #define ccsrp_ctx_n(KEY)      (ccdh_gp_n(ccsrp_ctx_gp(KEY)))
 #define ccsrp_ctx_prime(KEY)  (ccdh_gp_prime(ccsrp_ctx_gp(KEY)))
-#define ccsrp_ctx_ccn(KEY)    SRP_CCN((ccsrp_ctx_t)(KEY))
+#define ccsrp_ctx_ccn(KEY)    srp_ccn(KEY)
 #define ccsrp_ctx_pki_key(KEY,_N_) (ccsrp_ctx_ccn(KEY) + ccsrp_ctx_n(KEY) * _N_)
 #define ccsrp_ctx_public(KEY)           (ccsrp_ctx_pki_key(KEY,0))
 #define ccsrp_ctx_private(KEY)          (ccsrp_ctx_pki_key(KEY,1))

@@ -16,6 +16,10 @@ Pod::Spec.new do |spec|
   spec.resources = "AltSign/Resources/apple.pem"
   spec.library = "c++"
   
+  spec.xcconfig = {
+    "OTHER_CFLAGS" => "-DCORECRYPTO_DONOT_USE_TRANSPARENT_UNION=1"
+  }
+  
   # Somewhat hacky subspec usage to ensure directory hierarchies match what header includes expect.
   
   spec.subspec 'OpenSSL' do |base|
@@ -49,8 +53,9 @@ Pod::Spec.new do |spec|
   end
   
   spec.subspec 'CoreCrypto' do |base|
-    base.source_files  = "Dependencies/corecrypto/*.h"
+    base.source_files  = "Dependencies/corecrypto/*.{h,m}"
     base.exclude_files = "Dependencies/corecrypto/ccperf.h"
+    base.private_header_files = "Dependencies/corecrypto/*.h"
     base.header_mappings_dir = "Dependencies"
   end
   
