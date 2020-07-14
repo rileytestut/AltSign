@@ -18,7 +18,7 @@ cc_unit *srp_ccn(void *srp)
 #if TARGET_OS_IPHONE
     if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){ 14, 0, 0 }])
 #else
-    if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){ 11, 0, 0 }])
+    if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){ 10, 16, 0 }])
 #endif
     {
         return SRP_CCN((ccsrp_ctx_t)(srp));
