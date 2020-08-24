@@ -43,5 +43,14 @@ func cchmac_ctx_size(_ stateSize: Int, _ blockSize: Int) -> Int
 
 func cchmac_di_size(_ digestInfo: UnsafePointer<ccdigest_info>) -> Int
 {
-    cchmac_ctx_size(digestInfo.pointee.state_size, digestInfo.pointee.block_size)
+    if #available(iOS 14, macOS 11, *)
+    {
+        // CoreCrypto headers aren't accurate for iOS 14 or macOS 11 yet,
+        // so return bigger buffer size to ensure against invalid memory access.
+        return cchmac_ctx_size(digestInfo.pointee.state_size, digestInfo.pointee.block_size) * 2
+    }
+    else
+    {
+        return cchmac_ctx_size(digestInfo.pointee.state_size, digestInfo.pointee.block_size)
+    }
 }
