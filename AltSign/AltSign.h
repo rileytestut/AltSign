@@ -10,6 +10,10 @@
 #import <AltSign/ALTAppleAPI.h>
 #import <AltSign/ALTAppleAPISession.h>
 
+#if INCLUDE_PRIVATE_API
+#import <AltSign/ALTAppleAPI_Private.h>
+#endif
+
 // Signing
 #import <AltSign/ALTSigner.h>
 

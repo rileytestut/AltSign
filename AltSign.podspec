@@ -11,13 +11,17 @@ Pod::Spec.new do |spec|
   spec.author             = { "Riley Testut" => "riley@rileytestut.com" }
   spec.social_media_url   = "https://twitter.com/rileytestut"
   
-  spec.source_files  = "AltSign", "AltSign/**/*.{h,m,mm,hpp,cpp}"
+  spec.source_files  = "AltSign", "AltSign/**/*.{h,m,mm,hpp,cpp,swift}"
   spec.public_header_files = "AltSign/**/*.h"
   spec.resources = "AltSign/Resources/apple.pem"
   spec.library = "c++"
   
   spec.xcconfig = {
-    "OTHER_CFLAGS" => "-DCORECRYPTO_DONOT_USE_TRANSPARENT_UNION=1"
+    "OTHER_CFLAGS" => "-DCORECRYPTO_DONOT_USE_TRANSPARENT_UNION=1",
+    "GCC_PREPROCESSOR_DEFINITIONS" => "INCLUDE_PRIVATE_API=1 CORECRYPTO_DONOT_USE_TRANSPARENT_UNION=1",
+    "SWIFT_ACTIVE_COMPILATION_CONDITIONS" => "INCLUDE_PRIVATE_API",
+    "SWIFT_INCLUDE_PATHS" => "$(PODS_ROOT)/../Dependencies/AltSign/Dependencies/corecrypto/", # Assuming AltStore directory layout for now
+    "SYSTEM_HEADER_SEARCH_PATHS" => "$(PODS_ROOT)/Headers/Private/AltSign/"
   }
   
   # Somewhat hacky subspec usage to ensure directory hierarchies match what header includes expect.
@@ -53,7 +57,7 @@ Pod::Spec.new do |spec|
   end
   
   spec.subspec 'CoreCrypto' do |base|
-    base.source_files  = "Dependencies/corecrypto/*.{h,m}"
+    base.source_files  = "Dependencies/corecrypto/*.{h,m,swift,modulemap}"
     base.exclude_files = "Dependencies/corecrypto/ccperf.h"
     base.private_header_files = "Dependencies/corecrypto/*.h"
     base.header_mappings_dir = "Dependencies"

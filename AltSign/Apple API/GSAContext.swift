@@ -9,8 +9,6 @@
 import Foundation
 import CoreCrypto
 
-import AltSign.Private
-
 class GSAContext
 {
     let username: String

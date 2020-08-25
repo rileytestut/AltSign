@@ -8,6 +8,10 @@
 
 import Foundation
 
+#if !INCLUDE_PRIVATE_API
+import AltSign.Private
+#endif
+
 public extension ALTAppleAPI
 {
     @objc func authenticate(appleID: String,
