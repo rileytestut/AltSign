@@ -19,7 +19,7 @@ Pod::Spec.new do |spec|
   spec.xcconfig = {
     "OTHER_CFLAGS" => "-DCORECRYPTO_DONOT_USE_TRANSPARENT_UNION=1",
     "GCC_PREPROCESSOR_DEFINITIONS" => "INCLUDE_PRIVATE_API=1 CORECRYPTO_DONOT_USE_TRANSPARENT_UNION=1",
-    "SWIFT_ACTIVE_COMPILATION_CONDITIONS" => "INCLUDE_PRIVATE_API",
+    "SWIFT_ACTIVE_COMPILATION_CONDITIONS" => "$(inherited) INCLUDE_PRIVATE_API",
     "SWIFT_INCLUDE_PATHS" => "$(PODS_ROOT)/../Dependencies/AltSign/Dependencies/corecrypto/", # Assuming AltStore directory layout for now
     "SYSTEM_HEADER_SEARCH_PATHS" => "$(PODS_ROOT)/Headers/Private/AltSign/"
   }
