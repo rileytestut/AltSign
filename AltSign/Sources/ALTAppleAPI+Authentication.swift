@@ -8,9 +8,8 @@
 
 import Foundation
 
-#if !INCLUDE_PRIVATE_API
-import AltSign.Private
-#endif
+@_exported import CAltSign
+import CAltSign.Private
 
 public extension ALTAppleAPI
 {

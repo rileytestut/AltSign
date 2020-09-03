@@ -15,8 +15,9 @@
 
 #import "NSFileManager+Apps.h"
 #import "NSError+ALTErrors.h"
+#import "NSBundle+Resources.h"
 
-#include "ldid.hpp"
+#import "alt_ldid.hpp"
 
 #include <string>
 
@@ -25,7 +26,7 @@
 
 std::string CertificatesContent(ALTCertificate *altCertificate)
 {
-    NSURL *pemURL = [[NSBundle bundleForClass:ALTSigner.class] URLForResource:@"apple" withExtension:@"pem"];
+    NSURL *pemURL = [NSBundle.resourcesBundle URLForResource:@"apple" withExtension:@"pem"];
     
     NSData *altCertificateP12Data = [altCertificate p12Data];
     
