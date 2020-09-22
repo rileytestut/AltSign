@@ -44,7 +44,20 @@
 
 - (nullable instancetype)initWithURL:(NSURL *)fileURL
 {
-    NSData *data = [NSData dataWithContentsOfURL:fileURL];
+    NSError *error = nil;
+    self = [self initWithURL:fileURL options:0 error:&error];
+    
+    if (self == nil)
+    {
+        NSLog(@"Error loading provisioning profile from disk: %@", error);
+    }
+    
+    return self;
+}
+
+- (nullable instancetype)initWithURL:(NSURL *)fileURL options:(NSDataReadingOptions)options error:(NSError **)error
+{
+    NSData *data = [NSData dataWithContentsOfURL:fileURL options:options error:error];
     if (data == nil)
     {
         return nil;
