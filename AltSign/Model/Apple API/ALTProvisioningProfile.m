@@ -231,25 +231,25 @@
 
     /* Start parsing */
     unsigned char *pointer = (unsigned char *)encodedData.bytes;
-    if (*pointer != ASN1_SEQUENCE)
+    if (!pointer || *pointer != ASN1_SEQUENCE)
     {
         return nil;
     }
     
     pointer = advanceToNextItem(pointer);
-    if (*pointer != ASN1_OBJECT_IDENTIFIER)
+    if (!pointer || *pointer != ASN1_OBJECT_IDENTIFIER)
     {
         return nil;
     }
     
     pointer = skipNextItem(pointer);
-    if (*pointer != ASN1_CONTAINER)
+    if (!pointer || *pointer != ASN1_CONTAINER)
     {
         return nil;
     }
     
     pointer = advanceToNextItem(pointer);
-    if (*pointer != ASN1_SEQUENCE)
+    if (!pointer || *pointer != ASN1_SEQUENCE)
     {
         return nil;
     }
@@ -262,25 +262,25 @@
         pointer = skipNextItem(pointer);
     }
     
-    if (*pointer != ASN1_SEQUENCE)
+    if (!pointer || *pointer != ASN1_SEQUENCE)
     {
         return nil;
     }
     
     pointer = advanceToNextItem(pointer);
-    if (*pointer != ASN1_OBJECT_IDENTIFIER)
+    if (!pointer || *pointer != ASN1_OBJECT_IDENTIFIER)
     {
         return nil;
     }
     
     pointer = skipNextItem(pointer);
-    if (*pointer != ASN1_CONTAINER)
+    if (!pointer || *pointer != ASN1_CONTAINER)
     {
         return nil;
     }
     
     pointer = advanceToNextItem(pointer);
-    if (*pointer != ASN1_OCTET_STRING)
+    if (!pointer || *pointer != ASN1_OCTET_STRING)
     {
         return nil;
     }
