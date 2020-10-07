@@ -242,7 +242,8 @@ std::string CertificatesContent(ALTCertificate *altCertificate)
                 [entitlements insertString:additionalEntitlements atIndex:entitlementsStartRange.location + entitlementsStartRange.length];
             }
             
-            entitlementsByFileURL[app.fileURL] = entitlements;
+            NSURL *resolvedURL = [app.fileURL URLByResolvingSymlinksInPath];
+            entitlementsByFileURL[resolvedURL] = entitlements;
             
             return nil;
         };
@@ -302,7 +303,9 @@ std::string CertificatesContent(ALTCertificate *altCertificate)
                 fileURL = [application.fileURL URLByAppendingPathComponent:filename isDirectory:YES];
             }
             
-            NSString *entitlements = entitlementsByFileURL[fileURL];
+            NSURL *resolvedURL = [fileURL URLByResolvingSymlinksInPath];
+            
+            NSString *entitlements = entitlementsByFileURL[resolvedURL];
             return entitlements.UTF8String;
         }),
                    ldid::fun([&](const std::string &string) {
