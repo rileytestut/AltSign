@@ -214,18 +214,20 @@ std::string CertificatesContent(ALTCertificate *altCertificate)
             [profile.data writeToURL:profileURL atomically:YES];
             
             NSString *additionalEntitlements = nil;
-            
-            NSRange commentStartRange = [app.entitlementsString rangeOfString:@"<!---><!-->"];
-            NSRange commentEndRange = [app.entitlementsString rangeOfString:@"<!-- -->"];
-            if (commentStartRange.location != NSNotFound && commentEndRange.location != NSNotFound && commentEndRange.location > commentStartRange.location)
+            if (app.hasPrivateEntitlements)
             {
-                // Most likely using private (commented out) entitlements to exploit Psychic Paper https://github.com/Siguza/psychicpaper
-                // Assume they know what they are doing and extract private entitlements to merge with profile's.
-                
-                NSRange commentRange = NSMakeRange(commentStartRange.location, (commentEndRange.location + commentEndRange.length) - commentStartRange.location);
-                NSString *commentedEntitlements = [app.entitlementsString substringWithRange:commentRange];
-                
-                additionalEntitlements = commentedEntitlements;
+                NSRange commentStartRange = [app.entitlementsString rangeOfString:@"<!---><!-->"];
+                NSRange commentEndRange = [app.entitlementsString rangeOfString:@"<!-- -->"];
+                if (commentStartRange.location != NSNotFound && commentEndRange.location != NSNotFound && commentEndRange.location > commentStartRange.location)
+                {
+                    // Most likely using private (commented out) entitlements to exploit Psychic Paper https://github.com/Siguza/psychicpaper
+                    // Assume they know what they are doing and extract private entitlements to merge with profile's.
+                    
+                    NSRange commentRange = NSMakeRange(commentStartRange.location, (commentEndRange.location + commentEndRange.length) - commentStartRange.location);
+                    NSString *commentedEntitlements = [app.entitlementsString substringWithRange:commentRange];
+                    
+                    additionalEntitlements = commentedEntitlements;
+                }
             }
             
             NSData *entitlementsData = [NSPropertyListSerialization dataWithPropertyList:profile.entitlements format:NSPropertyListXMLFormat_v1_0 options:0 error:&error];
