@@ -6,7 +6,7 @@
 //  Copyright © 2019 Riley Testut. All rights reserved.
 //
 
-#import "ALTAppleAPI.h"
+#import <AltSign/ALTAppleAPI.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
       additionalParameters:(nullable NSDictionary *)additionalParameters
                    session:(ALTAppleAPISession *)session
                       team:(nullable ALTTeam *)team
-         completionHandler:(void (^)(NSDictionary *responseDictionary, NSError *error))completionHandler;
+         completionHandler:(void (^)(NSDictionary *_Nullable responseDictionary, NSError *_Nullable error))completionHandler;
 
 - (nullable id)processResponse:(NSDictionary *)responseDictionary
                   parseHandler:(id _Nullable (^_Nullable)(void))parseHandler

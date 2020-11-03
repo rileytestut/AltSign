@@ -36,7 +36,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (copy, nonatomic, readonly) NSData *data;
 
 - (nullable instancetype)initWithData:(NSData *)data NS_DESIGNATED_INITIALIZER;
+
 - (nullable instancetype)initWithURL:(NSURL *)fileURL;
+- (nullable instancetype)initWithURL:(NSURL *)fileURL options:(NSDataReadingOptions)options error:(NSError *_Nullable *)error;
 
 - (instancetype)init NS_UNAVAILABLE;
 
