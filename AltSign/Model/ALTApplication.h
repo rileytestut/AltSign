@@ -40,6 +40,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, copy, readonly) NSURL *fileURL;
 
+@property (nonatomic, assign) BOOL hasPrivateEntitlements;
+
 - (nullable instancetype)initWithFileURL:(NSURL *)fileURL;
 
 @end
