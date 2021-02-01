@@ -144,7 +144,6 @@ let package = Package(
                 "Dependencies/minizip/miniunz.c",
                 "Dependencies/minizip/ChangeLogUnzip",
             ],
-            resources: [.copy("AltSign/Resources/apple.pem")],
             publicHeadersPath: "AltSign/include",
             cSettings: [
                 .headerSearchPath("AltSign/**"),
