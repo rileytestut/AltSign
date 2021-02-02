@@ -81,6 +81,33 @@ const char *AppleWWDRCertificateData = ""
 "UDSdlTs=\n"
 "-----END CERTIFICATE-----\n";
 
+const char *LegacyAppleWWDRCertificateData = ""
+"-----BEGIN CERTIFICATE-----\n"
+"MIIEIjCCAwqgAwIBAgIIAd68xDltoBAwDQYJKoZIhvcNAQEFBQAwYjELMAkGA1UE\n"
+"BhMCVVMxEzARBgNVBAoTCkFwcGxlIEluYy4xJjAkBgNVBAsTHUFwcGxlIENlcnRp\n"
+"ZmljYXRpb24gQXV0aG9yaXR5MRYwFAYDVQQDEw1BcHBsZSBSb290IENBMB4XDTEz\n"
+"MDIwNzIxNDg0N1oXDTIzMDIwNzIxNDg0N1owgZYxCzAJBgNVBAYTAlVTMRMwEQYD\n"
+"VQQKDApBcHBsZSBJbmMuMSwwKgYDVQQLDCNBcHBsZSBXb3JsZHdpZGUgRGV2ZWxv\n"
+"cGVyIFJlbGF0aW9uczFEMEIGA1UEAww7QXBwbGUgV29ybGR3aWRlIERldmVsb3Bl\n"
+"ciBSZWxhdGlvbnMgQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkwggEiMA0GCSqGSIb3\n"
+"DQEBAQUAA4IBDwAwggEKAoIBAQDKOFSmy1aqyCQ5SOmM7uxfuH8mkbw0U3rOfGOA\n"
+"YXdkXqUHI7Y5/lAtFVZYcC1+xG7BSoU+L/DehBqhV8mvexj/avoVEkkVCBmsqtsq\n"
+"Mu2WY2hSFT2Miuy/axiV4AOsAX2XBWfODoWVN2rtCbauZ81RZJ/GXNG8V25nNYB2\n"
+"NqSHgW44j9grFU57Jdhav06DwY3Sk9UacbVgnJ0zTlX5ElgMhrgWDcHld0WNUEi6\n"
+"Ky3klIXh6MSdxmilsKP8Z35wugJZS3dCkTm59c3hTO/AO0iMpuUhXf1qarunFjVg\n"
+"0uat80YpyejDi+l5wGphZxWy8P3laLxiX27Pmd3vG2P+kmWrAgMBAAGjgaYwgaMw\n"
+"HQYDVR0OBBYEFIgnFwmpthhgi+zruvZHWcVSVKO3MA8GA1UdEwEB/wQFMAMBAf8w\n"
+"HwYDVR0jBBgwFoAUK9BpR5R2Cf70a40uQKb3R01/CF4wLgYDVR0fBCcwJTAjoCGg\n"
+"H4YdaHR0cDovL2NybC5hcHBsZS5jb20vcm9vdC5jcmwwDgYDVR0PAQH/BAQDAgGG\n"
+"MBAGCiqGSIb3Y2QGAgEEAgUAMA0GCSqGSIb3DQEBBQUAA4IBAQBPz+9Zviz1smwv\n"
+"j+4ThzLoBTWobot9yWkMudkXvHcs1Gfi/ZptOllc34MBvbKuKmFysa/Nw0Uwj6OD\n"
+"Dc4dR7Txk4qjdJukw5hyhzs+r0ULklS5MruQGFNrCk4QttkdUGwhgAqJTleMa1s8\n"
+"Pab93vcNIx0LSiaHP7qRkkykGRIZbVf1eliHe2iK5IaMSuviSRSqpd1VAKmuu0sw\n"
+"ruGgsbwpgOYJd+W+NKIByn/c4grmO7i77LpilfMFY0GCzQ87HUyVpNur+cmV6U/k\n"
+"TecmmYHpvPm0KdIBembhLoz2IYrF+Hjhga6/05Cdqa3zr/04GpZnMBxRpVzscYqC\n"
+"tGwPDBUf\n"
+"-----END CERTIFICATE-----\n";
+
 std::string CertificatesContent(ALTCertificate *altCertificate)
 {
     NSData *altCertificateP12Data = [altCertificate p12Data];
@@ -98,14 +125,27 @@ std::string CertificatesContent(ALTCertificate *altCertificate)
     // Prepare certificate chain of trust.
     auto *certificates = sk_X509_new(NULL);
     
-    BIO *rootCertificateBuffer = BIO_new_mem_buf(AppleRootCertificateData, strlen(AppleRootCertificateData));
+    BIO *rootCertificateBuffer = BIO_new_mem_buf(AppleRootCertificateData, (int)strlen(AppleRootCertificateData));
+    BIO *wwdrCertificateBuffer = nil;
+    
+    unsigned long issuerHash = X509_issuer_name_hash(certificate);
+    if (issuerHash == 0x817d2f7a)
+    {
+        // Use legacy WWDR certificate.
+        wwdrCertificateBuffer = BIO_new_mem_buf(LegacyAppleWWDRCertificateData, (int)strlen(LegacyAppleWWDRCertificateData));
+    }
+    else
+    {
+        // Use latest WWDR certificate.
+        wwdrCertificateBuffer = BIO_new_mem_buf(AppleWWDRCertificateData, (int)strlen(AppleWWDRCertificateData));
+    }
+    
     auto rootCertificate = PEM_read_bio_X509(rootCertificateBuffer, NULL, NULL, NULL);
     if (rootCertificate != NULL)
     {
         sk_X509_push(certificates, rootCertificate);
     }
     
-    BIO *wwdrCertificateBuffer = BIO_new_mem_buf(AppleWWDRCertificateData, strlen(AppleWWDRCertificateData));
     auto wwdrCertificate = PEM_read_bio_X509(wwdrCertificateBuffer, NULL, NULL, NULL);
     if (wwdrCertificate != NULL)
     {
