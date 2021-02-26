@@ -39,6 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, readonly) NSString *entitlementsString;
 
 @property (nonatomic, copy, readonly) NSURL *fileURL;
+@property (nonatomic, readonly) NSBundle *bundle;
 
 @property (nonatomic, assign) BOOL hasPrivateEntitlements;
 
