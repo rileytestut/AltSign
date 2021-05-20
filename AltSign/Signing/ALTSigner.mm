@@ -13,7 +13,7 @@
 #import "ALTProvisioningProfile.h"
 #import "ALTApplication.h"
 
-#import "NSFileManager+Apps.h"
+#import "NSFileManager+Zip.h"
 #import "NSError+ALTErrors.h"
 
 #import "alt_ldid.hpp"

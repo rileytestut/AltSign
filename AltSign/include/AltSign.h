@@ -26,7 +26,7 @@
 
 // Categories
 #import <AltSign/NSError+ALTErrors.h>
-#import <AltSign/NSFileManager+Apps.h>
+#import <AltSign/NSFileManager+Zip.h>
 
 // Capabilities
 #import <AltSign/ALTCapabilities.h>

@@ -1,12 +1,12 @@
 //
-//  NSFileManager+Apps.m
+//  NSFileManager+Zip.m
 //  AltSign
 //
 //  Created by Riley Testut on 5/28/19.
 //  Copyright © 2019 Riley Testut. All rights reserved.
 //
 
-#import "NSFileManager+Apps.h"
+#import "NSFileManager+Zip.h"
 
 #import "NSError+ALTErrors.h"
 
@@ -20,15 +20,15 @@ char ALTDirectoryDeliminator = '/';
 #define READ_BUFFER_SIZE 8192
 #define MAX_FILENAME 512
 
-@implementation NSFileManager (Apps)
+@implementation NSFileManager (Zip)
 
-- (nullable NSURL *)unzipAppBundleAtURL:(NSURL *)ipaURL toDirectory:(NSURL *)directoryURL error:(NSError **)error
+- (BOOL)unzipArchiveAtURL:(NSURL *)archiveURL toDirectory:(NSURL *)directoryURL error:(NSError **)error
 {
-    unzFile zipFile = unzOpen(ipaURL.fileSystemRepresentation);
+    unzFile zipFile = unzOpen(archiveURL.fileSystemRepresentation);
     if (zipFile == NULL)
     {
-        *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileNoSuchFileError userInfo:@{NSURLErrorKey: ipaURL}];
-        return nil;
+        *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileNoSuchFileError userInfo:@{NSURLErrorKey: archiveURL}];
+        return NO;
     }
     
     FILE *outputFile = nil;
@@ -46,10 +46,10 @@ char ALTDirectoryDeliminator = '/';
     unz_global_info zipInfo;
     if (unzGetGlobalInfo(zipFile, &zipInfo) != UNZ_OK)
     {
-        *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileReadCorruptFileError userInfo:@{NSURLErrorKey: ipaURL}];
+        *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileReadCorruptFileError userInfo:@{NSURLErrorKey: archiveURL}];
         
         finish();
-        return nil;
+        return NO;
     }
     
     NSProgress *progress = [NSProgress progressWithTotalUnitCount:zipInfo.number_entry];
@@ -63,10 +63,10 @@ char ALTDirectoryDeliminator = '/';
         
         if (unzGetCurrentFileInfo(zipFile, &info, cFilename, ALTMaxFilenameLength, NULL, 0, NULL, 0) != UNZ_OK)
         {
-            *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileReadUnknownError userInfo:@{NSURLErrorKey: ipaURL}];
+            *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileReadUnknownError userInfo:@{NSURLErrorKey: archiveURL}];
             
             finish();
-            return nil;
+            return NO;
         }
         
         NSString *filename = [[NSString alloc] initWithCString:cFilename encoding:NSUTF8StringEncoding];
@@ -79,7 +79,7 @@ char ALTDirectoryDeliminator = '/';
                     *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileReadUnknownError userInfo:@{NSFilePathErrorKey: filename}];
                     
                     finish();
-                    return nil;
+                    return NO;
                 }
             }
             
@@ -106,18 +106,18 @@ char ALTDirectoryDeliminator = '/';
             if (directoryError != nil)
             {
                 *error = directoryError;
-                return nil;
+                return NO;
             }
         }
         else
         {
-            // File            
+            // File
             if (unzOpenCurrentFile(zipFile) != UNZ_OK)
             {
                 *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileReadUnknownError userInfo:@{NSURLErrorKey: fileURL}];
                 
                 finish();
-                return nil;
+                return NO;
             }
             
             NSURL *parentDirectory = [fileURL URLByDeletingLastPathComponent];
@@ -127,7 +127,7 @@ char ALTDirectoryDeliminator = '/';
                 if (directoryError != nil)
                 {
                     *error = directoryError;
-                    return nil;
+                    return NO;
                 }
             }
             
@@ -138,7 +138,7 @@ char ALTDirectoryDeliminator = '/';
                 *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileWriteUnknownError userInfo:@{NSURLErrorKey: fileURL, NSUnderlyingErrorKey: underlyingError}];
                 
                 finish();
-                return nil;
+                return NO;
             }
             
             int result = UNZ_OK;
@@ -152,7 +152,7 @@ char ALTDirectoryDeliminator = '/';
                     *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileReadUnknownError userInfo:@{NSURLErrorKey: fileURL}];
                     
                     finish();
-                    return nil;
+                    return NO;
                 }
                 
                 size_t count = fwrite(buffer, result, 1, outputFile);
@@ -161,7 +161,7 @@ char ALTDirectoryDeliminator = '/';
                     *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileWriteUnknownError userInfo:@{NSURLErrorKey: fileURL}];
                     
                     finish();
-                    return nil;
+                    return NO;
                 }
                 
             } while (result > 0);
@@ -170,7 +170,7 @@ char ALTDirectoryDeliminator = '/';
             if (![self setAttributes:@{NSFilePosixPermissions: @(permissions)} ofItemAtPath:fileURL.path error:error])
             {
                 finish();
-                return nil;
+                return NO;
             }
             
             fclose(outputFile);
@@ -188,18 +188,27 @@ char ALTDirectoryDeliminator = '/';
                 *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileReadUnknownError userInfo:@{NSURLErrorKey: fileURL}];
                 
                 finish();
-                return nil;
+                return NO;
             }
         }
     }
     
     finish();
     
+    return YES;
+}
+
+- (nullable NSURL *)unzipAppBundleAtURL:(NSURL *)ipaURL toDirectory:(NSURL *)directoryURL error:(NSError **)error
+{
+    if (![self unzipArchiveAtURL:ipaURL toDirectory:directoryURL error:error])
+    {
+        return nil;
+    }
+    
     NSURL *payloadDirectory = [directoryURL URLByAppendingPathComponent:@"Payload"];
     NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:payloadDirectory.path error:error];
     if (contents == nil)
     {
-        finish();
         return nil;
     }
     
@@ -212,7 +221,6 @@ char ALTDirectoryDeliminator = '/';
             
             if (![[NSFileManager defaultManager] moveItemAtURL:appBundleURL toURL:outputURL error:error])
             {
-                finish();
                 return nil;
             }
             
@@ -221,7 +229,6 @@ char ALTDirectoryDeliminator = '/';
             {
                 *error = deleteError;
                 
-                finish();
                 return nil;
             }
             
