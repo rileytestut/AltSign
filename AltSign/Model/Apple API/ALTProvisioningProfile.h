@@ -22,7 +22,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (copy, nonatomic, readonly) NSUUID *UUID;
 
 @property (copy, nonatomic, readonly) NSString *bundleIdentifier;
+
 @property (copy, nonatomic, readonly) NSString *teamIdentifier;
+@property (copy, nonatomic, readonly) NSString *teamName;
 
 @property (copy, nonatomic, readonly) NSDate *creationDate;
 @property (copy, nonatomic, readonly) NSDate *expirationDate;

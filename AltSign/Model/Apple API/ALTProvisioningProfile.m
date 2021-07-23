@@ -82,6 +82,7 @@
         NSUUID *UUID = [[NSUUID alloc] initWithUUIDString:dictionary[@"UUID"]];
         
         NSString *teamIdentifier = [dictionary[@"TeamIdentifier"] firstObject];
+        NSString *teamName = dictionary[@"TeamName"];
         
         NSDate *creationDate = dictionary[@"CreationDate"];
         NSDate *expirationDate = dictionary[@"ExpirationDate"];
@@ -89,7 +90,7 @@
         NSDictionary<ALTEntitlement, id> *entitlements = dictionary[@"Entitlements"];
         NSArray<NSString *> *deviceIDs = dictionary[@"ProvisionedDevices"];
         
-        if (name == nil || UUID == nil || teamIdentifier == nil || creationDate == nil || expirationDate == nil || entitlements == nil || deviceIDs == nil)
+        if (name == nil || UUID == nil || teamIdentifier == nil || teamName == nil || creationDate == nil || expirationDate == nil || entitlements == nil || deviceIDs == nil)
         {
             return nil;
         }
@@ -102,6 +103,7 @@
         _UUID = [UUID copy];
         
         _teamIdentifier = [teamIdentifier copy];
+        _teamName = [teamName copy];
         
         _creationDate = [creationDate copy];
         _expirationDate = [expirationDate copy];
