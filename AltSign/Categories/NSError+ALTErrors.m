@@ -29,6 +29,10 @@ NSErrorDomain const ALTAppleAPIErrorDomain = @"com.rileytestut.ALTAppleAPI";
         {
             return [error alt_appleapi_localizedDescription];
         }
+        else if ([userInfoKey isEqualToString:NSLocalizedRecoverySuggestionErrorKey])
+        {
+            return [error alt_appleapi_localizedRecoverySuggestion];
+        }
         
         return nil;
     }];
@@ -123,6 +127,26 @@ NSErrorDomain const ALTAppleAPIErrorDomain = @"com.rileytestut.ALTAppleAPI";
             
         case ALTAppleAPIErrorAuthenticationHandshakeFailed:
             return NSLocalizedString(@"Failed to perform authentication handshake with server.", @"");
+            
+        case ALTAppleAPIErrorInvalidAnisetteData:
+            return NSLocalizedString(@"The provided anisette data is invalid.", @"");
+    }
+    
+    return nil;
+}
+
+- (nullable NSString *)alt_appleapi_localizedRecoverySuggestion
+{
+    switch ((ALTAppleAPIError)self.code)
+    {
+        case ALTAppleAPIErrorInvalidAnisetteData:
+#if TARGET_OS_OSX
+            return NSLocalizedString(@"Make sure this computer's date & time matches your iOS device and try again.", @"");
+#else
+            return NSLocalizedString(@"Make sure your computer's date & time matches your iOS device and try again. You may need to re-install AltStore with AltServer if the problem persists.", @"");
+#endif
+            
+        default: break;
     }
     
     return nil;
