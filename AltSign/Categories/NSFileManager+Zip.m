@@ -24,6 +24,15 @@ char ALTDirectoryDeliminator = '/';
 
 - (BOOL)unzipArchiveAtURL:(NSURL *)archiveURL toDirectory:(NSURL *)directoryURL error:(NSError **)error
 {
+    NSProgress *progress = [NSProgress progressWithTotalUnitCount:0];
+    [progress setKind:NSProgressKindFile];
+    [progress setUserInfoObject:NSProgressFileOperationKindDecompressingAfterDownloading forKey:NSProgressFileOperationKindKey];
+    
+    return [self unzipArchiveAtURL:archiveURL toDirectory:directoryURL progress:progress error:error];
+}
+
+- (BOOL)unzipArchiveAtURL:(NSURL *)archiveURL toDirectory:(NSURL *)directoryURL progress:(NSProgress *)progress error:(NSError **)error
+{
     unzFile zipFile = unzOpen(archiveURL.fileSystemRepresentation);
     if (zipFile == NULL)
     {
@@ -32,6 +41,7 @@ char ALTDirectoryDeliminator = '/';
     }
     
     FILE *outputFile = nil;
+    char buffer[ALTReadBufferSize];
     
     void (^finish)(void) = ^{
         if (outputFile != nil)
@@ -52,9 +62,49 @@ char ALTDirectoryDeliminator = '/';
         return NO;
     }
     
-    NSProgress *progress = [NSProgress progressWithTotalUnitCount:zipInfo.number_entry];
+    // Calculate total uncompressed size for accurate progress reporting.
+    int64_t uncompressedSize = 0;
     
-    char buffer[ALTReadBufferSize];
+    for (int i = 0; i < zipInfo.number_entry; i++)
+    {
+        unz_file_info info;
+        char cFilename[ALTMaxFilenameLength];
+        
+        if (unzGetCurrentFileInfo(zipFile, &info, cFilename, ALTMaxFilenameLength, NULL, 0, NULL, 0) != UNZ_OK)
+        {
+            *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileReadUnknownError userInfo:@{NSURLErrorKey: archiveURL}];
+            
+            finish();
+            return NO;
+        }
+        
+        NSString *filename = [[NSString alloc] initWithCString:cFilename encoding:NSUTF8StringEncoding];
+        if (![filename hasPrefix:@"__MACOSX"] && [filename characterAtIndex:filename.length - 1] != ALTDirectoryDeliminator)
+        {
+            uncompressedSize += info.uncompressed_size;
+        }
+
+        if (i + 1 < zipInfo.number_entry)
+        {
+            if (unzGoToNextFile(zipFile) != UNZ_OK)
+            {
+                *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileReadUnknownError userInfo:@{NSURLErrorKey: archiveURL}];
+                
+                finish();
+                return NO;
+            }
+        }
+    }
+    
+    if (unzGoToFirstFile(zipFile) != UNZ_OK)
+    {
+        *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileReadUnknownError userInfo:@{NSURLErrorKey: archiveURL}];
+        
+        finish();
+        return NO;
+    }
+    
+    progress.totalUnitCount = uncompressedSize;
     
     for (int i = 0; i < zipInfo.number_entry; i++)
     {
@@ -164,6 +214,8 @@ char ALTDirectoryDeliminator = '/';
                     return NO;
                 }
                 
+                progress.completedUnitCount += result;
+                
             } while (result > 0);
             
             short permissions = (info.external_fa >> 16) & 0x01FF;
@@ -178,8 +230,6 @@ char ALTDirectoryDeliminator = '/';
         }
         
         unzCloseCurrentFile(zipFile);
-        
-        progress.completedUnitCount += 1;
         
         if (i + 1 < zipInfo.number_entry)
         {
