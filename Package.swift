@@ -153,6 +153,7 @@ let package = Package(
                 .headerSearchPath("Dependencies/OpenSSL/ios/include"),
                 .headerSearchPath("Dependencies/ldid/libplist/include"),
                 .headerSearchPath("Dependencies/ldid"),
+                .define("unix=1"),
             ],
             linkerSettings: [
                 .linkedFramework("UIKit", .when(platforms: [.iOS])),
