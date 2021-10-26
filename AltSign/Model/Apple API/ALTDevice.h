@@ -20,8 +20,8 @@ extern "C" {
 NS_SWIFT_NAME(_NSOperatingSystemVersion.unknown)
 extern const NSOperatingSystemVersion NSOperatingSystemVersionUnknown;
 
-NS_SWIFT_NAME(NSOperatingSystemVersion.init(string:))
-extern NSOperatingSystemVersion NSOperatingSystemVersionFromString(NSString *osVersionString);
+NS_SWIFT_NAME(_NSOperatingSystemVersion.init(string:))
+extern NSOperatingSystemVersion NSOperatingSystemVersionFromString(NSString *_Nonnull osVersionString);
 
 #ifdef __cplusplus
 }
