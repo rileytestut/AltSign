@@ -8,6 +8,31 @@
 
 #import "ALTDevice.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+NSOperatingSystemVersion const NSOperatingSystemVersionUnknown = (NSOperatingSystemVersion){0, 0, 0};
+
+NSOperatingSystemVersion NSOperatingSystemVersionFromString(NSString *osVersionString)
+{
+    NSArray *versionComponents = [osVersionString componentsSeparatedByString:@"."];
+    
+    NSInteger majorVersion = [versionComponents.firstObject integerValue];
+    NSInteger minorVersion = (versionComponents.count > 1) ? [versionComponents[1] integerValue] : 0;
+    NSInteger patchVersion = (versionComponents.count > 2) ? [versionComponents[2] integerValue] : 0;
+    
+    NSOperatingSystemVersion osVersion;
+    osVersion.majorVersion = majorVersion;
+    osVersion.minorVersion = minorVersion;
+    osVersion.patchVersion = patchVersion;
+    return osVersion;
+}
+
+#ifdef __cplusplus
+}
+#endif
+
 @implementation ALTDevice
 
 - (instancetype)initWithName:(NSString *)name identifier:(NSString *)identifier type:(ALTDeviceType)type
@@ -82,6 +107,7 @@
 - (nonnull id)copyWithZone:(nullable NSZone *)zone
 {
     ALTDevice *device = [[ALTDevice alloc] initWithName:self.name identifier:self.identifier type:self.type];
+    device.osVersion = self.osVersion;
     return device;
 }
 

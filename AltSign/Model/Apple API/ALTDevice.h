@@ -8,6 +8,26 @@
 
 #import <Foundation/Foundation.h>
 
+// NS_SWIFT_NAME can only prefix types with types from same module.
+// Re-declare NSOperatingSystemVersion as _NSOperatingSystemVersion,
+// which will still map to OperatingSystemVersion in Swift.
+typedef NSOperatingSystemVersion _NSOperatingSystemVersion;
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+NS_SWIFT_NAME(_NSOperatingSystemVersion.unknown)
+extern const NSOperatingSystemVersion NSOperatingSystemVersionUnknown;
+
+NS_SWIFT_NAME(_NSOperatingSystemVersion.init(string:))
+extern NSOperatingSystemVersion NSOperatingSystemVersionFromString(NSString *_Nonnull osVersionString);
+
+#ifdef __cplusplus
+}
+#endif
+
+
 typedef NS_OPTIONS(NSInteger, ALTDeviceType)
 {
     ALTDeviceTypeiPhone NS_SWIFT_NAME(iphone) = 1 << 1,
@@ -25,6 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *name;
 @property (nonatomic, copy) NSString *identifier;
 @property (nonatomic) ALTDeviceType type;
+@property (nonatomic) NSOperatingSystemVersion osVersion;
 
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithName:(NSString *)name identifier:(NSString *)identifier type:(ALTDeviceType)type NS_DESIGNATED_INITIALIZER;

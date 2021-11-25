@@ -100,7 +100,8 @@ NS_ASSUME_NONNULL_END
 
 #pragma mark - Devices -
 
-- (void)fetchDevicesForTeam:(ALTTeam *)team session:(ALTAppleAPISession *)session completionHandler:(void (^)(NSArray<ALTDevice *> * _Nullable, NSError * _Nullable))completionHandler
+- (void)fetchDevicesForTeam:(ALTTeam *)team types:(ALTDeviceType)types session:(ALTAppleAPISession *)session
+          completionHandler:(void (^)(NSArray<ALTDevice *> *_Nullable devices, NSError *_Nullable error))completionHandler
 {
     NSURL *URL = [NSURL URLWithString:@"ios/listDevices.action" relativeToURL:self.baseURL];
     
@@ -128,6 +129,12 @@ NS_ASSUME_NONNULL_END
                     return nil;
                 }
                 
+                if ((types & device.type) != device.type)
+                {
+                     // Device type doesn't match the ones we requested, so ignore it.
+                    continue;
+                }
+                
                 [devices addObject:device];
             }
             return devices;
@@ -137,11 +144,32 @@ NS_ASSUME_NONNULL_END
     }];
 }
 
-- (void)registerDeviceWithName:(NSString *)name identifier:(NSString *)identifier team:(ALTTeam *)team session:(ALTAppleAPISession *)session completionHandler:(void (^)(ALTDevice * _Nullable, NSError * _Nullable))completionHandler
+- (void)registerDeviceWithName:(NSString *)name identifier:(NSString *)identifier type:(ALTDeviceType)type team:(ALTTeam *)team session:(ALTAppleAPISession *)session
+             completionHandler:(void (^)(ALTDevice *_Nullable device, NSError *_Nullable error))completionHandler
 {
     NSURL *URL = [NSURL URLWithString:@"ios/addDevice.action" relativeToURL:self.baseURL];
     
-    [self sendRequestWithURL:URL additionalParameters:@{@"deviceNumber": identifier, @"name": name} session:session team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
+    NSMutableDictionary *parameters = [@{
+        @"deviceNumber": identifier,
+        @"name": name,
+    } mutableCopy];
+    
+    switch (type)
+    {
+        case ALTDeviceTypeiPhone:
+        case ALTDeviceTypeiPad:
+            parameters[@"DTDK_Platform"] = @"ios";
+            break;
+            
+        case ALTDeviceTypeAppleTV:
+            parameters[@"DTDK_Platform"] = @"tvos";
+            parameters[@"subPlatform"] = @"tvOS";
+            break;
+            
+        default: break;
+    }
+    
+    [self sendRequestWithURL:URL additionalParameters:parameters session:session team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
         if (responseDictionary == nil)
         {
             completionHandler(nil, requestError);
@@ -583,11 +611,31 @@ NS_ASSUME_NONNULL_END
 
 #pragma mark - Provisioning Profiles -
 
-- (void)fetchProvisioningProfileForAppID:(ALTAppID *)appID team:(ALTTeam *)team session:(ALTAppleAPISession *)session completionHandler:(void (^)(ALTProvisioningProfile * _Nullable, NSError * _Nullable))completionHandler
+- (void)fetchProvisioningProfileForAppID:(ALTAppID *)appID deviceType:(ALTDeviceType)deviceType team:(ALTTeam *)team session:(ALTAppleAPISession *)session
+                       completionHandler:(void (^)(ALTProvisioningProfile *_Nullable provisioningProfile, NSError *_Nullable error))completionHandler
 {
     NSURL *URL = [NSURL URLWithString:@"ios/downloadTeamProvisioningProfile.action" relativeToURL:self.baseURL];
     
-    [self sendRequestWithURL:URL additionalParameters:@{@"appIdId": appID.identifier} session:session team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
+    NSMutableDictionary *parameters = [@{
+        @"appIdId": appID.identifier,
+    } mutableCopy];
+    
+    switch (deviceType)
+    {
+        case ALTDeviceTypeiPhone:
+        case ALTDeviceTypeiPad:
+            parameters[@"DTDK_Platform"] = @"ios";
+            break;
+            
+        case ALTDeviceTypeAppleTV:
+            parameters[@"DTDK_Platform"] = @"tvos";
+            parameters[@"subPlatform"] = @"tvOS";
+            break;
+            
+        default: break;
+    }
+    
+    [self sendRequestWithURL:URL additionalParameters:parameters session:session team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
         if (responseDictionary == nil)
         {
             completionHandler(nil, requestError);

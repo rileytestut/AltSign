@@ -44,7 +44,20 @@
 
 - (nullable instancetype)initWithURL:(NSURL *)fileURL
 {
-    NSData *data = [NSData dataWithContentsOfURL:fileURL];
+    NSError *error = nil;
+    self = [self initWithURL:fileURL options:0 error:&error];
+    
+    if (self == nil)
+    {
+        NSLog(@"Error loading provisioning profile from disk: %@", error);
+    }
+    
+    return self;
+}
+
+- (nullable instancetype)initWithURL:(NSURL *)fileURL options:(NSDataReadingOptions)options error:(NSError **)error
+{
+    NSData *data = [NSData dataWithContentsOfURL:fileURL options:options error:error];
     if (data == nil)
     {
         return nil;
@@ -69,6 +82,7 @@
         NSUUID *UUID = [[NSUUID alloc] initWithUUIDString:dictionary[@"UUID"]];
         
         NSString *teamIdentifier = [dictionary[@"TeamIdentifier"] firstObject];
+        NSString *teamName = dictionary[@"TeamName"];
         
         NSDate *creationDate = dictionary[@"CreationDate"];
         NSDate *expirationDate = dictionary[@"ExpirationDate"];
@@ -76,7 +90,7 @@
         NSDictionary<ALTEntitlement, id> *entitlements = dictionary[@"Entitlements"];
         NSArray<NSString *> *deviceIDs = dictionary[@"ProvisionedDevices"];
         
-        if (name == nil || UUID == nil || teamIdentifier == nil || creationDate == nil || expirationDate == nil || entitlements == nil || deviceIDs == nil)
+        if (name == nil || UUID == nil || teamIdentifier == nil || teamName == nil || creationDate == nil || expirationDate == nil || entitlements == nil || deviceIDs == nil)
         {
             return nil;
         }
@@ -89,6 +103,7 @@
         _UUID = [UUID copy];
         
         _teamIdentifier = [teamIdentifier copy];
+        _teamName = [teamName copy];
         
         _creationDate = [creationDate copy];
         _expirationDate = [expirationDate copy];
@@ -218,25 +233,25 @@
 
     /* Start parsing */
     unsigned char *pointer = (unsigned char *)encodedData.bytes;
-    if (*pointer != ASN1_SEQUENCE)
+    if (!pointer || *pointer != ASN1_SEQUENCE)
     {
         return nil;
     }
     
     pointer = advanceToNextItem(pointer);
-    if (*pointer != ASN1_OBJECT_IDENTIFIER)
+    if (!pointer || *pointer != ASN1_OBJECT_IDENTIFIER)
     {
         return nil;
     }
     
     pointer = skipNextItem(pointer);
-    if (*pointer != ASN1_CONTAINER)
+    if (!pointer || *pointer != ASN1_CONTAINER)
     {
         return nil;
     }
     
     pointer = advanceToNextItem(pointer);
-    if (*pointer != ASN1_SEQUENCE)
+    if (!pointer || *pointer != ASN1_SEQUENCE)
     {
         return nil;
     }
@@ -249,25 +264,25 @@
         pointer = skipNextItem(pointer);
     }
     
-    if (*pointer != ASN1_SEQUENCE)
+    if (!pointer || *pointer != ASN1_SEQUENCE)
     {
         return nil;
     }
     
     pointer = advanceToNextItem(pointer);
-    if (*pointer != ASN1_OBJECT_IDENTIFIER)
+    if (!pointer || *pointer != ASN1_OBJECT_IDENTIFIER)
     {
         return nil;
     }
     
     pointer = skipNextItem(pointer);
-    if (*pointer != ASN1_CONTAINER)
+    if (!pointer || *pointer != ASN1_CONTAINER)
     {
         return nil;
     }
     
     pointer = advanceToNextItem(pointer);
-    if (*pointer != ASN1_OCTET_STRING)
+    if (!pointer || *pointer != ASN1_OCTET_STRING)
     {
         return nil;
     }
