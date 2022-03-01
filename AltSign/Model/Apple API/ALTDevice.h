@@ -23,6 +23,9 @@ extern const NSOperatingSystemVersion NSOperatingSystemVersionUnknown;
 NS_SWIFT_NAME(_NSOperatingSystemVersion.init(string:))
 extern NSOperatingSystemVersion NSOperatingSystemVersionFromString(NSString *_Nonnull osVersionString);
 
+NS_SWIFT_NAME(getter:_NSOperatingSystemVersion.stringValue(self:))
+extern NSString *_Nonnull NSStringFromOperatingSystemVersion(NSOperatingSystemVersion osVersion);
+
 #ifdef __cplusplus
 }
 #endif

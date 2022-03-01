@@ -28,6 +28,17 @@ NSOperatingSystemVersion NSOperatingSystemVersionFromString(NSString *osVersionS
     osVersion.patchVersion = patchVersion;
     return osVersion;
 }
+    
+NSString *_Nonnull NSStringFromOperatingSystemVersion(NSOperatingSystemVersion osVersion)
+{
+    NSString *stringValue = [NSString stringWithFormat:@"%@.%@", @(osVersion.majorVersion), @(osVersion.minorVersion)];
+    if (osVersion.patchVersion != 0)
+    {
+        stringValue = [NSString stringWithFormat:@"%@.%@", stringValue, @(osVersion.patchVersion)];
+    }
+    
+    return stringValue;
+}
 
 #ifdef __cplusplus
 }
