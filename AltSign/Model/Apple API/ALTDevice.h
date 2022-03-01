@@ -13,6 +13,16 @@
 // which will still map to OperatingSystemVersion in Swift.
 typedef NSOperatingSystemVersion _NSOperatingSystemVersion;
 
+typedef NS_OPTIONS(NSInteger, ALTDeviceType)
+{
+    ALTDeviceTypeiPhone NS_SWIFT_NAME(iphone) = 1 << 1,
+    ALTDeviceTypeiPad NS_SWIFT_NAME(ipad) = 1 << 2,
+    ALTDeviceTypeAppleTV NS_SWIFT_NAME(appletv) = 1 << 3,
+    
+    ALTDeviceTypeNone = 0,
+    ALTDeviceTypeAll = (ALTDeviceTypeiPhone | ALTDeviceTypeiPad | ALTDeviceTypeAppleTV),
+};
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -26,20 +36,12 @@ extern NSOperatingSystemVersion NSOperatingSystemVersionFromString(NSString *_No
 NS_SWIFT_NAME(getter:_NSOperatingSystemVersion.stringValue(self:))
 extern NSString *_Nonnull NSStringFromOperatingSystemVersion(NSOperatingSystemVersion osVersion);
 
+NS_SWIFT_NAME(getter:ALTDeviceType.osName(self:))
+extern NSString *_Nullable ALTOperatingSystemNameForDeviceType(ALTDeviceType deviceType);
+
 #ifdef __cplusplus
 }
 #endif
-
-
-typedef NS_OPTIONS(NSInteger, ALTDeviceType)
-{
-    ALTDeviceTypeiPhone NS_SWIFT_NAME(iphone) = 1 << 1,
-    ALTDeviceTypeiPad NS_SWIFT_NAME(ipad) = 1 << 2,
-    ALTDeviceTypeAppleTV NS_SWIFT_NAME(appletv) = 1 << 3,
-    
-    ALTDeviceTypeNone = 0,
-    ALTDeviceTypeAll = (ALTDeviceTypeiPhone | ALTDeviceTypeiPad | ALTDeviceTypeAppleTV),
-};
 
 NS_ASSUME_NONNULL_BEGIN
 

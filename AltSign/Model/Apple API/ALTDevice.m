@@ -39,6 +39,24 @@ NSString *_Nonnull NSStringFromOperatingSystemVersion(NSOperatingSystemVersion o
     
     return stringValue;
 }
+    
+NSString *_Nullable ALTOperatingSystemNameForDeviceType(ALTDeviceType deviceType)
+{
+    switch (deviceType)
+    {
+        case ALTDeviceTypeiPhone:
+        case ALTDeviceTypeiPad:
+            return @"iOS";
+            
+        case ALTDeviceTypeAppleTV:
+            return @"tvOS";
+            
+        case ALTDeviceTypeNone:
+        case ALTDeviceTypeAll:
+        default:
+            return nil;
+    }
+}
 
 #ifdef __cplusplus
 }
