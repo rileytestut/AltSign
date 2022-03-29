@@ -387,52 +387,60 @@ std::string CertificatesContent(ALTCertificate *altCertificate)
             return;
         }
         
-        
-        // Sign application
-        ldid::DiskFolder appBundle(application.fileURL.fileSystemRepresentation);
-        std::string key = CertificatesContent(self.certificate);
-        
-        ldid::Sign("", appBundle, key, "",
-                   ldid::fun([&](const std::string &path, const std::string &binaryEntitlements) -> std::string {
-            NSString *filename = [NSString stringWithCString:path.c_str() encoding:NSUTF8StringEncoding];
+        try
+        {
+            // Sign application
+            ldid::DiskFolder appBundle(application.fileURL.fileSystemRepresentation);
+            std::string key = CertificatesContent(self.certificate);
             
-            NSURL *fileURL = nil;
-            
-            if (filename.length == 0)
-            {
-                fileURL = application.fileURL;
-            }
-            else
-            {
-                fileURL = [application.fileURL URLByAppendingPathComponent:filename isDirectory:YES];
-            }
-            
-            NSURL *resolvedURL = [fileURL URLByResolvingSymlinksInPath];
-            
-            NSString *entitlements = entitlementsByFileURL[resolvedURL];
-            return entitlements.UTF8String;
-        }),
-                   ldid::fun([&](const std::string &string) {
-            progress.completedUnitCount += 1;
-        }),
-                   ldid::fun([&](const double signingProgress) {
-        }));
-        
-        
-        // Dispatch after to allow time to finish signing binary.
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            if (ipaURL != nil)
-            {
-                NSURL *resignedIPAURL = [[NSFileManager defaultManager] zipAppBundleAtURL:appBundleURL error:&error];
+            ldid::Sign("", appBundle, key, "",
+                       ldid::fun([&](const std::string &path, const std::string &binaryEntitlements) -> std::string {
+                NSString *filename = [NSString stringWithCString:path.c_str() encoding:NSUTF8StringEncoding];
                 
-                if (![[NSFileManager defaultManager] replaceItemAtURL:ipaURL withItemAtURL:resignedIPAURL backupItemName:nil options:0 resultingItemURL:nil error:&error])
+                NSURL *fileURL = nil;
+                
+                if (filename.length == 0)
                 {
-                    finish(NO, error);
+                    fileURL = application.fileURL;
                 }
-            }
+                else
+                {
+                    fileURL = [application.fileURL URLByAppendingPathComponent:filename isDirectory:YES];
+                }
+                
+                NSURL *resolvedURL = [fileURL URLByResolvingSymlinksInPath];
+                
+                NSString *entitlements = entitlementsByFileURL[resolvedURL];
+                return entitlements.UTF8String;
+            }),
+                       ldid::fun([&](const std::string &string) {
+                progress.completedUnitCount += 1;
+            }),
+                       ldid::fun([&](const double signingProgress) {
+            }));
             
-            finish(YES, nil);
-        });
+            
+            // Dispatch after to allow time to finish signing binary.
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                if (ipaURL != nil)
+                {
+                    NSURL *resignedIPAURL = [[NSFileManager defaultManager] zipAppBundleAtURL:appBundleURL error:&error];
+                    
+                    if (![[NSFileManager defaultManager] replaceItemAtURL:ipaURL withItemAtURL:resignedIPAURL backupItemName:nil options:0 resultingItemURL:nil error:&error])
+                    {
+                        finish(NO, error);
+                        return;
+                    }
+                }
+                
+                finish(YES, nil);
+            });
+        }
+        catch (std::exception& exception)
+        {
+            NSError *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorUnknown userInfo:@{NSLocalizedDescriptionKey: @(exception.what())}];
+            finish(NO, error);
+        }
     });
 
     return progress;
