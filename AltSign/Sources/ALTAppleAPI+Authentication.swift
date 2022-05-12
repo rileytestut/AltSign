@@ -13,12 +13,15 @@ import CAltSign.Private
 
 public extension ALTAppleAPI
 {
-    @objc func authenticate(appleID: String,
+    @objc func authenticate(appleID unsanitizedAppleID: String,
                             password: String,
                             anisetteData: ALTAnisetteData,
                             verificationHandler: ((@escaping (String?) -> Void) -> Void)?,
                             completionHandler: @escaping (ALTAccount?, ALTAppleAPISession?, Error?) -> Void)
     {
+        // Authenticating only works with lowercase email address, even if Apple ID contains capital letters.
+        let sanitizedAppleID = unsanitizedAppleID.lowercased()
+        
         do
         {
             let clientDictionary = [
@@ -39,7 +42,7 @@ public extension ALTAppleAPI
                 "X-Apple-I-TimeZone": TimeZone.current.abbreviation() ?? "PST",
             ] as [String: Any]
             
-            let context = GSAContext(username: appleID, password: password)
+            let context = GSAContext(username: sanitizedAppleID, password: password)
             guard let publicKey = context.start() else { throw ALTAppleAPIError(.authenticationHandshakeFailed) }
             
             let parameters = [
@@ -47,7 +50,7 @@ public extension ALTAppleAPI
                 "cpd": clientDictionary,
                 "ps": ["s2k", "s2k_fo"],
                 "o": "init",
-                "u": appleID
+                "u": sanitizedAppleID
             ] as [String: Any]
             
             self.sendAuthenticationRequest(parameters: parameters, anisetteData: anisetteData) { (result) in
@@ -76,7 +79,7 @@ public extension ALTAppleAPI
                         "cpd": clientDictionary,
                         "M1": verificationMessage,
                         "o": "complete",
-                        "u": appleID
+                        "u": sanitizedAppleID
                     ] as [String: Any]
                     
                     self.sendAuthenticationRequest(parameters: parameters, anisetteData: anisetteData) { (result) in
@@ -109,7 +112,7 @@ public extension ALTAppleAPI
                                     {
                                     case .failure(let error): completionHandler(nil, nil, error)
                                     case .success:
-                                        self.authenticate(appleID: appleID, password: password, anisetteData: anisetteData, verificationHandler: verificationHandler, completionHandler: completionHandler)
+                                        self.authenticate(appleID: unsanitizedAppleID, password: password, anisetteData: anisetteData, verificationHandler: verificationHandler, completionHandler: completionHandler)
                                     }
                                 }
                             }
