@@ -103,11 +103,12 @@ public extension ALTAppleAPI
                             context.dsid = dsid
                             
                             let authType = statusDictionary["au"] as? String
-                            if authType == "trustedDeviceSecondaryAuth"
+                            switch authType
                             {
+                            case "trustedDeviceSecondaryAuth":
                                 guard let verificationHandler = verificationHandler else { throw ALTAppleAPIError(.requiresTwoFactorAuthentication) }
                                 
-                                self.requestTwoFactorCode(dsid: dsid, idmsToken: idmsToken, anisetteData: anisetteData, verificationHandler: verificationHandler) { (result) in
+                                self.requestTrustedDeviceTwoFactorCode(dsid: dsid, idmsToken: idmsToken, anisetteData: anisetteData, verificationHandler: verificationHandler) { (result) in
                                     switch result
                                     {
                                     case .failure(let error): completionHandler(nil, nil, error)
@@ -115,9 +116,20 @@ public extension ALTAppleAPI
                                         self.authenticate(appleID: unsanitizedAppleID, password: password, anisetteData: anisetteData, verificationHandler: verificationHandler, completionHandler: completionHandler)
                                     }
                                 }
-                            }
-                            else
-                            {
+                                
+                            case "secondaryAuth":
+                                guard let verificationHandler = verificationHandler else { throw ALTAppleAPIError(.requiresTwoFactorAuthentication) }
+                                
+                                self.requestSMSTwoFactorCode(dsid: dsid, idmsToken: idmsToken, anisetteData: anisetteData, verificationHandler: verificationHandler) { (result) in
+                                    switch result
+                                    {
+                                    case .failure(let error): completionHandler(nil, nil, error)
+                                    case .success:
+                                        self.authenticate(appleID: unsanitizedAppleID, password: password, anisetteData: anisetteData, verificationHandler: verificationHandler, completionHandler: completionHandler)
+                                    }
+                                }
+                                
+                            default:
                                 guard let sessionKey = decryptedDictionary["sk"] as? Data,
                                       let c = decryptedDictionary["c"] as? Data
                                 else { throw URLError(.badServerResponse) }
@@ -204,40 +216,16 @@ private extension ALTAppleAPI
         }
     }
     
-    func requestTwoFactorCode(dsid: String,
-                              idmsToken: String,
-                              anisetteData: ALTAnisetteData,
-                              verificationHandler: @escaping (@escaping (String?) -> Void) -> Void,
-                              completionHandler: @escaping (Result<Void, Error>) -> Void)
+    func requestTrustedDeviceTwoFactorCode(dsid: String,
+                                           idmsToken: String,
+                                           anisetteData: ALTAnisetteData,
+                                           verificationHandler: @escaping (@escaping (String?) -> Void) -> Void,
+                                           completionHandler: @escaping (Result<Void, Error>) -> Void)
     {
-        let url = URL(string: "https://gsa.apple.com/auth/verify/trusteddevice")!
+        let requestURL = URL(string: "https://gsa.apple.com/auth/verify/trusteddevice")!
+        let verifyURL = URL(string: "https://gsa.apple.com/grandslam/GsService2/validate")!
         
-        let identityToken = dsid + ":" + idmsToken
-        
-        let identityTokenData = identityToken.data(using: .utf8)!
-        let encodedIdentityToken = identityTokenData.base64EncodedString()
-        
-        let httpHeaders = [
-            "Accept": "text/x-xml-plist",
-            "Accept-Language": "en-us",
-            "Content-Type": "text/x-xml-plist",
-            "User-Agent": "Xcode",
-            "X-Apple-App-Info": "com.apple.gs.xcode.auth",
-            "X-Xcode-Version": "11.2 (11B41)",
-            "X-Apple-Identity-Token": encodedIdentityToken,
-            "X-Apple-I-MD-M": anisetteData.machineID,
-            "X-Apple-I-MD": anisetteData.oneTimePassword,
-            "X-Apple-I-MD-LU": anisetteData.localUserID,
-            "X-Apple-I-MD-RINFO": "\(anisetteData.routingInfo)",
-            "X-Mme-Device-Id": anisetteData.deviceUniqueIdentifier,
-            "X-MMe-Client-Info": anisetteData.deviceDescription,
-            "X-Apple-I-Client-Time": self.dateFormatter.string(from: anisetteData.date),
-            "X-Apple-Locale": anisetteData.locale.identifier,
-            "X-Apple-I-TimeZone": anisetteData.timeZone.abbreviation() ?? "PST"
-        ]
-        
-        var request = URLRequest(url: url)
-        httpHeaders.forEach { request.addValue($0.value, forHTTPHeaderField: $0.key) }
+        let request = self.makeTwoFactorCodeRequest(url: requestURL, dsid: dsid, idmsToken: idmsToken, anisetteData: anisetteData)
         
         let requestCodeTask = self.session.dataTask(with: request) { (data, response, error) in
             do
@@ -249,14 +237,9 @@ private extension ALTAppleAPI
                     do
                     {
                         guard let verificationCode = verificationCode else { throw ALTAppleAPIError(.requiresTwoFactorAuthentication) }
-                        
-                        var headers = httpHeaders
-                        headers["security-code"] = verificationCode
-                        
-                        let url = URL(string: "https://gsa.apple.com/grandslam/GsService2/validate")!
-                        
-                        var request = URLRequest(url: url)
-                        headers.forEach { request.addValue($0.value, forHTTPHeaderField: $0.key) }
+                                                
+                        var request = self.makeTwoFactorCodeRequest(url: verifyURL, dsid: dsid, idmsToken: idmsToken, anisetteData: anisetteData)
+                        request.allHTTPHeaderFields?["security-code"] = verificationCode
                         
                         let verifyCodeTask = self.session.dataTask(with: request) { (data, response, error) in
                             do
@@ -279,6 +262,97 @@ private extension ALTAppleAPI
                                     let localizedDescription = errorDescription + " (\(errorCode))"
                                     throw ALTAppleAPIError(.unknown, userInfo: [NSLocalizedDescriptionKey: localizedDescription])
                                 }
+                            }
+                            catch
+                            {
+                                completionHandler(.failure(error))
+                            }
+                        }
+                        
+                        verifyCodeTask.resume()
+                    }
+                    catch
+                    {
+                        completionHandler(.failure(error))
+                    }
+                }
+                
+                verificationHandler(responseHandler)
+            }
+            catch
+            {
+                completionHandler(.failure(error))
+            }
+        }
+        
+        requestCodeTask.resume()
+    }
+    
+    func requestSMSTwoFactorCode(dsid: String,
+                                 idmsToken: String,
+                                 anisetteData: ALTAnisetteData,
+                                 verificationHandler: @escaping (@escaping (String?) -> Void) -> Void,
+                                 completionHandler: @escaping (Result<Void, Error>) -> Void)
+    {
+        let requestURL = URL(string: "https://gsa.apple.com/auth/verify/phone/put?mode=sms")!
+        let verifyURL = URL(string: "https://gsa.apple.com/auth/verify/phone/securitycode?referrer=/auth/verify/phone/put")!
+
+        var request = self.makeTwoFactorCodeRequest(url: requestURL, dsid: dsid, idmsToken: idmsToken, anisetteData: anisetteData)
+        request.httpMethod = "POST"
+
+        do
+        {
+            let bodyXML = [
+                "serverInfo": [
+                    "phoneNumber.id": "1"
+                ]
+            ] as [String : Any]
+            
+            let bodyData = try PropertyListSerialization.data(fromPropertyList: bodyXML, format: .xml, options: 0)
+            request.httpBody = bodyData
+        }
+        catch
+        {
+            completionHandler(.failure(error))
+            return
+        }
+        
+        let requestCodeTask = self.session.dataTask(with: request) { (data, response, error) in
+            do
+            {
+                guard error == nil else { throw error! }
+                
+                func responseHandler(verificationCode: String?)
+                {
+                    do
+                    {
+                        guard let verificationCode = verificationCode else { throw ALTAppleAPIError(.requiresTwoFactorAuthentication) }
+                        
+                        var request = self.makeTwoFactorCodeRequest(url: verifyURL, dsid: dsid, idmsToken: idmsToken, anisetteData: anisetteData)
+                        request.httpMethod = "POST"
+                        
+                        let bodyXML = [
+                            "securityCode.code": verificationCode,
+                            "serverInfo": [
+                                "mode": "sms",
+                                "phoneNumber.id": "1"
+                            ]
+                        ] as [String : Any]
+                        
+                        let bodyData = try PropertyListSerialization.data(fromPropertyList: bodyXML, format: .xml, options: 0)
+                        request.httpBody = bodyData
+                        
+                        let verifyCodeTask = self.session.dataTask(with: request) { (data, response, error) in
+                            do
+                            {
+                                guard error == nil else { throw error! }
+                                                                
+                                guard let httpResponse = response as? HTTPURLResponse,
+                                      httpResponse.statusCode == 200,
+                                      httpResponse.allHeaderFields.keys.contains("X-Apple-PE-Token") // PE token is included in headers if we sent correct verification code.
+                                else { throw ALTAppleAPIError(.incorrectVerificationCode) }
+                                
+                                completionHandler(.success(()))
                             }
                             catch
                             {
@@ -330,7 +404,10 @@ private extension ALTAppleAPI
             }
         }
     }
-    
+}
+
+private extension ALTAppleAPI
+{
     func sendAuthenticationRequest(parameters requestParameters: [String: Any], anisetteData: ALTAnisetteData, completionHandler: @escaping (Result<[String: Any], Error>) -> Void)
     {
         do
@@ -392,5 +469,40 @@ private extension ALTAppleAPI
         {
             completionHandler(.failure(error))
         }
+    }
+    
+    func makeTwoFactorCodeRequest(url: URL,
+                                  dsid: String,
+                                  idmsToken: String,
+                                  anisetteData: ALTAnisetteData) -> URLRequest
+    {
+        let identityToken = dsid + ":" + idmsToken
+        
+        let identityTokenData = identityToken.data(using: .utf8)!
+        let encodedIdentityToken = identityTokenData.base64EncodedString()
+        
+        let httpHeaders = [
+            "Accept": "application/x-buddyml",
+            "Accept-Language": "en-us",
+            "Content-Type": "application/x-plist",
+            "User-Agent": "Xcode",
+            "X-Apple-App-Info": "com.apple.gs.xcode.auth",
+            "X-Xcode-Version": "11.2 (11B41)",
+            "X-Apple-Identity-Token": encodedIdentityToken,
+            "X-Apple-I-MD-M": anisetteData.machineID,
+            "X-Apple-I-MD": anisetteData.oneTimePassword,
+            "X-Apple-I-MD-LU": anisetteData.localUserID,
+            "X-Apple-I-MD-RINFO": "\(anisetteData.routingInfo)",
+            "X-Mme-Device-Id": anisetteData.deviceUniqueIdentifier,
+            "X-MMe-Client-Info": anisetteData.deviceDescription,
+            "X-Apple-I-Client-Time": self.dateFormatter.string(from: anisetteData.date),
+            "X-Apple-Locale": anisetteData.locale.identifier,
+            "X-Apple-I-TimeZone": anisetteData.timeZone.abbreviation() ?? "PST"
+        ]
+        
+        var request = URLRequest(url: url)
+        httpHeaders.forEach { request.addValue($0.value, forHTTPHeaderField: $0.key) }
+        
+        return request
     }
 }
