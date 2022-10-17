@@ -16,8 +16,23 @@ NSErrorDomain const ALTAppleAPIErrorDomain = @"com.rileytestut.ALTAppleAPI";
 + (void)load
 {
     [NSError setUserInfoValueProviderForDomain:AltSignErrorDomain provider:^id _Nullable(NSError * _Nonnull error, NSErrorUserInfoKey  _Nonnull userInfoKey) {
-        if ([userInfoKey isEqualToString:NSLocalizedFailureReasonErrorKey])
+        if ([userInfoKey isEqualToString:NSLocalizedDescriptionKey])
         {
+            if ([error altsign_localizedFailure] != nil)
+            {
+                // Error has localizedFailure, so return nil to construct localizedDescription from it + localizedFailureReason.
+                return nil;
+            }
+            else
+            {
+                // Otherwise, return failureReason for localizedDescription to avoid system prepending "Operation Failed" message.
+                // Do NOT return [error alt_localizedFailureReason], which might be unexpectedly nil if unrecognized error code.
+                return error.localizedFailureReason;
+            }
+        }
+        else if ([userInfoKey isEqualToString:NSLocalizedFailureReasonErrorKey])
+        {
+            // Return failureReason for both keys to prevent prepending "Operation Failed" message to localizedDescription.
             return [error alt_localizedFailureReason];
         }
         
@@ -27,7 +42,22 @@ NSErrorDomain const ALTAppleAPIErrorDomain = @"com.rileytestut.ALTAppleAPI";
     [NSError setUserInfoValueProviderForDomain:ALTAppleAPIErrorDomain provider:^id _Nullable(NSError * _Nonnull error, NSErrorUserInfoKey  _Nonnull userInfoKey) {
         if ([userInfoKey isEqualToString:NSLocalizedDescriptionKey])
         {
-            return [error alt_appleapi_localizedDescription];
+            if ([error altsign_localizedFailure] != nil)
+            {
+                // Error has localizedFailure, so return nil to construct localizedDescription from it + localizedFailureReason.
+                return nil;
+            }
+            else
+            {
+                // Otherwise, return failureReason for localizedDescription to avoid system prepending "Operation Failed" message.
+                // Do NOT return [error alt_appleapi_localizedFailureReason], which might be unexpectedly nil if unrecognized error code.
+                return error.localizedFailureReason;
+            }
+        }
+        else if ([userInfoKey isEqualToString:NSLocalizedFailureReasonErrorKey])
+        {
+            // Return failureReason for both keys to prevent prepending "Operation Failed" message to localizedDescription.
+            return [error alt_appleapi_localizedFailureReason];
         }
         else if ([userInfoKey isEqualToString:NSLocalizedRecoverySuggestionErrorKey])
         {
@@ -36,6 +66,25 @@ NSErrorDomain const ALTAppleAPIErrorDomain = @"com.rileytestut.ALTAppleAPI";
         
         return nil;
     }];
+}
+
+- (nullable NSString *)altsign_localizedFailure
+{
+    // Copied logic from AltStore's NSError+AltStore.swift.
+    NSString *localizedFailure = self.userInfo[NSLocalizedFailureErrorKey];
+    if (localizedFailure != nil)
+    {
+        return localizedFailure;
+    }
+        
+    id (^provider)(NSError *, NSErrorUserInfoKey) = [NSError userInfoValueProviderForDomain:self.domain];
+    if (provider == nil)
+    {
+        return nil;
+    }
+        
+    localizedFailure = provider(self, NSLocalizedFailureErrorKey);
+    return localizedFailure;
 }
 
 - (nullable NSString *)alt_localizedFailureReason
@@ -61,7 +110,7 @@ NSErrorDomain const ALTAppleAPIErrorDomain = @"com.rileytestut.ALTAppleAPI";
     return nil;
 }
 
-- (nullable NSString *)alt_appleapi_localizedDescription
+- (nullable NSString *)alt_appleapi_localizedFailureReason
 {
     switch ((ALTAppleAPIError)self.code)
     {
