@@ -11,6 +11,9 @@
 NSErrorDomain const AltSignErrorDomain = @"com.rileytestut.AltSign";
 NSErrorDomain const ALTAppleAPIErrorDomain = @"com.rileytestut.ALTAppleAPI";
 
+NSErrorUserInfoKey const ALTSourceFileErrorKey = @"ALTSourceFile";
+NSErrorUserInfoKey const ALTSourceLineErrorKey = @"ALTSourceLine";
+
 @implementation NSError (ALTError)
 
 + (void)load

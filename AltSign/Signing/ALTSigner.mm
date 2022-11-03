@@ -438,7 +438,11 @@ std::string CertificatesContent(ALTCertificate *altCertificate)
         }
         catch (std::exception& exception)
         {
-            NSError *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorUnknown userInfo:@{NSLocalizedDescriptionKey: @(exception.what())}];
+            NSError *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorUnknown userInfo:@{
+                NSLocalizedFailureReasonErrorKey: @(exception.what()),
+                ALTSourceFileErrorKey: @(__FILE__).lastPathComponent,
+                ALTSourceLineErrorKey: @(__LINE__)
+            }];
             finish(NO, error);
         }
     });

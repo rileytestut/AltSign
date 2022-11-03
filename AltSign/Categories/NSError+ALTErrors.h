@@ -9,6 +9,10 @@
 #import <Foundation/Foundation.h>
 
 extern NSErrorDomain const AltSignErrorDomain;
+
+extern NSErrorUserInfoKey const ALTSourceFileErrorKey;
+extern NSErrorUserInfoKey const ALTSourceLineErrorKey;
+
 typedef NS_ERROR_ENUM(AltSignErrorDomain, ALTError)
 {
     ALTErrorUnknown,
