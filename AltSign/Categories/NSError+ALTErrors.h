@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 
 extern NSErrorDomain const AltSignErrorDomain;
+extern NSErrorDomain const ALTAppleAPIErrorDomain;
+extern NSErrorDomain const ALTUnderlyingAppleAPIErrorDomain;
 
 extern NSErrorUserInfoKey const ALTSourceFileErrorKey;
 extern NSErrorUserInfoKey const ALTSourceLineErrorKey;
@@ -22,7 +24,6 @@ typedef NS_ERROR_ENUM(AltSignErrorDomain, ALTError)
     ALTErrorMissingProvisioningProfile,
 };
 
-extern NSErrorDomain const ALTAppleAPIErrorDomain;
 typedef NS_ERROR_ENUM(ALTAppleAPIErrorDomain, ALTAppleAPIError)
 {
     ALTAppleAPIErrorUnknown,

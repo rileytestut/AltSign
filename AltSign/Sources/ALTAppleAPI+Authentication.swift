@@ -273,7 +273,7 @@ private extension ALTAppleAPI
                                     guard let errorDescription = responseDictionary["em"] as? String else { throw ALTAppleAPIError.unknown() }
                                     
                                     let localizedDescription = errorDescription + " (\(errorCode))"
-                                    throw ALTAppleAPIError.unknown(userInfo: [NSLocalizedDescriptionKey: localizedDescription])
+                                    throw NSError(domain: ALTUnderlyingAppleAPIErrorDomain, code: errorCode, userInfo: [NSLocalizedDescriptionKey: localizedDescription])
                                 }
                             }
                             catch
@@ -467,7 +467,7 @@ private extension ALTAppleAPI
                         guard let errorDescription = status["em"] as? String else { throw ALTAppleAPIError.unknown() }
                         
                         let localizedDescription = errorDescription + " (\(errorCode))"
-                        throw ALTAppleAPIError.unknown(userInfo: [NSLocalizedDescriptionKey: localizedDescription])
+                        throw NSError(domain: ALTUnderlyingAppleAPIErrorDomain, code: errorCode, userInfo: [NSLocalizedDescriptionKey: localizedDescription])
                     }
                 }
                 catch

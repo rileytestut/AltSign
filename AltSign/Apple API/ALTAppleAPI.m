@@ -906,9 +906,9 @@ NS_ASSUME_NONNULL_END
             NSString *errorDescription = [responseDictionary objectForKey:@"userString"] ?: [responseDictionary objectForKey:@"resultString"];
             NSString *localizedDescription = [NSString stringWithFormat:@"%@ (%@)", errorDescription, @(resultCode)];
             
-            NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-            userInfo[NSLocalizedDescriptionKey] = localizedDescription;
-            tempError = [NSError errorWithDomain:ALTAppleAPIErrorDomain code:ALTAppleAPIErrorUnknown userInfo:userInfo];
+            tempError = [NSError errorWithDomain:ALTUnderlyingAppleAPIErrorDomain code:resultCode userInfo:@{
+                NSLocalizedDescriptionKey: localizedDescription,
+            }];
         }
         
         *error = tempError;
