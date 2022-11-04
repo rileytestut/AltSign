@@ -26,7 +26,7 @@ typedef NS_ERROR_ENUM(AltSignErrorDomain, ALTError)
 
 typedef NS_ERROR_ENUM(ALTAppleAPIErrorDomain, ALTAppleAPIError)
 {
-    ALTAppleAPIErrorUnknown,
+    ALTAppleAPIErrorUnknown = 3000,
     ALTAppleAPIErrorInvalidParameters,
     
     ALTAppleAPIErrorIncorrectCredentials,
