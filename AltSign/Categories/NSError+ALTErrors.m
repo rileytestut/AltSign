@@ -125,7 +125,7 @@ NSErrorUserInfoKey const ALTSourceLineErrorKey = @"ALTSourceLine";
             return NSLocalizedString(@"The provided parameters are invalid.", @"");
             
         case ALTAppleAPIErrorIncorrectCredentials:
-            return NSLocalizedString(@"Incorrect Apple ID or password.", @"");
+            return NSLocalizedString(@"Your Apple ID or password is incorrect.", @"");
             
         case ALTAppleAPIErrorNoTeams:
             return NSLocalizedString(@"You are not a member of any development teams.", @"");
@@ -192,6 +192,9 @@ NSErrorUserInfoKey const ALTSourceLineErrorKey = @"ALTSourceLine";
 {
     switch ((ALTAppleAPIError)self.code)
     {
+        case ALTAppleAPIErrorIncorrectCredentials:
+            return NSLocalizedString(@"Please make sure you entered both your Apple ID and password correctly and try again.", @"");
+            
         case ALTAppleAPIErrorInvalidAnisetteData:
 #if TARGET_OS_OSX
             return NSLocalizedString(@"Make sure this computer's date & time matches your iOS device and try again.", @"");
