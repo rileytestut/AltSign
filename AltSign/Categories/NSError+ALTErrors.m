@@ -8,7 +8,7 @@
 
 #import "NSError+ALTErrors.h"
 
-NSErrorDomain const AltSignErrorDomain = @"com.rileytestut.AltSign";
+NSErrorDomain const AltSignErrorDomain = @"AltSign.Error";
 NSErrorDomain const ALTAppleAPIErrorDomain = @"AltStore.AppleDeveloperError";
 NSErrorDomain const ALTUnderlyingAppleAPIErrorDomain = @"Apple.APIError";
 
