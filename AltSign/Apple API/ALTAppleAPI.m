@@ -397,7 +397,7 @@ NS_ASSUME_NONNULL_END
             switch (resultCode)
             {
                 case 35:
-                    return [NSError errorWithDomain:ALTAppleAPIErrorDomain code:ALTAppleAPIErrorInvalidAppIDName userInfo:nil];
+                    return [NSError errorWithDomain:ALTAppleAPIErrorDomain code:ALTAppleAPIErrorInvalidAppIDName userInfo:@{ALTAppNameErrorKey: sanitizedName}];
                     
                 case 9120:
                     return [NSError errorWithDomain:ALTAppleAPIErrorDomain code:ALTAppleAPIErrorMaximumAppIDLimitReached userInfo:nil];

@@ -14,6 +14,7 @@ NSErrorDomain const ALTUnderlyingAppleAPIErrorDomain = @"Apple.APIError";
 
 NSErrorUserInfoKey const ALTSourceFileErrorKey = @"ALTSourceFile";
 NSErrorUserInfoKey const ALTSourceLineErrorKey = @"ALTSourceLine";
+NSErrorUserInfoKey const ALTAppNameErrorKey = @"appName";
 
 @implementation NSError (ALTError)
 
@@ -146,7 +147,15 @@ NSErrorUserInfoKey const ALTSourceLineErrorKey = @"ALTSourceLine";
             return NSLocalizedString(@"There is no certificate with the requested serial number for this team.", @"");
             
         case ALTAppleAPIErrorInvalidAppIDName:
-            return NSLocalizedString(@"The name for this app is invalid.", @"");
+        {
+            NSString *appName = self.userInfo[ALTAppNameErrorKey];
+            if (appName != nil)
+            {
+                return [NSString stringWithFormat:NSLocalizedString(@"The name “%@” contains invalid characters.", @""), appName];
+            }
+            
+            return NSLocalizedString(@"The name of this app contains invalid characters.", @"");
+        }
             
         case ALTAppleAPIErrorInvalidBundleIdentifier:
             return NSLocalizedString(@"The bundle identifier for this app is invalid.", @"");
