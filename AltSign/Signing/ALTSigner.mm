@@ -359,20 +359,8 @@ std::string CertificatesContent(ALTCertificate *altCertificate)
             return;
         }
         
-        NSURL *pluginsURL = [appBundle builtInPlugInsURL];
-        
-        NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtURL:pluginsURL
-                                                                 includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsSubdirectoryDescendants errorHandler:nil];
-        
-        for (NSURL *extensionURL in enumerator)
+        for (ALTApplication *appExtension in application.appExtensions)
         {
-            ALTApplication *appExtension = [[ALTApplication alloc] initWithFileURL:extensionURL];
-            if (appExtension == nil)
-            {
-                prepareError = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorInvalidApp userInfo:nil];
-                break;
-            }
-            
             NSError *error = prepareApp(appExtension);
             if (error != nil)
             {
