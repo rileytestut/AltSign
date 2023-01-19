@@ -461,7 +461,7 @@ private extension ALTAppleAPI
                     
                     switch errorCode
                     {
-                    case -22406: throw ALTAppleAPIError(.incorrectCredentials)
+                    case -20101, -22406: throw ALTAppleAPIError(.incorrectCredentials)
                     case -22421: throw ALTAppleAPIError(.invalidAnisetteData)
                     default:
                         guard let errorDescription = status["em"] as? String else { throw ALTAppleAPIError.unknown() }
