@@ -7,8 +7,8 @@ import PackageDescription
 let package = Package(
     name: "AltSign",
     platforms: [
-        .iOS(.v12),
-        .macOS(.v10_14),
+        .iOS(.v14),
+        .macOS(.v11),
     ],
     products: [
         .library(
