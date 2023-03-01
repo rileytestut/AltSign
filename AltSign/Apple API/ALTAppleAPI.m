@@ -249,7 +249,7 @@ NS_ASSUME_NONNULL_END
 
 - (void)addCertificateWithMachineName:(NSString *)machineName toTeam:(ALTTeam *)team session:(ALTAppleAPISession *)session completionHandler:(void (^)(ALTCertificate * _Nullable, NSError * _Nullable))completionHandler
 {
-    ALTCertificateRequest *request = [[ALTCertificateRequest alloc] init];
+    ALTCertificateRequest *request = [ALTCertificateRequest newRequest];
     if (request == nil)
     {
         NSError *error = [NSError errorWithDomain:ALTAppleAPIErrorDomain code:ALTAppleAPIErrorInvalidCertificateRequest userInfo:nil];

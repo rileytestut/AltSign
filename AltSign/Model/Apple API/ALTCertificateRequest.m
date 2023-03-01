@@ -12,20 +12,26 @@
 
 @implementation ALTCertificateRequest
 
-- (instancetype)init
++ (nullable instancetype)newRequest
+{
+    NSData *data = nil;
+    NSData *privateKey = nil;
+    [ALTCertificateRequest generateRequest:&data privateKey:&privateKey];
+    
+    if (data == nil || privateKey == nil)
+    {
+        return nil;
+    }
+    
+    ALTCertificateRequest *request = [[ALTCertificateRequest alloc] initWithData:data privateKey:privateKey];
+    return request;
+}
+
+- (instancetype)initWithData:(NSData *)data privateKey:(NSData *)privateKey
 {
     self = [super init];
     if (self)
     {
-        NSData *data = nil;
-        NSData *privateKey = nil;
-        [self generateRequest:&data privateKey:&privateKey];
-        
-        if (data == nil || privateKey == nil)
-        {
-            return nil;
-        }
-        
         _data = [data copy];
         _privateKey = [privateKey copy];
     }
@@ -34,7 +40,7 @@
 }
 
 // Based on https://www.codepool.biz/how-to-use-openssl-to-generate-x-509-certificate-request.html
-- (void)generateRequest:(NSData **)outputRequest privateKey:(NSData **)outputPrivateKey
++ (void)generateRequest:(NSData **)outputRequest privateKey:(NSData **)outputPrivateKey
 {
     BIGNUM *bignum = NULL;
     __block RSA *rsa = NULL;

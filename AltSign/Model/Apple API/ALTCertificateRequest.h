@@ -15,7 +15,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, readonly) NSData *data;
 @property (nonatomic, copy, readonly) NSData *privateKey;
 
-- (nullable instancetype)init;
+// Can't mark init nullable without warnings, so use factory method instead.
++ (nullable instancetype)newRequest NS_SWIFT_NAME(ALTCertificateRequest.makeRequest());
+
+- (instancetype)init NS_UNAVAILABLE;
 
 @end
 
