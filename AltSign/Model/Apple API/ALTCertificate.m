@@ -185,7 +185,7 @@ NSString *ALTCertificatePEMSuffix = @"-----END CERTIFICATE-----";
     
     X509_NAME_ENTRY *nameEntry = X509_NAME_get_entry(subject, index);
     ASN1_STRING *nameData = X509_NAME_ENTRY_get_data(nameEntry);
-    unsigned char *cName = ASN1_STRING_data(nameData);
+    const unsigned char *cName = ASN1_STRING_get0_data(nameData);
     
     
     /* Serial Number */
