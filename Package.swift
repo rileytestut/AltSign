@@ -78,6 +78,11 @@ let package = Package(
                 .headerSearchPath("libplist/src"),
                 .headerSearchPath("libplist/libcnary/include"),
                 .headerSearchPath("../OpenSSL/ios/include"),
+                
+                .unsafeFlags(["-w"])
+            ],
+            cxxSettings: [
+                .unsafeFlags(["-w"])
             ]
         ),
         .target(
@@ -97,6 +102,9 @@ let package = Package(
                 .headerSearchPath("../../Dependencies/ldid/libplist/src"),
                 .headerSearchPath("../../Dependencies/ldid/libplist/libcnary/include"),
                 .headerSearchPath("../../Dependencies/OpenSSL/ios/include"),
+            ],
+            cxxSettings: [
+                .unsafeFlags(["-w"])
             ]
         ),
         
