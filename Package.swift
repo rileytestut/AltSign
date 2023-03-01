@@ -70,7 +70,6 @@ let package = Package(
                 "lookup2.c",
                 "libplist/src",
                 "libplist/libcnary",
-                "libplist/libcnary/src",
             ],
             publicHeadersPath: "",
             cSettings: [
@@ -150,7 +149,6 @@ let package = Package(
                 "Dependencies/minizip/Makefile",
                 "Dependencies/minizip/minizip.c",
                 "Dependencies/minizip/miniunz.c",
-                "Dependencies/minizip/ChangeLogUnzip",
             ],
             publicHeadersPath: "AltSign/include",
             cSettings: [
