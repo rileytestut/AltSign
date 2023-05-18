@@ -61,9 +61,11 @@ ALTDeviceType ALTDeviceTypeFromUIDeviceFamily(NSInteger deviceFamily)
             return nil;
         }
         
+        // These technically can be nil, but in practice every app should have a version and build version.
         NSString *version = infoDictionary[@"CFBundleShortVersionString"] ?: @"1.0";
-        NSString *minimumVersionString = infoDictionary[@"MinimumOSVersion"] ?: @"1.0";
+        NSString *buildVersion = infoDictionary[(NSString *)kCFBundleVersionKey] ?: @"1";
         
+        NSString *minimumVersionString = infoDictionary[@"MinimumOSVersion"] ?: @"1.0";
         NSArray *versionComponents = [minimumVersionString componentsSeparatedByString:@"."];
         
         NSInteger majorVersion = [versionComponents.firstObject integerValue];
@@ -125,6 +127,7 @@ ALTDeviceType ALTDeviceTypeFromUIDeviceFamily(NSInteger deviceFamily)
         _name = [name copy];
         _bundleIdentifier = [bundleIdentifier copy];
         _version = [version copy];
+        _buildVersion = [buildVersion copy];
         _minimumiOSVersion = minimumVersion;
         _supportedDeviceTypes = supportedDeviceTypes;
         _iconName = [iconName copy];
