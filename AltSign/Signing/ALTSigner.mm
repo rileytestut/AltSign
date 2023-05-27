@@ -332,7 +332,17 @@ std::string CertificatesContent(ALTCertificate *altCertificate)
                 }
             }
             
-            NSData *entitlementsData = [NSPropertyListSerialization dataWithPropertyList:profile.entitlements format:NSPropertyListXMLFormat_v1_0 options:0 error:&error];
+            NSMutableDictionary<NSString *, id> *filteredEntitlements = [profile.entitlements mutableCopy];
+            for (NSString *entitlement in profile.entitlements)
+            {
+                if (app.entitlements[entitlement] == nil)
+                {
+                    // Original app does not have this entitlement, so don't give it to resigned app.
+                    filteredEntitlements[entitlement] = nil;
+                }
+            }
+            
+            NSData *entitlementsData = [NSPropertyListSerialization dataWithPropertyList:filteredEntitlements format:NSPropertyListXMLFormat_v1_0 options:0 error:&error];
             if (entitlementsData == nil)
             {
                 return error;
