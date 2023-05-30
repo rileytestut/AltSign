@@ -337,6 +337,13 @@ std::string CertificatesContent(ALTCertificate *altCertificate)
             {
                 if (app.entitlements[entitlement] == nil)
                 {
+                    if ([entitlement isEqualToString:ALTEntitlementApplicationIdentifier] || [entitlement isEqualToString:ALTEntitlementTeamIdentifier] || [entitlement isEqualToString:ALTEntitlementGetTaskAllow])
+                    {
+                        // Apps signed with development profiles _must_ have these entitlements, so never remove them,
+                        // even if downloaded app doesn't have them originally.
+                        continue;
+                    }
+                    
                     // Original app does not have this entitlement, so don't give it to resigned app.
                     filteredEntitlements[entitlement] = nil;
                 }
