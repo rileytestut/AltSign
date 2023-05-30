@@ -335,7 +335,33 @@ std::string CertificatesContent(ALTCertificate *altCertificate)
             NSMutableDictionary<NSString *, id> *filteredEntitlements = [profile.entitlements mutableCopy];
             for (NSString *entitlement in profile.entitlements)
             {
-                if (app.entitlements[entitlement] == nil)
+                id entitlementValue = app.entitlements[entitlement];
+                if (entitlementValue != nil)
+                {
+                    if ([entitlement isEqualToString:ALTEntitlementKeychainAccessGroups])
+                    {
+                        // Replace profile's keychain-access-groups wildcard value with correct groups.
+
+                        NSMutableArray *keychainAccessGroups = [NSMutableArray array];
+                        for (NSString *keychainGroup in entitlementValue)
+                        {
+                            NSRange range = [keychainGroup rangeOfString:@"."];
+                            NSString *rawKeychainGroup = [keychainGroup substringFromIndex:range.location];
+                            
+                            // rawKeychainGroup is prefixed with period already.
+                            NSString *fixedKeychainGroup = [NSString stringWithFormat:@"%@%@", profile.teamIdentifier, rawKeychainGroup];
+                            [keychainAccessGroups addObject:fixedKeychainGroup];
+                        }
+
+                        filteredEntitlements[entitlement] = keychainAccessGroups;
+                    }
+                    else
+                    {
+                        // Downloaded app has this entitlement, so don't remove.
+                        continue;
+                    }
+                }
+                else
                 {
                     if ([entitlement isEqualToString:ALTEntitlementApplicationIdentifier] || [entitlement isEqualToString:ALTEntitlementTeamIdentifier] || [entitlement isEqualToString:ALTEntitlementGetTaskAllow])
                     {
