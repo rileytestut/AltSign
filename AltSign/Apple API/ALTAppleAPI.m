@@ -14,6 +14,7 @@
 #import "ALTModel+Internal.h"
 
 #import <AltSign/NSError+ALTErrors.h>
+#import <AltSign/NSCharacterSet+ASCII.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -370,11 +371,17 @@ NS_ASSUME_NONNULL_END
 {
     NSURL *URL = [NSURL URLWithString:@"ios/addAppId.action" relativeToURL:self.baseURL];
     
-    NSMutableCharacterSet *allowedCharacters = [NSMutableCharacterSet alphanumericCharacterSet];
+    NSMutableCharacterSet *allowedCharacters = [[NSCharacterSet asciiAlphanumericCharacterSet] mutableCopy];
     [allowedCharacters formUnionWithCharacterSet:[NSCharacterSet whitespaceCharacterSet]];
     
     NSString *sanitizedName = [name stringByFoldingWithOptions:NSDiacriticInsensitiveSearch locale:nil];
     sanitizedName = [[sanitizedName componentsSeparatedByCharactersInSet:[allowedCharacters invertedSet]] componentsJoinedByString:@""];
+    
+    if (sanitizedName.length == 0)
+    {
+        // Fallback in case name had no valid characters.
+        sanitizedName = @"App";
+    }
     
     [self sendRequestWithURL:URL additionalParameters:@{@"identifier": bundleIdentifier, @"name": sanitizedName} session:session team:team completionHandler:^(NSDictionary *responseDictionary, NSError *requestError) {
         if (responseDictionary == nil)
