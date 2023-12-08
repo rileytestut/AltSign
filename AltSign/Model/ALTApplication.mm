@@ -183,7 +183,9 @@ ALTDeviceType ALTDeviceTypeFromUIDeviceFamily(NSInteger deviceFamily)
 {
     if (_entitlementsString == nil)
     {
-        std::string rawEntitlements = ldid::Entitlements(self.fileURL.fileSystemRepresentation);
+        NSString *path = [self.fileURL.path.stringByStandardizingPath stringByAppendingString:@"/"];
+        
+        std::string rawEntitlements = ldid::Entitlements(path.fileSystemRepresentation);
         _entitlementsString = @(rawEntitlements.c_str());
     }
     

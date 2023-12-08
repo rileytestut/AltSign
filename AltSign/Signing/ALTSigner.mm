@@ -178,6 +178,24 @@ std::string CertificatesContent(ALTCertificate *altCertificate)
     return output;
 }
 
+struct ALTProgress: public ldid::Progress
+{
+    NSProgress *progress = nil;
+    
+    virtual void operator()(const std::string &value) const
+    {
+        this->progress.completedUnitCount += 1;
+    }
+    
+    virtual void operator()(double value) const
+    {
+    }
+    
+    ALTProgress(NSProgress *progress) : progress(progress)
+    {
+    }
+};
+
 @implementation ALTSigner
 
 + (void)load
@@ -421,11 +439,13 @@ std::string CertificatesContent(ALTCertificate *altCertificate)
         try
         {
             // Sign application
-            ldid::DiskFolder appBundle(application.fileURL.fileSystemRepresentation);
-            std::string key = CertificatesContent(self.certificate);
+            NSString *filePath = [application.fileURL.path.stringByStandardizingPath stringByAppendingString:@"/"];
+            ldid::DiskFolder appBundle(filePath.UTF8String);
             
-            ldid::Sign("", appBundle, key, "",
-                       ldid::fun([&](const std::string &path, const std::string &binaryEntitlements) -> std::string {
+            std::string key = CertificatesContent(self.certificate);
+            ALTProgress altProgress(progress);
+            
+            ldid::Sign("", appBundle, key, "", ldid::fun([&](const std::string &path, const std::string &binaryEntitlements) -> std::string {
                 NSString *filename = [NSString stringWithCString:path.c_str() encoding:NSUTF8StringEncoding];
                 
                 NSURL *fileURL = nil;
@@ -443,13 +463,7 @@ std::string CertificatesContent(ALTCertificate *altCertificate)
                 
                 NSString *entitlements = entitlementsByFileURL[resolvedURL];
                 return entitlements.UTF8String;
-            }),
-                       ldid::fun([&](const std::string &string) {
-                progress.completedUnitCount += 1;
-            }),
-                       ldid::fun([&](const double signingProgress) {
-            }));
-            
+            }), altProgress);
             
             // Dispatch after to allow time to finish signing binary.
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
