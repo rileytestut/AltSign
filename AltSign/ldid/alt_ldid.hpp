@@ -15,4 +15,5 @@
 namespace ldid
 {
     std::string Entitlements(std::string path);
+    std::string Requirements(std::string path);
 }
