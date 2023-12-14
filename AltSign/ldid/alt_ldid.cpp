@@ -169,7 +169,7 @@ namespace ldid
         }
         
         // No entitlements found in any mach_header, so return empty string.
-        return "";
+        return stringstream.str();
     }
     
 }
