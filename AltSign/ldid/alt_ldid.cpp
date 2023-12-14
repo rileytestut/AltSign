@@ -161,7 +161,8 @@ namespace ldid
                         struct Blob *requirement = reinterpret_cast<struct Blob *>(blob + begin);
                         
                         //fwrite(requirement, 1, Swap(requirement->length), stdout);
-                        stringstream << std::string((char *)requirement, Swap(requirement->length));
+                        std::string value((char *)requirement, Swap(requirement->length));
+                        stringstream << value;
                     }
                 }
             }
