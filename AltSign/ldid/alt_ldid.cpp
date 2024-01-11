@@ -115,5 +115,59 @@ namespace ldid
         // No entitlements found in any mach_header, so return empty string.
         return "";
     }
+
+    // Based heavily on ldid's -q argument logic.
+    std::string Requirements(std::string path)
+    {
+        struct stat info;
+        _syscall(stat(path.c_str(), &info));
+        
+        if (S_ISDIR(info.st_mode))
+        {
+            path += "/" + ExecutablePath(path);
+        }
+        
+        std::stringstream stringstream;
+        
+        Map mapping(path, false);
+        FatHeader fat_header(mapping.data(), mapping.size());
+        
+        _foreach (mach_header, fat_header.GetMachHeaders())
+        {
+            struct linkedit_data_command *signature(NULL);
+            
+            _foreach (load_command, mach_header.GetLoadCommands())
+            {
+                uint32_t cmd(mach_header.Swap(load_command->cmd));
+                if (cmd == LC_CODE_SIGNATURE)
+                {
+                    signature = reinterpret_cast<struct linkedit_data_command *>(load_command);
+                }
+            }
+            
+            if (signature != NULL)
+            {
+                uint32_t data = mach_header.Swap(signature->dataoff);
+
+                uint8_t *top = reinterpret_cast<uint8_t *>(mach_header.GetBase());
+                uint8_t *blob = top + data;
+                struct SuperBlob *super = reinterpret_cast<struct SuperBlob *>(blob);
+
+                for (size_t index(0); index != Swap(super->count); ++index)
+                {
+                    if (Swap(super->index[index].type) == CSSLOT_REQUIREMENTS)
+                    {
+                        uint32_t begin = Swap(super->index[index].offset);
+                        struct Blob *requirement = reinterpret_cast<struct Blob *>(blob + begin);
+                        
+                        std::string value((char *)requirement, Swap(requirement->length));
+                        stringstream << value;
+                    }
+                }
+            }
+        }
+        
+        return stringstream.str();
+    }
     
 }
