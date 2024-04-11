@@ -7,7 +7,10 @@
 //
 
 import Foundation
+
+#if !MARKETPLACE
 import CoreCrypto
+#endif
 
 class GSAContext
 {
@@ -34,6 +37,8 @@ class GSAContext
     /// M1
     private(set) var verificationMessage: Data?
     
+    #if !MARKETPLACE
+    
     /// SRP group: https://tools.ietf.org/html/rfc5054#page-16
     private let srpGroup = ccsrp_gp_rfc5054_2048()!
     
@@ -48,6 +53,8 @@ class GSAContext
         return context
     }()
     
+    #endif
+    
     init(username: String, password: String)
     {
         self.username = username
@@ -56,7 +63,9 @@ class GSAContext
     
     deinit
     {
+        #if !MARKETPLACE
         self.srpContext.deallocate()
+        #endif
     }
 }
 
@@ -84,6 +93,12 @@ extension GSAContext
     
     func verifyServerVerificationMessage(_ serverVerificationMessage: Data) -> Bool
     {
+        #if MARKETPLACE
+
+        return false
+
+        #else
+        
         guard !serverVerificationMessage.isEmpty else { return false }
         
         let isValid = serverVerificationMessage.withUnsafeBytes { (bytes) -> Bool in
@@ -92,10 +107,18 @@ extension GSAContext
         }
         
         return isValid
+        
+        #endif
     }
     
     func makeChecksum(appName: String) -> Data?
     {
+        #if MARKETPLACE
+
+        return nil
+
+        #else
+        
         guard let sessionKey = self.sessionKey, let dsid = self.dsid else { return nil }
         
         let size = cchmac_di_size(self.digestInfo)
@@ -113,6 +136,8 @@ extension GSAContext
         var checksum = Data(repeating: 0, count: self.digestInfo.pointee.output_size)
         checksum.withUnsafeMutableBytes { cchmac_final(self.digestInfo, context, $0.baseAddress?.assumingMemoryBound(to: UInt8.self)) }
         return checksum
+        
+        #endif
     }
 }
 
@@ -120,12 +145,20 @@ internal extension GSAContext
 {
     func makeHMACKey(_ string: String) -> Data
     {
+        #if MARKETPLACE
+
+        return Data()
+
+        #else
+        
         var keySize = 0
         let rawSessionKey = ccsrp_get_session_key(self.srpContext, &keySize)
         
         var sessionKey = Data(repeating: 0, count: keySize)
         sessionKey.withUnsafeMutableBytes { cchmac(self.digestInfo, keySize, rawSessionKey, string.count, string, $0.baseAddress?.assumingMemoryBound(to: UInt8.self)) }
         return sessionKey
+        
+        #endif
     }
 }
 
@@ -133,6 +166,12 @@ private extension GSAContext
 {
     func makeAKey() -> Data?
     {
+        #if MARKETPLACE
+
+        return nil
+
+        #else
+        
         let size = ccsrp_exchange_size(self.srpContext)
         
         var keyA = Data(repeating: 0, count: size)
@@ -140,10 +179,18 @@ private extension GSAContext
         
         guard result == 0 else { return nil }
         return keyA
+        
+        #endif
     }
     
     func makeX(password: String, salt: Data, iterations: Int, isHexadecimal: Bool) -> Data?
     {
+        #if MARKETPLACE
+
+        return nil
+
+        #else
+        
         var digest = Data(repeating: 0, count: self.digestInfo.pointee.output_size)
         digest.withUnsafeMutableBytes { ccdigest(self.digestInfo, password.utf8.count, password, $0.baseAddress!) }
         
@@ -167,10 +214,18 @@ private extension GSAContext
         
         guard result == 0 else { return nil }
         return x
+        
+        #endif
     }
     
     func makeM1(username: String, derivedPasswordKey x: Data, salt: Data, serverPublicKey B: Data) -> Data?
     {
+        #if MARKETPLACE
+
+        return nil
+
+        #else
+        
         let size = ccsrp_get_session_key_length(self.srpContext)
         
         var M1 = Data(repeating: 0, count: size)
@@ -188,5 +243,7 @@ private extension GSAContext
 
         guard result == 0 else { return nil }
         return M1
+        
+        #endif
     }
 }
