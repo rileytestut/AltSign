@@ -152,10 +152,10 @@ let package = Package(
             ],
             publicHeadersPath: "AltSign/include",
             cSettings: [
-                .headerSearchPath("AltSign/**"),
-                .headerSearchPath("AltSign/ldid"),
+                // Recursive wildcard paths no longer work as of Xcode 16 :(
+                // .headerSearchPath("AltSign/**"),
+                .headerSearchPath("AltSign/include/AltSign"),
                 .headerSearchPath("Dependencies/minizip"),
-                .headerSearchPath("AltSign/Capabilities"),
                 .headerSearchPath("Dependencies/OpenSSL/ios/include"),
                 .headerSearchPath("Dependencies/ldid/libplist/include"),
                 .headerSearchPath("Dependencies/ldid"),
