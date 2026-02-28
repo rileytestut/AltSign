@@ -22,7 +22,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (copy, nonatomic, readonly) NSUUID *UUID;
 
 @property (copy, nonatomic, readonly) NSString *bundleIdentifier;
+
 @property (copy, nonatomic, readonly) NSString *teamIdentifier;
+@property (copy, nonatomic, readonly) NSString *teamName;
 
 @property (copy, nonatomic, readonly) NSDate *creationDate;
 @property (copy, nonatomic, readonly) NSDate *expirationDate;
@@ -36,7 +38,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (copy, nonatomic, readonly) NSData *data;
 
 - (nullable instancetype)initWithData:(NSData *)data NS_DESIGNATED_INITIALIZER;
+
 - (nullable instancetype)initWithURL:(NSURL *)fileURL;
+- (nullable instancetype)initWithURL:(NSURL *)fileURL options:(NSDataReadingOptions)options error:(NSError *_Nullable *)error;
 
 - (instancetype)init NS_UNAVAILABLE;
 

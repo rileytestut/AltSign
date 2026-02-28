@@ -47,7 +47,16 @@ NSString *ALTCertificatePEMSuffix = @"-----END CERTIFICATE-----";
     }
     
     NSString *machineName = attributesDictionary[@"machineName"];
+    if ([machineName isKindOfClass:[NSNull class]])
+    {
+        machineName = nil;
+    }
+    
     NSString *machineIdentifier = attributesDictionary[@"machineId"];
+    if ([machineIdentifier isKindOfClass:[NSNull class]])
+    {
+        machineIdentifier = nil;
+    }
     
     if (data != nil)
     {

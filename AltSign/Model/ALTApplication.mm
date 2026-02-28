@@ -118,8 +118,9 @@ ALTDeviceType ALTDeviceTypeFromUIDeviceFamily(NSInteger deviceFamily)
             {
                 iconName = infoDictionary[@"CFBundleIconFile"];
             }
-        }        
+        }
         
+        _bundle = bundle;
         _fileURL = [fileURL copy];
         _name = [name copy];
         _bundleIdentifier = [bundleIdentifier copy];
@@ -135,19 +136,13 @@ ALTDeviceType ALTDeviceTypeFromUIDeviceFamily(NSInteger deviceFamily)
 #if TARGET_OS_IPHONE
 - (UIImage *)icon
 {
-    NSBundle *bundle = [NSBundle bundleWithURL:self.fileURL];
-    if (bundle == nil)
-    {
-        return nil;
-    }
-    
     NSString *iconName = self.iconName;
     if (iconName == nil)
     {
         return nil;
     }
     
-    UIImage *icon = [UIImage imageNamed:iconName inBundle:bundle compatibleWithTraitCollection:nil];
+    UIImage *icon = [UIImage imageNamed:iconName inBundle:self.bundle compatibleWithTraitCollection:nil];
     return icon;
 }
 #endif
@@ -205,11 +200,9 @@ ALTDeviceType ALTDeviceTypeFromUIDeviceFamily(NSInteger deviceFamily)
 
 - (NSSet<ALTApplication *> *)appExtensions
 {
-    NSBundle *bundle = [NSBundle bundleWithURL:self.fileURL];
-    
     NSMutableSet *appExtensions = [NSMutableSet set];
     
-    NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtURL:bundle.builtInPlugInsURL includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsSubdirectoryDescendants errorHandler:nil];
+    NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtURL:self.bundle.builtInPlugInsURL includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsSubdirectoryDescendants errorHandler:nil];
     for (NSURL *fileURL in enumerator)
     {
         if (![fileURL.pathExtension.lowercaseString isEqualToString:@"appex"])

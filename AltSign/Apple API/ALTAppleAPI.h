@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 #import "ALTCapabilities.h"
+#import "ALTDevice.h"
 
 @class ALTAppleAPISession;
 
@@ -32,12 +33,12 @@ NS_ASSUME_NONNULL_BEGIN
            completionHandler:(void (^)(NSArray<ALTTeam *> *_Nullable teams, NSError *_Nullable error))completionHandler;
 
 /* Devices */
-- (void)fetchDevicesForTeam:(ALTTeam *)team session:(ALTAppleAPISession *)session
+- (void)fetchDevicesForTeam:(ALTTeam *)team types:(ALTDeviceType)types session:(ALTAppleAPISession *)session
           completionHandler:(void (^)(NSArray<ALTDevice *> *_Nullable devices, NSError *_Nullable error))completionHandler;
 
-- (void)registerDeviceWithName:(NSString *)name identifier:(NSString *)identifier team:(ALTTeam *)team session:(ALTAppleAPISession *)session
+- (void)registerDeviceWithName:(NSString *)name identifier:(NSString *)identifier type:(ALTDeviceType)type team:(ALTTeam *)team session:(ALTAppleAPISession *)session
              completionHandler:(void (^)(ALTDevice *_Nullable device, NSError *_Nullable error))completionHandler
-NS_SWIFT_NAME(registerDevice(name:identifier:team:session:completionHandler:));
+NS_SWIFT_NAME(registerDevice(name:identifier:type:team:session:completionHandler:));
 
 /* Certificates */
 - (void)fetchCertificatesForTeam:(ALTTeam *)team session:(ALTAppleAPISession *)session
@@ -75,7 +76,7 @@ NS_SWIFT_NAME(revoke(_:for:session:completionHandler:));
   completionHandler:(void (^)(BOOL success, NSError *_Nullable error))completionHandler;
 
 /* Provisioning Profiles */
-- (void)fetchProvisioningProfileForAppID:(ALTAppID *)appID team:(ALTTeam *)team session:(ALTAppleAPISession *)session
+- (void)fetchProvisioningProfileForAppID:(ALTAppID *)appID deviceType:(ALTDeviceType)deviceType team:(ALTTeam *)team session:(ALTAppleAPISession *)session
                        completionHandler:(void (^)(ALTProvisioningProfile *_Nullable provisioningProfile, NSError *_Nullable error))completionHandler;
 
 - (void)deleteProvisioningProfile:(ALTProvisioningProfile *)provisioningProfile forTeam:(ALTTeam *)team session:(ALTAppleAPISession *)session

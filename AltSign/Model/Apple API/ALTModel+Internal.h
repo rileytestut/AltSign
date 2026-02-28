@@ -6,14 +6,14 @@
 //  Copyright © 2019 Riley Testut. All rights reserved.
 //
 
-#import "ALTAccount.h"
-#import "ALTTeam.h"
-#import "ALTDevice.h"
-#import "ALTCertificate.h"
-#import "ALTCertificateRequest.h"
-#import "ALTAppID.h"
-#import "ALTAppGroup.h"
-#import "ALTProvisioningProfile.h"
+#import <AltSign/ALTAccount.h>
+#import <AltSign/ALTTeam.h>
+#import <AltSign/ALTDevice.h>
+#import <AltSign/ALTCertificate.h>
+#import <AltSign/ALTCertificateRequest.h>
+#import <AltSign/ALTAppID.h>
+#import <AltSign/ALTAppGroup.h>
+#import <AltSign/ALTProvisioningProfile.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

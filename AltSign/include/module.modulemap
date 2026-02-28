@@ -1,0 +1,11 @@
+module CAltSign {
+    umbrella header "AltSign.h"
+    export *
+    
+    explicit module Private {
+        header "AltSign/ALTAppleAPI_Private.h"
+        header "AltSign/ALTModel+Internal.h"
+        header "AltSign/ALTCertificateRequest.h"
+        export *
+    }
+}
