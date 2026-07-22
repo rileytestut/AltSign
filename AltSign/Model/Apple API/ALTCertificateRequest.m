@@ -88,7 +88,7 @@
     const char *commonName = "AltSign";
     
     request = X509_REQ_new();
-    if (X509_REQ_set_version(request, 1) != 1)
+    if (X509_REQ_set_version(request, 0) != 1)
     {
         finish();
         return;
