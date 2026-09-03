@@ -713,6 +713,21 @@ NSData *ALTCreateAppTokensChecksum(NSData *sk, NSString *adsid, NSArray<NSString
             return;
         }
         
+        // Apple's GSA endpoint occasionally responds to this request with a plain
+        // HTTP error page (e.g. 503 Service Temporarily Unavailable) instead of a
+        // plist body. Parsing that HTML as a plist below fails with a confusing,
+        // low-level "unknown tag html" / kCFPropertyListOldStyleParsingError, which
+        // gives no indication the actual problem is a transient server error. Check
+        // the status code first so that case gets a clear, actionable message.
+        NSHTTPURLResponse *httpResponse = [response isKindOfClass:[NSHTTPURLResponse class]] ? (NSHTTPURLResponse *)response : nil;
+        if (httpResponse != nil && (httpResponse.statusCode < 200 || httpResponse.statusCode >= 300))
+        {
+            NSString *localizedDescription = [NSString stringWithFormat:@"Apple's servers returned an error while authenticating (HTTP %@). Please try again later.", @(httpResponse.statusCode)];
+            NSError *error = [NSError errorWithDomain:ALTAppleAPIErrorDomain code:ALTAppleAPIErrorUnknown userInfo:@{NSLocalizedDescriptionKey: localizedDescription}];
+            completionHandler(nil, error);
+            return;
+        }
+
         NSError *parseError = nil;
         NSDictionary *responseDictionary = [NSPropertyListSerialization propertyListWithData:data options:0 format:nil error:&parseError];
         
