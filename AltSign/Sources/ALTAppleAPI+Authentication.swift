@@ -257,11 +257,7 @@ private extension ALTAppleAPI
                         let verifyCodeTask = self.session.dataTask(with: request) { (data, response, error) in
                             do
                             {
-                                guard let data = data else { throw error ?? ALTAppleAPIError.unknown() }
-                                
-                                guard let responseDictionary = try PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any] else {
-                                    throw URLError(.badServerResponse)
-                                }
+                                let responseDictionary = try self.propertyListResponse(data: data, response: response, error: error)
                                 
                                 let errorCode = responseDictionary["ec"] as? Int ?? 0
                                 guard errorCode != 0 else { return completionHandler(.success(())) }
