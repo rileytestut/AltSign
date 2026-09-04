@@ -419,8 +419,86 @@ private extension ALTAppleAPI
     }
 }
 
+private let ALTMaximumGSARetries = 5
+
 private extension ALTAppleAPI
 {
+    /// Parses a property list response from Apple, verifying the server actually sent one.
+    ///
+    /// Apple's GSA edge answers rejected requests with an HTML error page rather than a plist.
+    /// Handing that straight to PropertyListSerialization surfaces an opaque NSCocoaErrorDomain
+    /// 3840 "Encountered unknown tag html on line 1", which hides both the HTTP status and the
+    /// fact that this is a server-side failure rather than incorrect credentials.
+    func propertyListResponse(data: Data?, response: URLResponse?, error: Error?) throws -> [String: Any]
+    {
+        if let error = error { throw error }
+        guard let data = data else { throw ALTAppleAPIError.unknown() }
+        
+        let propertyList: Any
+        
+        do
+        {
+            propertyList = try PropertyListSerialization.propertyList(from: data, format: nil)
+        }
+        catch
+        {
+            throw self.badServerResponseError(data: data, response: response, underlyingError: error)
+        }
+        
+        guard let responseDictionary = propertyList as? [String: Any] else {
+            throw self.badServerResponseError(data: data, response: response, underlyingError: nil)
+        }
+        
+        return responseDictionary
+    }
+    
+    func badServerResponseError(data: Data?, response: URLResponse?, underlyingError: Error?) -> Error
+    {
+        var debugComponents = [String]()
+        
+        if let httpResponse = response as? HTTPURLResponse
+        {
+            debugComponents.append("HTTP \(httpResponse.statusCode)")
+            
+            if let contentType = httpResponse.value(forHTTPHeaderField: "Content-Type")
+            {
+                debugComponents.append("Content-Type: \(contentType)")
+            }
+        }
+        
+        if let data = data
+        {
+            debugComponents.append("\(data.count) bytes")
+            
+            let snippet = String(decoding: data.prefix(256), as: UTF8.self)
+                .replacingOccurrences(of: "\n", with: " ")
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            if !snippet.isEmpty
+            {
+                debugComponents.append("Body: \(snippet)")
+            }
+        }
+        
+        var userInfo = [String: Any]()
+        userInfo[NSDebugDescriptionErrorKey] = debugComponents.joined(separator: ", ")
+        
+        if let httpResponse = response as? HTTPURLResponse
+        {
+            userInfo[NSLocalizedDescriptionKey] = String(format: NSLocalizedString("Apple's servers returned an unexpected response (HTTP %ld).", comment: ""), httpResponse.statusCode)
+        }
+        else
+        {
+            userInfo[NSLocalizedDescriptionKey] = NSLocalizedString("Apple's servers returned an unexpected response.", comment: "")
+        }
+        
+        if let underlyingError = underlyingError
+        {
+            userInfo[NSUnderlyingErrorKey] = underlyingError
+        }
+        
+        return NSError(domain: NSURLErrorDomain, code: NSURLErrorBadServerResponse, userInfo: userInfo)
+    }
+    
     func sendAuthenticationRequest(parameters requestParameters: [String: Any], anisetteData: ALTAnisetteData, completionHandler: @escaping (Result<[String: Any], Error>) -> Void)
     {
         do
@@ -446,15 +524,37 @@ private extension ALTAppleAPI
             request.httpBody = bodyData
             httpHeaders.forEach { request.addValue($0.value, forHTTPHeaderField: $0.key) }
             
-            let dataTask = self.session.dataTask(with: request) { (data, response, error) in
+            var attempt = 0
+            
+            func send()
+            {
+            // Apple's GSA edge keeps a connection pinned to a backend node, and once that node
+            // starts failing every subsequent request on the same connection returns 5xx and never
+            // recovers. Retrying over the shared session therefore just repeats the same failure,
+            // so give each attempt its own session to force a new connection.
+            let attemptSession = URLSession(configuration: .ephemeral)
+            
+            let dataTask = attemptSession.dataTask(with: request) { (data, response, error) in
+                attemptSession.finishTasksAndInvalidate()
+                
+                // A 5xx means the request was never processed, so retrying is safe.
+                if let httpResponse = response as? HTTPURLResponse, (500...599).contains(httpResponse.statusCode), attempt < ALTMaximumGSARetries - 1
+                {
+                    attempt += 1
+                    
+                    let delay = min(pow(2.0, Double(attempt - 1)), 8.0)
+                    DispatchQueue.global().asyncAfter(deadline: .now() + delay) { send() }
+                    
+                    return
+                }
+                
                 do
                 {
-                    guard let data = data else { throw error ?? ALTAppleAPIError.unknown() }
+                    let responseDictionary = try self.propertyListResponse(data: data, response: response, error: error)
                     
-                    guard let responseDictionary = try PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any],
-                          let dictionary = responseDictionary["Response"] as? [String: Any],
+                    guard let dictionary = responseDictionary["Response"] as? [String: Any],
                           let status = dictionary["Status"] as? [String: Any]
-                    else { throw URLError(.badServerResponse) }
+                    else { throw self.badServerResponseError(data: data, response: response, underlyingError: nil) }
                                         
                     let errorCode = status["ec"] as? Int ?? 0
                     guard errorCode != 0 else { return completionHandler(.success(dictionary)) }
@@ -477,6 +577,9 @@ private extension ALTAppleAPI
             }
             
             dataTask.resume()
+            }
+            
+            send()
         }
         catch
         {
