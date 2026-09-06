@@ -460,6 +460,14 @@ private extension ALTAppleAPI
                 {
                     guard let data = data else { throw error ?? ALTAppleAPIError.unknown() }
                     
+                    // Surface server errors directly; their HTML bodies are not property lists, and
+                    // parsing them yields a misleading "data couldn't be read" error instead.
+                    if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode >= 500
+                    {
+                        let message = String(format: NSLocalizedString("Apple's authentication servers returned an error (HTTP %d). This is a problem on Apple's end, not with your Apple ID or password.", comment: ""), httpResponse.statusCode)
+                        throw NSError(domain: ALTUnderlyingAppleAPIErrorDomain, code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: message])
+                    }
+                    
                     guard let responseDictionary = try PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any],
                           let dictionary = responseDictionary["Response"] as? [String: Any],
                           let status = dictionary["Status"] as? [String: Any]
