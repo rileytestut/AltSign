@@ -446,7 +446,16 @@ private extension ALTAppleAPI
             request.httpBody = bodyData
             httpHeaders.forEach { request.addValue($0.value, forHTTPHeaderField: $0.key) }
             
-            let dataTask = self.session.dataTask(with: request) { (data, response, error) in
+            // Apple's edge serves at most two requests per connection and answers every request
+            // after that with a 503 HTML error page. Authenticating takes three requests (init,
+            // complete, apptokens), so the third one fails whenever they share a pooled connection.
+            // Give each request its own session, and therefore its own connection.
+            let configuration = URLSessionConfiguration.ephemeral
+            configuration.httpMaximumConnectionsPerHost = 1
+            let session = URLSession(configuration: configuration)
+            defer { session.finishTasksAndInvalidate() }
+            
+            let dataTask = session.dataTask(with: request) { (data, response, error) in
                 do
                 {
                     guard let data = data else { throw error ?? ALTAppleAPIError.unknown() }
