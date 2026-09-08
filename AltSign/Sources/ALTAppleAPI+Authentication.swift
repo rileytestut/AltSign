@@ -436,7 +436,7 @@ private extension ALTAppleAPI
                 "Content-Type": "text/x-xml-plist",
                 "X-MMe-Client-Info": anisetteData.deviceDescription,
                 "Accept": "*/*",
-                "User-Agent": "akd/1.0 CFNetwork/978.0.7 Darwin/18.7.0"
+                "User-Agent": "AuthKit/1 (Macintosh; OS X 26.5.2) (com.apple.dt.Xcode/26.0)"
             ]
             
             let bodyData = try PropertyListSerialization.data(fromPropertyList: parameters, format: .xml, options: 0)
@@ -445,45 +445,92 @@ private extension ALTAppleAPI
             request.httpMethod = "POST"
             request.httpBody = bodyData
             httpHeaders.forEach { request.addValue($0.value, forHTTPHeaderField: $0.key) }
-            
-            let dataTask = self.session.dataTask(with: request) { (data, response, error) in
-                do
-                {
-                    guard let data = data else { throw error ?? ALTAppleAPIError.unknown() }
-                    
-                    guard let responseDictionary = try PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any],
-                          let dictionary = responseDictionary["Response"] as? [String: Any],
-                          let status = dictionary["Status"] as? [String: Any]
-                    else { throw URLError(.badServerResponse) }
-                                        
-                    let errorCode = status["ec"] as? Int ?? 0
-                    guard errorCode != 0 else { return completionHandler(.success(dictionary)) }
-                    
-                    switch errorCode
-                    {
-                    case -20101, -22406: throw ALTAppleAPIError(.incorrectCredentials)
-                    case -22421: throw ALTAppleAPIError(.invalidAnisetteData)
-                    default:
-                        guard let errorDescription = status["em"] as? String else { throw ALTAppleAPIError.unknown() }
-                        
-                        let localizedDescription = errorDescription + " (\(errorCode))"
-                        throw NSError(domain: ALTUnderlyingAppleAPIErrorDomain, code: errorCode, userInfo: [NSLocalizedDescriptionKey: localizedDescription])
-                    }
-                }
-                catch
-                {
-                    completionHandler(.failure(error))
-                }
-            }
-            
-            dataTask.resume()
+
+            self.sendGrandSlamRequest(request, attempt: 1, deadline: ProcessInfo.processInfo.systemUptime + 20, completionHandler: completionHandler)
         }
         catch
         {
             completionHandler(.failure(error))
         }
     }
-    
+
+    // Isolate every GSA attempt and keep transient server retries within this exchange's deadline.
+    func sendGrandSlamRequest(_ request: URLRequest, attempt: Int, deadline: TimeInterval,
+                             completionHandler: @escaping (Result<[String: Any], Error>) -> Void)
+    {
+        let remaining = deadline - ProcessInfo.processInfo.systemUptime
+        guard remaining > 0 else {
+            completionHandler(.failure(URLError(.timedOut)))
+            return
+        }
+
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.timeoutIntervalForRequest = remaining
+        configuration.timeoutIntervalForResource = remaining
+        let session = URLSession(configuration: configuration)
+        var timedRequest = request
+        timedRequest.timeoutInterval = remaining
+
+        let dataTask = session.dataTask(with: timedRequest) { (data, response, error) in
+            session.finishTasksAndInvalidate()
+            do
+            {
+                if let error = error { throw error }
+                let httpResponse = response as? HTTPURLResponse
+
+                // Read structured Apple errors before considering a retry. Never expose response bodies.
+                let propertyList = data.flatMap { try? PropertyListSerialization.propertyList(from: $0, format: nil) }
+                let responseDictionary = propertyList as? [String: Any]
+                let dictionary = responseDictionary?["Response"] as? [String: Any]
+                let status = dictionary?["Status"] as? [String: Any]
+                if let errorCode = status?["ec"] as? Int, errorCode != 0
+                {
+                    switch errorCode
+                    {
+                    case -20101, -22406: throw ALTAppleAPIError(.incorrectCredentials)
+                    case -22421: throw ALTAppleAPIError(.invalidAnisetteData)
+                    default:
+                        guard let errorDescription = status?["em"] as? String else { throw ALTAppleAPIError.unknown() }
+
+                        let localizedDescription = errorDescription + " (\(errorCode))"
+                        throw NSError(domain: ALTUnderlyingAppleAPIErrorDomain, code: errorCode, userInfo: [NSLocalizedDescriptionKey: localizedDescription])
+                    }
+                }
+
+                // GSA carries its own status in the plist, including authentication challenges.
+                if let dictionary = dictionary, status != nil {
+                    completionHandler(.success(dictionary))
+                    return
+                }
+
+                if let httpResponse = httpResponse, (500...599).contains(httpResponse.statusCode), attempt < 5
+                {
+                    let delay = pow(2.0, Double(attempt - 1)) // Four retries: 1, 2, 4, then 8 seconds.
+                    if ProcessInfo.processInfo.systemUptime + delay < deadline
+                    {
+                        DispatchQueue.global().asyncAfter(deadline: .now() + delay) {
+                            self.sendGrandSlamRequest(request, attempt: attempt + 1, deadline: deadline, completionHandler: completionHandler)
+                        }
+                        return
+                    }
+                }
+
+                let message: String
+                if let httpResponse = httpResponse {
+                    message = String(format: NSLocalizedString("Apple's authentication servers returned an unexpected response (HTTP %ld). Please try again.", comment: ""), httpResponse.statusCode)
+                } else {
+                    message = NSLocalizedString("Apple's authentication servers returned an unexpected response. Please try again.", comment: "")
+                }
+                throw URLError(.badServerResponse, userInfo: [NSLocalizedDescriptionKey: message])
+            }
+            catch
+            {
+                completionHandler(.failure(error))
+            }
+        }
+        dataTask.resume()
+    }
+
     func makeTwoFactorCodeRequest(url: URL,
                                   dsid: String,
                                   idmsToken: String,
