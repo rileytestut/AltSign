@@ -254,10 +254,24 @@ private extension ALTAppleAPI
                         var request = self.makeTwoFactorCodeRequest(url: verifyURL, dsid: dsid, idmsToken: idmsToken, anisetteData: anisetteData)
                         request.allHTTPHeaderFields?["security-code"] = verificationCode
                         
-                        let verifyCodeTask = self.session.dataTask(with: request) { (data, response, error) in
+                        // Same reason as sendAuthenticationRequest: this shares the pooled
+                        // connection the sign-in requests already used, so it can land on a
+                        // connection Apple has started 503ing.
+                        let configuration = URLSessionConfiguration.ephemeral
+                        configuration.httpMaximumConnectionsPerHost = 1
+                        let session = URLSession(configuration: configuration)
+                        defer { session.finishTasksAndInvalidate() }
+                        
+                        let verifyCodeTask = session.dataTask(with: request) { (data, response, error) in
                             do
                             {
                                 guard let data = data else { throw error ?? ALTAppleAPIError.unknown() }
+                                
+                                if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode >= 500
+                                {
+                                    let message = String(format: NSLocalizedString("Apple's authentication servers returned an error (HTTP %d). This is a problem on Apple's end, not with your Apple ID or password.", comment: ""), httpResponse.statusCode)
+                                    throw NSError(domain: ALTUnderlyingAppleAPIErrorDomain, code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: message])
+                                }
                                 
                                 guard let responseDictionary = try PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any] else {
                                     throw URLError(.badServerResponse)
