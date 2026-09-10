@@ -269,8 +269,13 @@ private extension ALTAppleAPI
                                 
                                 if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode >= 500
                                 {
-                                    let message = String(format: NSLocalizedString("Apple's authentication servers returned an error (HTTP %d). This is a problem on Apple's end, not with your Apple ID or password.", comment: ""), httpResponse.statusCode)
-                                    throw NSError(domain: ALTUnderlyingAppleAPIErrorDomain, code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: message])
+                                    let message = String(format: NSLocalizedString("Apple's authentication servers returned an error (HTTP %d).", comment: ""), httpResponse.statusCode)
+                                    let recoverySuggestion = NSLocalizedString("This is most likely a problem on Apple's end, not with your Apple ID or password.", comment: "")
+                                    throw ALTAppleAPIError(.unknown, userInfo: [
+                                        NSLocalizedFailureReasonErrorKey: message,
+                                        NSLocalizedRecoverySuggestionErrorKey: recoverySuggestion,
+                                        "HTTPErrorCode": httpResponse.statusCode
+                                    ])
                                 }
                                 
                                 guard let responseDictionary = try PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any] else {
