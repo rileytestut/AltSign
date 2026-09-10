@@ -436,7 +436,7 @@ private extension ALTAppleAPI
                 "Content-Type": "text/x-xml-plist",
                 "X-MMe-Client-Info": anisetteData.deviceDescription,
                 "Accept": "*/*",
-                "User-Agent": "akd/1.0 CFNetwork/978.0.7 Darwin/18.7.0"
+                "User-Agent": "AuthKit/1 (Macintosh; OS X 26.5.2) (com.apple.dt.Xcode/26.0)"
             ]
             
             let bodyData = try PropertyListSerialization.data(fromPropertyList: parameters, format: .xml, options: 0)
