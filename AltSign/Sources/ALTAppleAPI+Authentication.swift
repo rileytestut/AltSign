@@ -266,22 +266,12 @@ private extension ALTAppleAPI
                             do
                             {
                                 guard let data = data else { throw error ?? ALTAppleAPIError.unknown() }
-                                
-                                if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode >= 500
-                                {
-                                    let message = String(format: NSLocalizedString("Apple's authentication servers returned an error (HTTP %d).", comment: ""), httpResponse.statusCode)
-                                    let recoverySuggestion = NSLocalizedString("This is most likely a problem on Apple's end, not with your Apple ID or password.", comment: "")
-                                    throw ALTAppleAPIError(.unknown, userInfo: [
-                                        NSLocalizedFailureReasonErrorKey: message,
-                                        NSLocalizedRecoverySuggestionErrorKey: recoverySuggestion,
-                                        "HTTPErrorCode": httpResponse.statusCode
-                                    ])
-                                }
-                                
-                                guard let responseDictionary = try PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any] else {
+
+                                let propertyList = try self.propertyList(from: data, response: response)
+                                guard let responseDictionary = propertyList as? [String: Any] else {
                                     throw URLError(.badServerResponse)
                                 }
-                                
+
                                 let errorCode = responseDictionary["ec"] as? Int ?? 0
                                 guard errorCode != 0 else { return completionHandler(.success(())) }
                                 
@@ -440,6 +430,41 @@ private extension ALTAppleAPI
 
 private extension ALTAppleAPI
 {
+    // GrandSlam reports its own errors inside the plist, so the HTTP status only matters when the
+    // body is not a plist: server errors and rate limiting come back as HTML pages.
+    func propertyList(from data: Data, response: URLResponse?) throws -> Any
+    {
+        do
+        {
+            return try PropertyListSerialization.propertyList(from: data, format: nil)
+        }
+        catch
+        {
+            guard let httpResponse = response as? HTTPURLResponse else { throw error }
+
+            let message: String
+            let recoverySuggestion: String
+
+            if httpResponse.statusCode == 429
+            {
+                message = NSLocalizedString("Apple's authentication servers are rate limiting sign-in requests (HTTP 429).", comment: "")
+                recoverySuggestion = NSLocalizedString("Wait a while before trying again.", comment: "")
+            }
+            else
+            {
+                message = String(format: NSLocalizedString("Apple's authentication servers returned an error (HTTP %d).", comment: ""), httpResponse.statusCode)
+                recoverySuggestion = NSLocalizedString("This is most likely a problem on Apple's end, not with your Apple ID or password.", comment: "")
+            }
+
+            throw ALTAppleAPIError(.unknown, userInfo: [
+                NSLocalizedFailureReasonErrorKey: message,
+                NSLocalizedRecoverySuggestionErrorKey: recoverySuggestion,
+                NSUnderlyingErrorKey: error,
+                "HTTPErrorCode": httpResponse.statusCode
+            ])
+        }
+    }
+
     func sendAuthenticationRequest(parameters requestParameters: [String: Any], anisetteData: ALTAnisetteData, completionHandler: @escaping (Result<[String: Any], Error>) -> Void)
     {
         do
@@ -477,23 +502,13 @@ private extension ALTAppleAPI
                 do
                 {
                     guard let data = data else { throw error ?? ALTAppleAPIError.unknown() }
-                    
-                    if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode >= 500
-                    {
-                        let message = String(format: NSLocalizedString("Apple's authentication servers returned an error (HTTP %d).", comment: ""), httpResponse.statusCode)
-                        let recoverySuggestion = NSLocalizedString("This is most likely a problem on Apple's end, not with your Apple ID or password.", comment: "")
-                        throw ALTAppleAPIError(.unknown, userInfo: [
-                            NSLocalizedFailureReasonErrorKey: message,
-                            NSLocalizedRecoverySuggestionErrorKey: recoverySuggestion,
-                            "HTTPErrorCode": httpResponse.statusCode
-                        ])
-                    }
-                    
-                    guard let responseDictionary = try PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any],
+
+                    let propertyList = try self.propertyList(from: data, response: response)
+                    guard let responseDictionary = propertyList as? [String: Any],
                           let dictionary = responseDictionary["Response"] as? [String: Any],
                           let status = dictionary["Status"] as? [String: Any]
                     else { throw URLError(.badServerResponse) }
-                                        
+
                     let errorCode = status["ec"] as? Int ?? 0
                     guard errorCode != 0 else { return completionHandler(.success(dictionary)) }
                     
