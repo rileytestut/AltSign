@@ -11,6 +11,8 @@ import Foundation
 @_exported import CAltSign
 import CAltSign.Private
 
+private let authenticationTransport = ALTAuthenticationTransport()
+
 public extension ALTAppleAPIError
 {
     static func unknown(userInfo: [String: Any] = [:], sourceFile: String = #fileID, sourceLine: UInt = #line) -> ALTAppleAPIError
@@ -240,7 +242,7 @@ private extension ALTAppleAPI
         
         let request = self.makeTwoFactorCodeRequest(url: requestURL, dsid: dsid, idmsToken: idmsToken, anisetteData: anisetteData)
         
-        let requestCodeTask = self.session.dataTask(with: request) { (data, response, error) in
+        self.performAuthenticationDataRequest(request) { (data, response, error) in
             do
             {
                 guard error == nil else { throw error! }
@@ -254,14 +256,10 @@ private extension ALTAppleAPI
                         var request = self.makeTwoFactorCodeRequest(url: verifyURL, dsid: dsid, idmsToken: idmsToken, anisetteData: anisetteData)
                         request.allHTTPHeaderFields?["security-code"] = verificationCode
                         
-                        let verifyCodeTask = self.session.dataTask(with: request) { (data, response, error) in
+                        self.performPlistRequest(request) { (result) in
                             do
                             {
-                                guard let data = data else { throw error ?? ALTAppleAPIError.unknown() }
-                                
-                                guard let responseDictionary = try PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any] else {
-                                    throw URLError(.badServerResponse)
-                                }
+                                let responseDictionary = try result.get()
                                 
                                 let errorCode = responseDictionary["ec"] as? Int ?? 0
                                 guard errorCode != 0 else { return completionHandler(.success(())) }
@@ -281,8 +279,6 @@ private extension ALTAppleAPI
                                 completionHandler(.failure(error))
                             }
                         }
-                        
-                        verifyCodeTask.resume()
                     }
                     catch
                     {
@@ -297,8 +293,6 @@ private extension ALTAppleAPI
                 completionHandler(.failure(error))
             }
         }
-        
-        requestCodeTask.resume()
     }
     
     func requestSMSTwoFactorCode(dsid: String,
@@ -330,7 +324,7 @@ private extension ALTAppleAPI
             return
         }
         
-        let requestCodeTask = self.session.dataTask(with: request) { (data, response, error) in
+        self.performAuthenticationDataRequest(request) { (data, response, error) in
             do
             {
                 guard error == nil else { throw error! }
@@ -355,7 +349,7 @@ private extension ALTAppleAPI
                         let bodyData = try PropertyListSerialization.data(fromPropertyList: bodyXML, format: .xml, options: 0)
                         request.httpBody = bodyData
                         
-                        let verifyCodeTask = self.session.dataTask(with: request) { (data, response, error) in
+                        self.performAuthenticationDataRequest(request) { (data, response, error) in
                             do
                             {
                                 guard error == nil else { throw error! }
@@ -372,8 +366,6 @@ private extension ALTAppleAPI
                                 completionHandler(.failure(error))
                             }
                         }
-                        
-                        verifyCodeTask.resume()
                     }
                     catch
                     {
@@ -388,8 +380,6 @@ private extension ALTAppleAPI
                 completionHandler(.failure(error))
             }
         }
-        
-        requestCodeTask.resume()
     }
     
     func fetchAccount(session: ALTAppleAPISession, completionHandler: @escaping (Result<ALTAccount, Error>) -> Void)
@@ -421,6 +411,32 @@ private extension ALTAppleAPI
 
 private extension ALTAppleAPI
 {
+    func performAuthenticationDataRequest(_ request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void)
+    {
+        // Code-delivery requests must not be replayed automatically.
+        authenticationTransport.send(request, requiresPropertyList: false, retriesTransientFailures: false) { data, response, error in
+            completionHandler(data, response, error)
+        }
+    }
+
+    func performPlistRequest(_ request: URLRequest, completionHandler: @escaping (Result<[String: Any], Error>) -> Void)
+    {
+        authenticationTransport.send(request, requiresPropertyList: true, retriesTransientFailures: true) { data, _, error in
+            do
+            {
+                if let error = error { throw error }
+                guard let data = data,
+                      let dictionary = try PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any]
+                else { throw URLError(.badServerResponse) }
+                completionHandler(.success(dictionary))
+            }
+            catch
+            {
+                completionHandler(.failure(error))
+            }
+        }
+    }
+
     func sendAuthenticationRequest(parameters requestParameters: [String: Any], anisetteData: ALTAnisetteData, completionHandler: @escaping (Result<[String: Any], Error>) -> Void)
     {
         do
@@ -446,13 +462,12 @@ private extension ALTAppleAPI
             request.httpBody = bodyData
             httpHeaders.forEach { request.addValue($0.value, forHTTPHeaderField: $0.key) }
             
-            let dataTask = self.session.dataTask(with: request) { (data, response, error) in
+            self.performPlistRequest(request) { (result) in
                 do
                 {
-                    guard let data = data else { throw error ?? ALTAppleAPIError.unknown() }
+                    let responseDictionary = try result.get()
                     
-                    guard let responseDictionary = try PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any],
-                          let dictionary = responseDictionary["Response"] as? [String: Any],
+                    guard let dictionary = responseDictionary["Response"] as? [String: Any],
                           let status = dictionary["Status"] as? [String: Any]
                     else { throw URLError(.badServerResponse) }
                                         
@@ -475,8 +490,6 @@ private extension ALTAppleAPI
                     completionHandler(.failure(error))
                 }
             }
-            
-            dataTask.resume()
         }
         catch
         {
