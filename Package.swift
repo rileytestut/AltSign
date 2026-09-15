@@ -138,6 +138,7 @@ let package = Package(
             dependencies: ["CoreCrypto", "ldid"],
             path: "",
             exclude: [
+                "Tests",
                 "AltSign/ldid/alt_ldid.cpp",
                 "AltSign/ldid/alt_ldid.hpp",
                 "AltSign/Sources",

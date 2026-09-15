@@ -1,0 +1,21 @@
+name: Authentication transport tests
+on:
+  push:
+    paths:
+      - 'AltSign/Sources/ALTAuthenticationTransport.swift'
+      - 'Tests/AuthenticationTransport/**'
+      - '.github/workflows/authentication-transport-tests.yml'
+  pull_request:
+    paths:
+      - 'AltSign/Sources/ALTAuthenticationTransport.swift'
+      - 'Tests/AuthenticationTransport/**'
+      - '.github/workflows/authentication-transport-tests.yml'
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: macos-14
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - run: Tests/AuthenticationTransport/run.sh
