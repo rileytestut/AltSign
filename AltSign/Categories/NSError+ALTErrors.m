@@ -15,6 +15,7 @@ NSErrorDomain const ALTUnderlyingAppleAPIErrorDomain = @"Apple.APIError";
 NSErrorUserInfoKey const ALTSourceFileErrorKey = @"ALTSourceFile";
 NSErrorUserInfoKey const ALTSourceLineErrorKey = @"ALTSourceLine";
 NSErrorUserInfoKey const ALTAppNameErrorKey = @"appName";
+NSErrorUserInfoKey const ALTHTTPStatusCode = @"HTTPStatusCode";
 
 @implementation NSError (ALTError)
 
