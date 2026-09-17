@@ -436,6 +436,9 @@ private extension ALTAppleAPI
 
 private extension ALTAppleAPI
 {
+    // Apple's servers reject outdated client identities, so use the same modern AuthKit identity for every request.
+    static let userAgent = "AuthKit/1 (Macintosh; OS X 26.5.2) (com.apple.dt.Xcode/26.0)"
+    
     func sendGSARequest(_ request: URLRequest, completionHandler: @escaping (Result<(Data, HTTPURLResponse), Error>) -> Void)
     {
         // Create a new session, and limit the maximum connections to just one at a time.
@@ -483,7 +486,7 @@ private extension ALTAppleAPI
                 "Content-Type": "text/x-xml-plist",
                 "X-MMe-Client-Info": anisetteData.deviceDescription,
                 "Accept": "*/*",
-                "User-Agent": "AuthKit/1 (Macintosh; OS X 26.5.2) (com.apple.dt.Xcode/26.0)"
+                "User-Agent": ALTAppleAPI.userAgent
             ]
             
             let bodyData = try PropertyListSerialization.data(fromPropertyList: parameters, format: .xml, options: 0)
@@ -543,9 +546,8 @@ private extension ALTAppleAPI
             "Accept": "application/x-buddyml",
             "Accept-Language": "en-us",
             "Content-Type": "application/x-plist",
-            "User-Agent": "Xcode",
+            "User-Agent": ALTAppleAPI.userAgent,
             "X-Apple-App-Info": "com.apple.gs.xcode.auth",
-            "X-Xcode-Version": "11.2 (11B41)",
             "X-Apple-Identity-Token": encodedIdentityToken,
             "X-Apple-I-MD-M": anisetteData.machineID,
             "X-Apple-I-MD": anisetteData.oneTimePassword,
