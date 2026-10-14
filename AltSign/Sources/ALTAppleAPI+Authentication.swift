@@ -48,6 +48,20 @@ public extension ALTAppleAPI
                             verificationHandler: ((@escaping (String?) -> Void) -> Void)?,
                             completionHandler: @escaping (ALTAccount?, ALTAppleAPISession?, Error?) -> Void)
     {
+        self.authenticate(appleID: unsanitizedAppleID, password: password, anisetteData: anisetteData, hasEnteredPushedCode: false,
+                          verificationHandler: verificationHandler, completionHandler: completionHandler)
+    }
+}
+
+private extension ALTAppleAPI
+{
+    func authenticate(appleID unsanitizedAppleID: String,
+                      password: String,
+                      anisetteData: ALTAnisetteData,
+                      hasEnteredPushedCode: Bool,
+                      verificationHandler: ((@escaping (String?) -> Void) -> Void)?,
+                      completionHandler: @escaping (ALTAccount?, ALTAppleAPISession?, Error?) -> Void)
+    {
         // Authenticating only works with lowercase email address, even if Apple ID contains capital letters.
         let sanitizedAppleID = unsanitizedAppleID.lowercased()
         
@@ -131,21 +145,30 @@ public extension ALTAppleAPI
                             
                             context.dsid = dsid
                             
-                            let authType = statusDictionary["au"] as? String
+                            // Apple may now respond with HTTP status 409 and no "au" field,
+                            // in which case it has already pushed a code to trusted devices.
+                            // Based on SideSign: https://github.com/SideStore/SideSign/pull/5
+                            let authType = statusDictionary["au"] as? String ?? ((statusDictionary["hsc"] as? Int) == 409 ? "pushedCode" : nil)
                             switch authType
                             {
-                            case "trustedDeviceSecondaryAuth":
+                            case "trustedDeviceSecondaryAuth", "pushedCode":
                                 guard let verificationHandler = verificationHandler else { throw ALTAppleAPIError(.requiresTwoFactorAuthentication) }
-                                
-                                self.requestTrustedDeviceTwoFactorCode(dsid: dsid, idmsToken: idmsToken, anisetteData: anisetteData, verificationHandler: verificationHandler) { (result) in
+
+                                let isCodeAlreadySent = (authType == "pushedCode")
+
+                                // Don't prompt for a pushed code again if Apple still asks for one after we've entered it.
+                                guard !isCodeAlreadySent || !hasEnteredPushedCode else { throw ALTAppleAPIError(.requiresTwoFactorAuthentication) }
+
+                                self.requestTrustedDeviceTwoFactorCode(dsid: dsid, idmsToken: idmsToken, anisetteData: anisetteData, isCodeAlreadySent: isCodeAlreadySent, verificationHandler: verificationHandler) { (result) in
                                     switch result
                                     {
                                     case .failure(let error): completionHandler(nil, nil, error)
                                     case .success:
-                                        self.authenticate(appleID: unsanitizedAppleID, password: password, anisetteData: anisetteData, verificationHandler: verificationHandler, completionHandler: completionHandler)
+                                        self.authenticate(appleID: unsanitizedAppleID, password: password, anisetteData: anisetteData, hasEnteredPushedCode: hasEnteredPushedCode || isCodeAlreadySent,
+                                                          verificationHandler: verificationHandler, completionHandler: completionHandler)
                                     }
                                 }
-                                
+
                             case "secondaryAuth":
                                 guard let verificationHandler = verificationHandler else { throw ALTAppleAPIError(.requiresTwoFactorAuthentication) }
                                 
@@ -154,7 +177,8 @@ public extension ALTAppleAPI
                                     {
                                     case .failure(let error): completionHandler(nil, nil, error)
                                     case .success:
-                                        self.authenticate(appleID: unsanitizedAppleID, password: password, anisetteData: anisetteData, verificationHandler: verificationHandler, completionHandler: completionHandler)
+                                        self.authenticate(appleID: unsanitizedAppleID, password: password, anisetteData: anisetteData, hasEnteredPushedCode: hasEnteredPushedCode,
+                                                          verificationHandler: verificationHandler, completionHandler: completionHandler)
                                     }
                                 }
                                 
@@ -248,6 +272,7 @@ private extension ALTAppleAPI
     func requestTrustedDeviceTwoFactorCode(dsid: String,
                                            idmsToken: String,
                                            anisetteData: ALTAnisetteData,
+                                           isCodeAlreadySent: Bool,
                                            verificationHandler: @escaping (@escaping (String?) -> Void) -> Void,
                                            completionHandler: @escaping (Result<Void, Error>) -> Void)
     {
@@ -256,14 +281,18 @@ private extension ALTAppleAPI
         
         let request = self.makeTwoFactorCodeRequest(url: requestURL, dsid: dsid, idmsToken: idmsToken, anisetteData: anisetteData)
         
-        self.sendGSARequest(request) { (result) in
+        // nil result means Apple already sent the code, so we didn't request one.
+        let requestCodeHandler = { (result: Result<(Data, HTTPURLResponse), Error>?) in
             do
             {
-                let (_, response) = try result.get()
-                guard (200 ..< 300).contains(response.statusCode) else {
-                    throw ALTAppleAPIError.unknown(statusCode: response.statusCode, failure: NSLocalizedString("Could not request a verification code from Apple.", comment: ""))
+                if let result
+                {
+                    let (_, response) = try result.get()
+                    guard (200 ..< 300).contains(response.statusCode) else {
+                        throw ALTAppleAPIError.unknown(statusCode: response.statusCode, failure: NSLocalizedString("Could not request a verification code from Apple.", comment: ""))
+                    }
                 }
-                
+
                 func responseHandler(verificationCode: String?)
                 {
                     do
@@ -314,6 +343,18 @@ private extension ALTAppleAPI
             catch
             {
                 completionHandler(.failure(error))
+            }
+        }
+
+        if isCodeAlreadySent
+        {
+            // Apple already sent the code, so prompt for it without requesting another.
+            requestCodeHandler(nil)
+        }
+        else
+        {
+            self.sendGSARequest(request) { (result) in
+                requestCodeHandler(result)
             }
         }
     }
