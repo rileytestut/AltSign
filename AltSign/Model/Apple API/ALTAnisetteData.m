@@ -8,6 +8,21 @@
 
 #import "ALTAnisetteData.h"
 
+// Apple's 2FA endpoints reject locales with keywords (e.g. "en_US@rg=skzzzz") with HTTP 500, so keep only language, script and region.
+static NSLocale *ALTSanitizedLocale(NSLocale *locale)
+{
+    NSDictionary<NSString *, NSString *> *components = [NSLocale componentsFromLocaleIdentifier:locale.localeIdentifier];
+    
+    NSMutableDictionary<NSString *, NSString *> *sanitizedComponents = [NSMutableDictionary dictionary];
+    for (NSString *key in @[NSLocaleLanguageCode, NSLocaleScriptCode, NSLocaleCountryCode])
+    {
+        sanitizedComponents[key] = components[key];
+    }
+    
+    NSString *identifier = [NSLocale localeIdentifierFromComponents:sanitizedComponents];
+    return [NSLocale localeWithLocaleIdentifier:identifier];
+}
+
 @implementation ALTAnisetteData
 
 - (instancetype)initWithMachineID:(NSString *)machineID
@@ -34,11 +49,16 @@
         _deviceDescription = [deviceDescription copy];
         
         _date = [date copy];
-        _locale = [locale copy];
+        _locale = ALTSanitizedLocale(locale);
         _timeZone = [timeZone copy];
     }
     
     return self;
+}
+
+- (void)setLocale:(NSLocale *)locale
+{
+    _locale = ALTSanitizedLocale(locale);
 }
 
 #pragma mark - NSObject -

@@ -13,11 +13,27 @@ import CAltSign.Private
 
 public extension ALTAppleAPIError
 {
-    static func unknown(userInfo: [String: Any] = [:], sourceFile: String = #fileID, sourceLine: UInt = #line) -> ALTAppleAPIError
+    static func unknown(statusCode: Int? = nil, failure: String? = nil, userInfo: [String: Any] = [:], sourceFile: String = #fileID, sourceLine: UInt = #line) -> ALTAppleAPIError
     {
         var userInfo = userInfo
         userInfo[ALTSourceFileErrorKey] = sourceFile
         userInfo[ALTSourceLineErrorKey] = sourceLine
+        
+        if let failure
+        {
+            userInfo[NSLocalizedFailureErrorKey] = failure
+        }
+        
+        if let statusCode
+        {
+            userInfo[ALTHTTPStatusCode] = statusCode
+            userInfo[NSLocalizedFailureReasonErrorKey] = String(format: NSLocalizedString("Apple's authentication servers returned an error (HTTP %d).", comment: ""), statusCode)
+            
+            if statusCode >= 300
+            {
+                userInfo[NSLocalizedRecoverySuggestionErrorKey] = NSLocalizedString("This is most likely a problem on Apple's end, not with your Apple ID or password.", comment: "")
+            }
+        }
         
         let error = ALTAppleAPIError(.unknown, userInfo: userInfo)
         return error
@@ -57,8 +73,8 @@ private extension ALTAppleAPI
                 "pbe": false,
                 "prkgen": true,
                 "svct": "iCloud",
-                "loc": Locale.current.identifier,
-                "X-Apple-Locale": Locale.current.identifier,
+                "loc": anisetteData.locale.identifier,
+                "X-Apple-Locale": anisetteData.locale.identifier,
                 "X-Apple-I-MD": anisetteData.oneTimePassword,
                 "X-Apple-I-MD-M": anisetteData.machineID,
                 "X-Mme-Device-Id": anisetteData.deviceUniqueIdentifier,
@@ -265,11 +281,18 @@ private extension ALTAppleAPI
         
         let request = self.makeTwoFactorCodeRequest(url: requestURL, dsid: dsid, idmsToken: idmsToken, anisetteData: anisetteData)
         
-        let requestCodeHandler = { (error: Error?) in
+        // nil result means Apple already sent the code, so we didn't request one.
+        let requestCodeHandler = { (result: Result<(Data, HTTPURLResponse), Error>?) in
             do
             {
-                guard error == nil else { throw error! }
-                
+                if let result
+                {
+                    let (_, response) = try result.get()
+                    guard (200 ..< 300).contains(response.statusCode) else {
+                        throw ALTAppleAPIError.unknown(statusCode: response.statusCode, failure: NSLocalizedString("Could not request a verification code from Apple.", comment: ""))
+                    }
+                }
+
                 func responseHandler(verificationCode: String?)
                 {
                     do
@@ -279,29 +302,12 @@ private extension ALTAppleAPI
                         var request = self.makeTwoFactorCodeRequest(url: verifyURL, dsid: dsid, idmsToken: idmsToken, anisetteData: anisetteData)
                         request.allHTTPHeaderFields?["security-code"] = verificationCode
                         
-                        // Same reason as sendAuthenticationRequest: this shares the pooled
-                        // connection the sign-in requests already used, so it can land on a
-                        // connection Apple has started 503ing.
-                        let configuration = URLSessionConfiguration.ephemeral
-                        configuration.httpMaximumConnectionsPerHost = 1
-                        let session = URLSession(configuration: configuration)
-                        defer { session.finishTasksAndInvalidate() }
-                        
-                        let verifyCodeTask = session.dataTask(with: request) { (data, response, error) in
+                        self.sendGSARequest(request) { (result) in
                             do
                             {
-                                guard let data = data else { throw error ?? ALTAppleAPIError.unknown() }
+                                let (data, httpResponse) = try result.get()
                                 
-                                if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode >= 500
-                                {
-                                    let message = String(format: NSLocalizedString("Apple's authentication servers returned an error (HTTP %d).", comment: ""), httpResponse.statusCode)
-                                    let recoverySuggestion = NSLocalizedString("This is most likely a problem on Apple's end, not with your Apple ID or password.", comment: "")
-                                    throw ALTAppleAPIError(.unknown, userInfo: [
-                                        NSLocalizedFailureReasonErrorKey: message,
-                                        NSLocalizedRecoverySuggestionErrorKey: recoverySuggestion,
-                                        "HTTPErrorCode": httpResponse.statusCode
-                                    ])
-                                }
+                                guard (200 ..< 300).contains(httpResponse.statusCode) else { throw ALTAppleAPIError.unknown(statusCode: httpResponse.statusCode) }
                                 
                                 guard let responseDictionary = try PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any] else {
                                     throw URLError(.badServerResponse)
@@ -325,8 +331,6 @@ private extension ALTAppleAPI
                                 completionHandler(.failure(error))
                             }
                         }
-                        
-                        verifyCodeTask.resume()
                     }
                     catch
                     {
@@ -341,7 +345,7 @@ private extension ALTAppleAPI
                 completionHandler(.failure(error))
             }
         }
-        
+
         if isCodeAlreadySent
         {
             // Apple already sent the code, so prompt for it without requesting another.
@@ -349,11 +353,9 @@ private extension ALTAppleAPI
         }
         else
         {
-            let requestCodeTask = self.session.dataTask(with: request) { (data, response, error) in
-                requestCodeHandler(error)
+            self.sendGSARequest(request) { (result) in
+                requestCodeHandler(result)
             }
-            
-            requestCodeTask.resume()
         }
     }
     
@@ -386,10 +388,13 @@ private extension ALTAppleAPI
             return
         }
         
-        let requestCodeTask = self.session.dataTask(with: request) { (data, response, error) in
+        self.sendGSARequest(request) { (result) in
             do
             {
-                guard error == nil else { throw error! }
+                let (_, response) = try result.get()
+                guard (200 ..< 300).contains(response.statusCode) else {
+                    throw ALTAppleAPIError.unknown(statusCode: response.statusCode, failure: NSLocalizedString("Could not request an SMS verification code from Apple.", comment: ""))
+                }
                 
                 func responseHandler(verificationCode: String?)
                 {
@@ -411,13 +416,12 @@ private extension ALTAppleAPI
                         let bodyData = try PropertyListSerialization.data(fromPropertyList: bodyXML, format: .xml, options: 0)
                         request.httpBody = bodyData
                         
-                        let verifyCodeTask = self.session.dataTask(with: request) { (data, response, error) in
+                        self.sendGSARequest(request) { (result) in
                             do
                             {
-                                guard error == nil else { throw error! }
-                                                                
-                                guard let httpResponse = response as? HTTPURLResponse,
-                                      httpResponse.statusCode == 200,
+                                let (_, httpResponse) = try result.get()
+                                
+                                guard httpResponse.statusCode == 200,
                                       httpResponse.allHeaderFields.keys.contains("X-Apple-PE-Token") // PE token is included in headers if we sent correct verification code.
                                 else { throw ALTAppleAPIError(.incorrectVerificationCode) }
                                 
@@ -428,8 +432,6 @@ private extension ALTAppleAPI
                                 completionHandler(.failure(error))
                             }
                         }
-                        
-                        verifyCodeTask.resume()
                     }
                     catch
                     {
@@ -444,8 +446,6 @@ private extension ALTAppleAPI
                 completionHandler(.failure(error))
             }
         }
-        
-        requestCodeTask.resume()
     }
     
     func fetchAccount(session: ALTAppleAPISession, completionHandler: @escaping (Result<ALTAccount, Error>) -> Void)
@@ -477,6 +477,41 @@ private extension ALTAppleAPI
 
 private extension ALTAppleAPI
 {
+    // Apple's servers reject outdated client identities, so use the same modern AuthKit identity for every request.
+    static let userAgent = "AuthKit/1 (Macintosh; OS X 26.5.2) (com.apple.dt.Xcode/26.0)"
+    
+    func sendGSARequest(_ request: URLRequest, completionHandler: @escaping (Result<(Data, HTTPURLResponse), Error>) -> Void)
+    {
+        // Create a new session, and limit the maximum connections to just one at a time.
+        // Otherwise, Apple's servers may reject connections with more than 2 requests.
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.httpMaximumConnectionsPerHost = 1
+        
+        let session = URLSession(configuration: configuration)
+        defer { session.finishTasksAndInvalidate() }
+        
+        let dataTask = session.dataTask(with: request) { (data, response, error) in
+            do
+            {
+                guard let data = data, let httpResponse = response as? HTTPURLResponse else { throw error ?? ALTAppleAPIError.unknown() }
+                
+                #if LOG_GSA
+                // Only log the response, NOT the request, because request headers contain the identity token and anisette data.
+                let body = String(data: data, encoding: .utf8) ?? "<\(data.count) bytes>"
+                print("GSA Request Body:", body)
+                #endif
+                
+                completionHandler(.success((data, httpResponse)))
+            }
+            catch
+            {
+                completionHandler(.failure(error))
+            }
+        }
+        
+        dataTask.resume()
+    }
+    
     func sendAuthenticationRequest(parameters requestParameters: [String: Any], anisetteData: ALTAnisetteData, completionHandler: @escaping (Result<[String: Any], Error>) -> Void)
     {
         do
@@ -492,7 +527,7 @@ private extension ALTAppleAPI
                 "Content-Type": "text/x-xml-plist",
                 "X-MMe-Client-Info": anisetteData.deviceDescription,
                 "Accept": "*/*",
-                "User-Agent": "AuthKit/1 (Macintosh; OS X 26.5.2) (com.apple.dt.Xcode/26.0)"
+                "User-Agent": ALTAppleAPI.userAgent
             ]
             
             let bodyData = try PropertyListSerialization.data(fromPropertyList: parameters, format: .xml, options: 0)
@@ -502,29 +537,10 @@ private extension ALTAppleAPI
             request.httpBody = bodyData
             httpHeaders.forEach { request.addValue($0.value, forHTTPHeaderField: $0.key) }
             
-            // Create a new session, and limit the maximum connections to just one at a time.
-            // Otherwise, Apple's servers may reject connections with more than 2 requests.
-            let configuration = URLSessionConfiguration.ephemeral
-            configuration.httpMaximumConnectionsPerHost = 1
-            
-            let session = URLSession(configuration: configuration)
-            defer { session.finishTasksAndInvalidate() }
-            
-            let dataTask = session.dataTask(with: request) { (data, response, error) in
+            self.sendGSARequest(request) { (result) in
                 do
                 {
-                    guard let data = data else { throw error ?? ALTAppleAPIError.unknown() }
-                    
-                    if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode >= 500
-                    {
-                        let message = String(format: NSLocalizedString("Apple's authentication servers returned an error (HTTP %d).", comment: ""), httpResponse.statusCode)
-                        let recoverySuggestion = NSLocalizedString("This is most likely a problem on Apple's end, not with your Apple ID or password.", comment: "")
-                        throw ALTAppleAPIError(.unknown, userInfo: [
-                            NSLocalizedFailureReasonErrorKey: message,
-                            NSLocalizedRecoverySuggestionErrorKey: recoverySuggestion,
-                            "HTTPErrorCode": httpResponse.statusCode
-                        ])
-                    }
+                    let (data, _) = try result.get()
                     
                     guard let responseDictionary = try PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any],
                           let dictionary = responseDictionary["Response"] as? [String: Any],
@@ -550,8 +566,6 @@ private extension ALTAppleAPI
                     completionHandler(.failure(error))
                 }
             }
-            
-            dataTask.resume()
         }
         catch
         {
@@ -573,9 +587,8 @@ private extension ALTAppleAPI
             "Accept": "application/x-buddyml",
             "Accept-Language": "en-us",
             "Content-Type": "application/x-plist",
-            "User-Agent": "Xcode",
+            "User-Agent": ALTAppleAPI.userAgent,
             "X-Apple-App-Info": "com.apple.gs.xcode.auth",
-            "X-Xcode-Version": "11.2 (11B41)",
             "X-Apple-Identity-Token": encodedIdentityToken,
             "X-Apple-I-MD-M": anisetteData.machineID,
             "X-Apple-I-MD": anisetteData.oneTimePassword,
