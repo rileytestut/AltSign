@@ -28,6 +28,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (class, nonatomic, readonly) ALTAppleAPI *sharedAPI;
 
+// Optional. Apple rejects one-time passwords that were already used, so when this is set
+// authentication asks for fresh anisette data before each step that follows the first sign-in.
+@property (nonatomic, copy, nullable) void (^anisetteDataRefreshHandler)(void (^completionHandler)(ALTAnisetteData *_Nullable anisetteData, NSError *_Nullable error));
+
 /* Teams */
 - (void)fetchTeamsForAccount:(ALTAccount *)account session:(ALTAppleAPISession *)session
            completionHandler:(void (^)(NSArray<ALTTeam *> *_Nullable teams, NSError *_Nullable error))completionHandler;
