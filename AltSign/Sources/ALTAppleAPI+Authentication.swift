@@ -11,6 +11,19 @@ import Foundation
 @_exported import CAltSign
 import CAltSign.Private
 
+// Don't follow redirects for GrandSlam requests so an unexpected redirect surfaces as an HTTP error.
+private final class AuthenticationSessionDelegate: NSObject, URLSessionTaskDelegate
+{
+    static let shared = AuthenticationSessionDelegate()
+    func urlSession(_ session: URLSession, task: URLSessionTask,
+                    willPerformHTTPRedirection response: HTTPURLResponse,
+                    newRequest request: URLRequest,
+                    completionHandler: @escaping (URLRequest?) -> Void)
+    {
+        completionHandler(nil)
+    }
+}
+
 public extension ALTAppleAPIError
 {
     static func unknown(statusCode: Int? = nil, failure: String? = nil, userInfo: [String: Any] = [:], sourceFile: String = #fileID, sourceLine: UInt = #line) -> ALTAppleAPIError
@@ -494,7 +507,7 @@ private extension ALTAppleAPI
         let configuration = URLSessionConfiguration.ephemeral
         configuration.httpMaximumConnectionsPerHost = 1
         
-        let session = URLSession(configuration: configuration)
+        let session = URLSession(configuration: configuration, delegate: AuthenticationSessionDelegate.shared, delegateQueue: nil)
         defer { session.finishTasksAndInvalidate() }
         
         let dataTask = session.dataTask(with: request) { (data, response, error) in
@@ -550,7 +563,10 @@ private extension ALTAppleAPI
             self.sendGSARequest(request) { (result) in
                 do
                 {
-                    let (data, _) = try result.get()
+                    let (data, httpResponse) = try result.get()
+                    
+                    // GSA answers rejected clients with an HTML error page (e.g. 503), which would otherwise surface as a plist parsing error.
+                    guard (200 ..< 300).contains(httpResponse.statusCode) else { throw ALTAppleAPIError.unknown(statusCode: httpResponse.statusCode) }
                     
                     guard let responseDictionary = try PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any],
                           let dictionary = responseDictionary["Response"] as? [String: Any],
