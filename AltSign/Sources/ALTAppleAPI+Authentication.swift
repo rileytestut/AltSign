@@ -224,21 +224,15 @@ private extension ALTAppleAPI
     func makeClientDictionary(anisetteData: ALTAnisetteData) -> [String: Any]
     {
         let clientDictionary = [
-            "bootstrap": true,
-            "icscrec": true,
-            "pbe": false,
-            "prkgen": true,
+            "bootstrap": "true",
+            "icscrec": "true",
+            "pbe": "false",
+            "prkgen": "true",
             "svct": "iCloud",
-            "loc": anisetteData.locale.identifier,
-            "X-Apple-Locale": anisetteData.locale.identifier,
+            "loc": "en_US",
             "X-Apple-I-MD": anisetteData.oneTimePassword,
             "X-Apple-I-MD-M": anisetteData.machineID,
             "X-Mme-Device-Id": anisetteData.deviceUniqueIdentifier,
-            "X-Apple-I-MD-LU": anisetteData.localUserID,
-            "X-Apple-I-MD-RINFO": anisetteData.routingInfo,
-            "X-Apple-I-SRL-NO": anisetteData.deviceSerialNumber,
-            "X-Apple-I-Client-Time": self.dateFormatter.string(from: anisetteData.date),
-            "X-Apple-I-TimeZone": TimeZone.current.abbreviation() ?? "PST",
         ] as [String: Any]
         
         return clientDictionary
@@ -490,8 +484,8 @@ private extension ALTAppleAPI
 
 private extension ALTAppleAPI
 {
-    // Apple's servers reject outdated client identities, so use the same modern AuthKit identity for every request.
-    static let userAgent = "AuthKit/1 (Macintosh; OS X 26.5.2) (com.apple.dt.Xcode/26.0)"
+    // GrandSlam rejects requests whose User-Agent and X-MMe-Client-Info don't match the client that generated the anisette data.
+    var userAgent: String { self.authenticationUserAgent ?? "akd/1.0 CFNetwork/808.1.4" }
     
     func sendGSARequest(_ request: URLRequest, completionHandler: @escaping (Result<(Data, HTTPURLResponse), Error>) -> Void)
     {
@@ -539,8 +533,11 @@ private extension ALTAppleAPI
             let httpHeaders = [
                 "Content-Type": "text/x-xml-plist",
                 "X-MMe-Client-Info": anisetteData.deviceDescription,
-                "Accept": "*/*",
-                "User-Agent": ALTAppleAPI.userAgent
+                "Accept": "text/x-xml-plist",
+                "X-Xcode-Version": "27.0 (27A5218g)",
+                "X-Apple-App-Info": "com.apple.gs.xcode.auth",
+                "Connection": "close",
+                "User-Agent": self.userAgent
             ]
             
             let bodyData = try PropertyListSerialization.data(fromPropertyList: parameters, format: .xml, options: 0)
@@ -597,10 +594,12 @@ private extension ALTAppleAPI
         let encodedIdentityToken = identityTokenData.base64EncodedString()
         
         let httpHeaders = [
-            "Accept": "application/x-buddyml",
+            "Accept": "text/x-xml-plist",
+            "X-Xcode-Version": "27.0 (27A5218g)",
+            "Connection": "close",
             "Accept-Language": "en-us",
-            "Content-Type": "application/x-plist",
-            "User-Agent": ALTAppleAPI.userAgent,
+            "Content-Type": "text/x-xml-plist",
+            "User-Agent": self.userAgent,
             "X-Apple-App-Info": "com.apple.gs.xcode.auth",
             "X-Apple-Identity-Token": encodedIdentityToken,
             "X-Apple-I-MD-M": anisetteData.machineID,

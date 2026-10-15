@@ -32,6 +32,10 @@ NS_ASSUME_NONNULL_BEGIN
 // authentication asks for fresh anisette data before each step that follows the first sign-in.
 @property (nonatomic, copy, nullable) void (^anisetteDataRefreshHandler)(void (^completionHandler)(ALTAnisetteData *_Nullable anisetteData, NSError *_Nullable error));
 
+// Optional. The User-Agent sent with GrandSlam requests. It must match the client that generated the
+// anisette data (anisette v3 servers report it in /v3/client_info). Defaults to akd's user agent.
+@property (nonatomic, copy, nullable) NSString *authenticationUserAgent;
+
 /* Teams */
 - (void)fetchTeamsForAccount:(ALTAccount *)account session:(ALTAppleAPISession *)session
            completionHandler:(void (^)(NSArray<ALTTeam *> *_Nullable teams, NSError *_Nullable error))completionHandler;
