@@ -66,164 +66,181 @@ public extension ALTAppleAPI
         
         do
         {
-            let clientDictionary = self.makeClientDictionary(anisetteData: anisetteData)
-            
             let context = GSAContext(username: sanitizedAppleID, password: password)
             guard let publicKey = context.start() else { throw ALTAppleAPIError(.authenticationHandshakeFailed) }
             
-            let parameters = [
-                "A2k": publicKey,
-                "cpd": clientDictionary,
-                "ps": ["s2k", "s2k_fo"],
-                "o": "init",
-                "u": sanitizedAppleID
-            ] as [String: Any]
+            func beginAuthentication(using anisetteData: ALTAnisetteData, hasResynchronized: Bool = false)
+            {
+                let clientDictionary = self.makeClientDictionary(anisetteData: anisetteData)
+                let parameters = [
+                    "A2k": publicKey,
+                    "cpd": clientDictionary,
+                    "ps": ["s2k", "s2k_fo"],
+                    "o": "init",
+                    "u": sanitizedAppleID
+                ] as [String: Any]
             
-            self.sendAuthenticationRequest(parameters: parameters, anisetteData: anisetteData) { (result) in
-                do
-                {
-                    let responseDictionary = try result.get()
-
-                    guard let c = responseDictionary["c"] as? String,
-                          let salt = responseDictionary["s"] as? Data,
-                          let iterations = responseDictionary["i"] as? Int,
-                          let serverPublicKey = responseDictionary["B"] as? Data
-                    else { throw URLError(.badServerResponse) }
-                    
-                    context.salt = salt
-                    context.serverPublicKey = serverPublicKey
-                    
-                    let sp = responseDictionary["sp"] as? String
-                    let isHexadecimal = (sp == "s2k_fo")                    
-                    
-                    guard let verificationMessage = context.makeVerificationMessage(iterations: iterations, isHexadecimal: isHexadecimal) else {
-                        throw ALTAppleAPIError(.authenticationHandshakeFailed)
-                    }
-                    
-                    let parameters = [
-                        "c": c,
-                        "cpd": clientDictionary,
-                        "M1": verificationMessage,
-                        "o": "complete",
-                        "u": sanitizedAppleID
-                    ] as [String: Any]
-                    
-                    self.sendAuthenticationRequest(parameters: parameters, anisetteData: anisetteData) { (result) in
-                        do
+                self.sendAuthenticationRequest(parameters: parameters, anisetteData: anisetteData) { (result) in
+                    do
+                    {
+                        let responseDictionary = try result.get()
+                        if let status = responseDictionary["Status"] as? [String: Any], status["hsc"] as? Int == 434
                         {
-                            let responseDictionary = try result.get()
-                            
-                            guard let serverVerificationMessage = responseDictionary["M2"] as? Data,
-                                  let serverDictionary = responseDictionary["spd"] as? Data,
-                                  let statusDictionary = responseDictionary["Status"] as? [String: Any]
-                            else { throw URLError(.badServerResponse) }
-                            
-                            guard context.verifyServerVerificationMessage(serverVerificationMessage) else { throw ALTAppleAPIError(.authenticationHandshakeFailed) }
-                            guard let decryptedData = serverDictionary.decryptedCBC(context: context) else { throw ALTAppleAPIError(.authenticationHandshakeFailed) }
-                            
-                            guard let decryptedDictionary = try PropertyListSerialization.propertyList(from: decryptedData, format: nil) as? [String: Any],
-                                  let dsid = decryptedDictionary["adsid"] as? String,
-                                  let idmsToken = decryptedDictionary["GsIdmsToken"] as? String
-                            else { throw URLError(.badServerResponse) }
-                            
-                            context.dsid = dsid
-                            
-                            func signInAgain(verificationHandler: @escaping (@escaping (String?) -> Void) -> Void)
-                            {
-                                self.refreshAnisetteData(anisetteData) { (result) in
-                                    switch result
-                                    {
-                                    case .failure(let error): completionHandler(nil, nil, error)
-                                    case .success(let anisetteData):
-                                        self.authenticate(appleID: unsanitizedAppleID, password: password, anisetteData: anisetteData, verificationHandler: verificationHandler, completionHandler: completionHandler)
-                                    }
-                                }
+                            guard !hasResynchronized, let resync = self.anisetteDataResyncHandler else { throw ALTAppleAPIError(.invalidAnisetteData) }
+                            let sim = (status["X-Apple-I-MD-DATA"] as? String) ??
+                                      (status["X-Apple-I-MD-DATA"] as? Data)?.base64EncodedString()
+                            guard let sim, !sim.isEmpty else { throw ALTAppleAPIError(.invalidAnisetteData) }
+                            resync(sim) { data, error in
+                                guard let data else { return completionHandler(nil, nil, error ?? ALTAppleAPIError(.invalidAnisetteData)) }
+                                // Same SRP context and A2k; all later steps use the resynchronized cpd.
+                                beginAuthentication(using: data, hasResynchronized: true)
                             }
-                            
-                            // Since October 2026 Apple often sends the code to trusted devices on its own.
-                            // It then answers with hsc 409 and no "au" value instead of "trustedDeviceSecondaryAuth".
-                            let authType = statusDictionary["au"] as? String
-                            let isCodeAlreadySent = (authType ?? "").isEmpty && statusDictionary["hsc"] as? Int == 409
-                            
-                            switch isCodeAlreadySent ? "trustedDeviceSecondaryAuth" : authType
+                            return
+                        }
+
+                        guard let c = responseDictionary["c"] as? String,
+                              let salt = responseDictionary["s"] as? Data,
+                              let iterations = responseDictionary["i"] as? Int,
+                              let serverPublicKey = responseDictionary["B"] as? Data
+                        else { throw URLError(.badServerResponse) }
+                    
+                        context.salt = salt
+                        context.serverPublicKey = serverPublicKey
+                    
+                        let sp = responseDictionary["sp"] as? String
+                        let isHexadecimal = (sp == "s2k_fo")                    
+                    
+                        guard let verificationMessage = context.makeVerificationMessage(iterations: iterations, isHexadecimal: isHexadecimal) else {
+                            throw ALTAppleAPIError(.authenticationHandshakeFailed)
+                        }
+                    
+                        let parameters = [
+                            "c": c,
+                            "cpd": clientDictionary,
+                            "M1": verificationMessage,
+                            "o": "complete",
+                            "u": sanitizedAppleID
+                        ] as [String: Any]
+                    
+                        self.sendAuthenticationRequest(parameters: parameters, anisetteData: anisetteData) { (result) in
+                            do
                             {
-                            case "trustedDeviceSecondaryAuth":
-                                guard let verificationHandler = verificationHandler else { throw ALTAppleAPIError(.requiresTwoFactorAuthentication) }
-                                
-                                self.requestTrustedDeviceTwoFactorCode(dsid: dsid, idmsToken: idmsToken, anisetteData: anisetteData, isCodeAlreadySent: isCodeAlreadySent, verificationHandler: verificationHandler) { (result) in
-                                    switch result
-                                    {
-                                    case .failure(let error): completionHandler(nil, nil, error)
-                                    case .success: signInAgain(verificationHandler: verificationHandler)
-                                    }
-                                }
-                                
-                            case "secondaryAuth":
-                                guard let verificationHandler = verificationHandler else { throw ALTAppleAPIError(.requiresTwoFactorAuthentication) }
-                                
-                                self.requestSMSTwoFactorCode(dsid: dsid, idmsToken: idmsToken, anisetteData: anisetteData, verificationHandler: verificationHandler) { (result) in
-                                    switch result
-                                    {
-                                    case .failure(let error): completionHandler(nil, nil, error)
-                                    case .success: signInAgain(verificationHandler: verificationHandler)
-                                    }
-                                }
-                                
-                            default:
-                                guard let sessionKey = decryptedDictionary["sk"] as? Data,
-                                      let c = decryptedDictionary["c"] as? Data
+                                let responseDictionary = try result.get()
+                            
+                                guard let serverVerificationMessage = responseDictionary["M2"] as? Data,
+                                      let serverDictionary = responseDictionary["spd"] as? Data,
+                                      let statusDictionary = responseDictionary["Status"] as? [String: Any]
                                 else { throw URLError(.badServerResponse) }
-                                
-                                context.sessionKey = sessionKey
-                                
-                                let app = "com.apple.gs.xcode.auth"
-                                guard let checksum = context.makeChecksum(appName: app) else { throw ALTAppleAPIError(.authenticationHandshakeFailed) }
-                                
-                                self.refreshAnisetteData(anisetteData) { (result) in
-                                    let anisetteData: ALTAnisetteData
-                                    do { anisetteData = try result.get() }
-                                    catch { return completionHandler(nil, nil, error) }
-                                    
-                                    let parameters = [
-                                        "app": [app],
-                                        "c": c,
-                                        "checksum": checksum,
-                                        "cpd": self.makeClientDictionary(anisetteData: anisetteData),
-                                        "o": "apptokens",
-                                        "t": idmsToken,
-                                        "u": dsid
-                                    ] as [String: Any]
-                                    
-                                    self.fetchAuthToken(app: app, parameters: parameters, context: context, anisetteData: anisetteData) { (result) in
+                            
+                                guard context.verifyServerVerificationMessage(serverVerificationMessage) else { throw ALTAppleAPIError(.authenticationHandshakeFailed) }
+                                guard let decryptedData = serverDictionary.decryptedCBC(context: context) else { throw ALTAppleAPIError(.authenticationHandshakeFailed) }
+                            
+                                guard let decryptedDictionary = try PropertyListSerialization.propertyList(from: decryptedData, format: nil) as? [String: Any],
+                                      let dsid = decryptedDictionary["adsid"] as? String,
+                                      let idmsToken = decryptedDictionary["GsIdmsToken"] as? String
+                                else { throw URLError(.badServerResponse) }
+                            
+                                context.dsid = dsid
+                            
+                                func signInAgain(verificationHandler: @escaping (@escaping (String?) -> Void) -> Void)
+                                {
+                                    self.refreshAnisetteData(anisetteData) { (result) in
                                         switch result
                                         {
                                         case .failure(let error): completionHandler(nil, nil, error)
-                                        case .success(let token):
+                                        case .success(let anisetteData):
+                                            self.authenticate(appleID: unsanitizedAppleID, password: password, anisetteData: anisetteData, verificationHandler: verificationHandler, completionHandler: completionHandler)
+                                        }
+                                    }
+                                }
+                            
+                                // Since October 2026 Apple often sends the code to trusted devices on its own.
+                                // It then answers with hsc 409 and no "au" value instead of "trustedDeviceSecondaryAuth".
+                                let authType = statusDictionary["au"] as? String
+                                let isCodeAlreadySent = (authType ?? "").isEmpty && statusDictionary["hsc"] as? Int == 409
+                            
+                                switch isCodeAlreadySent ? "trustedDeviceSecondaryAuth" : authType
+                                {
+                                case "trustedDeviceSecondaryAuth":
+                                    guard let verificationHandler = verificationHandler else { throw ALTAppleAPIError(.requiresTwoFactorAuthentication) }
+                                
+                                    self.requestTrustedDeviceTwoFactorCode(dsid: dsid, idmsToken: idmsToken, anisetteData: anisetteData, isCodeAlreadySent: isCodeAlreadySent, verificationHandler: verificationHandler) { (result) in
+                                        switch result
+                                        {
+                                        case .failure(let error): completionHandler(nil, nil, error)
+                                        case .success: signInAgain(verificationHandler: verificationHandler)
+                                        }
+                                    }
+                                
+                                case "secondaryAuth":
+                                    guard let verificationHandler = verificationHandler else { throw ALTAppleAPIError(.requiresTwoFactorAuthentication) }
+                                
+                                    self.requestSMSTwoFactorCode(dsid: dsid, idmsToken: idmsToken, anisetteData: anisetteData, verificationHandler: verificationHandler) { (result) in
+                                        switch result
+                                        {
+                                        case .failure(let error): completionHandler(nil, nil, error)
+                                        case .success: signInAgain(verificationHandler: verificationHandler)
+                                        }
+                                    }
+                                
+                                default:
+                                    guard let sessionKey = decryptedDictionary["sk"] as? Data,
+                                          let c = decryptedDictionary["c"] as? Data
+                                    else { throw URLError(.badServerResponse) }
+                                
+                                    context.sessionKey = sessionKey
+                                
+                                    let app = "com.apple.gs.xcode.auth"
+                                    guard let checksum = context.makeChecksum(appName: app) else { throw ALTAppleAPIError(.authenticationHandshakeFailed) }
+                                
+                                    self.refreshAnisetteData(anisetteData) { (result) in
+                                        let anisetteData: ALTAnisetteData
+                                        do { anisetteData = try result.get() }
+                                        catch { return completionHandler(nil, nil, error) }
+                                    
+                                        let parameters = [
+                                            "app": [app],
+                                            "c": c,
+                                            "checksum": checksum,
+                                            "cpd": self.makeClientDictionary(anisetteData: anisetteData),
+                                            "o": "apptokens",
+                                            "t": idmsToken,
+                                            "u": dsid
+                                        ] as [String: Any]
+                                    
+                                        self.fetchAuthToken(app: app, parameters: parameters, context: context, anisetteData: anisetteData) { (result) in
+                                            switch result
+                                            {
+                                            case .failure(let error): completionHandler(nil, nil, error)
+                                            case .success(let token):
                                             
-                                            let session = ALTAppleAPISession(dsid: dsid, authToken: token, anisetteData: anisetteData)
-                                            self.fetchAccount(session: session) { (result) in
-                                                switch result
-                                                {
-                                                case .failure(let error): completionHandler(nil, nil, error)
-                                                case .success(let account): completionHandler(account, session, nil)
+                                                let session = ALTAppleAPISession(dsid: dsid, authToken: token, anisetteData: anisetteData)
+                                                self.fetchAccount(session: session) { (result) in
+                                                    switch result
+                                                    {
+                                                    case .failure(let error): completionHandler(nil, nil, error)
+                                                    case .success(let account): completionHandler(account, session, nil)
+                                                    }
                                                 }
                                             }
                                         }
                                     }
                                 }
                             }
-                        }
-                        catch
-                        {
-                            completionHandler(nil, nil, error)
+                            catch
+                            {
+                                completionHandler(nil, nil, error)
+                            }
                         }
                     }
-                }
-                catch
-                {
-                    completionHandler(nil, nil, error)
+                    catch
+                    {
+                        completionHandler(nil, nil, error)
+                    }
                 }
             }
+            
+            beginAuthentication(using: anisetteData)
         }
         catch
         {
@@ -573,6 +590,8 @@ private extension ALTAppleAPI
                           let status = dictionary["Status"] as? [String: Any]
                     else { throw URLError(.badServerResponse) }
                                         
+                    // hsc 434 is a protocol resync, handled once by the original init.
+                    if status["hsc"] as? Int == 434 { return completionHandler(.success(dictionary)) }
                     let errorCode = status["ec"] as? Int ?? 0
                     guard errorCode != 0 else { return completionHandler(.success(dictionary)) }
                     
