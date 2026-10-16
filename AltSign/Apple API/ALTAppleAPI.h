@@ -28,6 +28,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (class, nonatomic, readonly) ALTAppleAPI *sharedAPI;
 
+// Optional. Apple rejects one-time passwords that were already used, so when this is set
+// authentication asks for fresh anisette data before each step that follows the first sign-in.
+@property (nonatomic, copy, nullable) void (^anisetteDataRefreshHandler)(void (^completionHandler)(ALTAnisetteData *_Nullable anisetteData, NSError *_Nullable error));
+
+// Optional. The User-Agent sent with GrandSlam requests. It must match the client that generated the
+// anisette data (anisette v3 servers report it in /v3/client_info). Defaults to akd's user agent.
+@property (nonatomic, copy, nullable) NSString *authenticationUserAgent;
+
+// Optional. Called once when GrandSlam answers hsc 434 (anisette data out of sync) with the X-Apple-I-MD-DATA
+// value it returned. The handler should resynchronize the anisette provider and return fresh anisette data.
+@property (nonatomic, copy, nullable) void (^anisetteDataResyncHandler)(NSString *sim, void (^completionHandler)(ALTAnisetteData *_Nullable anisetteData, NSError *_Nullable error));
+
 /* Teams */
 - (void)fetchTeamsForAccount:(ALTAccount *)account session:(ALTAppleAPISession *)session
            completionHandler:(void (^)(NSArray<ALTTeam *> *_Nullable teams, NSError *_Nullable error))completionHandler;
