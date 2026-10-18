@@ -499,9 +499,21 @@ private extension ALTAppleAPI
             self.sendGSARequest(request) { (result) in
                 do
                 {
-                    let (data, _) = try result.get()
+                    let (data, response) = try result.get()
                     
-                    guard let responseDictionary = try PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any],
+                    let propertyList: Any
+                    do
+                    {
+                        propertyList = try PropertyListSerialization.propertyList(from: data, format: nil)
+                    }
+                    catch
+                    {
+                        // GrandSlam reports its own errors inside the plist, so the HTTP status only matters when the body is not one.
+                        guard (200 ..< 300).contains(response.statusCode) else { throw ALTAppleAPIError.unknown(statusCode: response.statusCode) }
+                        throw error
+                    }
+
+                    guard let responseDictionary = propertyList as? [String: Any],
                           let dictionary = responseDictionary["Response"] as? [String: Any],
                           let status = dictionary["Status"] as? [String: Any]
                     else { throw URLError(.badServerResponse) }
