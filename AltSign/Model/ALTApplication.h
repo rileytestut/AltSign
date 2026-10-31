@@ -31,7 +31,17 @@ NS_ASSUME_NONNULL_BEGIN
 #endif
 
 @property (nonatomic, readonly, nullable) ALTProvisioningProfile *provisioningProfile;
+// Immediate PlugIns/*.appex only, retained for callers that count iOS extension slots.
 @property (nonatomic, readonly) NSSet<ALTApplication *> *appExtensions;
+
+// All embedded apps and extensions, recursively, excluding self. Includes Watch/*.app
+// and the Watch app inside a first-generation WatchKit extension.
+@property (nonatomic, readonly) NSArray<ALTApplication *> *nestedApplications;
+@property (nonatomic, readonly) BOOL isWatchOSApplication;
+
+// Uses exact identifiers, including WatchKit dependency keys. Does not change entitlements.
+- (BOOL)remapBundleIdentifiers:(NSDictionary<NSString *, NSString *> *)identifiers error:(NSError **)error;
+- (BOOL)validateWatchProvisioningProfile:(ALTProvisioningProfile *)profile error:(NSError **)error;
 
 @property (nonatomic, readonly) NSOperatingSystemVersion minimumiOSVersion;
 @property (nonatomic, readonly) ALTDeviceType supportedDeviceTypes;

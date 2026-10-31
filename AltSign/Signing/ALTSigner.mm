@@ -330,8 +330,12 @@ struct ALTProgress: public ldid::Progress
                 return [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorMissingProvisioningProfile userInfo:nil];
             }
             
+            NSError *validationError = nil;
+            if (![app validateWatchProvisioningProfile:profile error:&validationError]) { return validationError; }
+
             NSURL *profileURL = [app.fileURL URLByAppendingPathComponent:@"embedded.mobileprovision"];
-            [profile.data writeToURL:profileURL atomically:YES];
+            NSError *writeError = nil;
+            if (![profile.data writeToURL:profileURL options:NSDataWritingAtomic error:&writeError]) { return writeError; }
             
             NSString *additionalEntitlements = nil;
             if (app.hasPrivateEntitlements)
@@ -420,7 +424,7 @@ struct ALTProgress: public ldid::Progress
             return;
         }
         
-        for (ALTApplication *appExtension in application.appExtensions)
+        for (ALTApplication *appExtension in application.nestedApplications)
         {
             NSError *error = prepareApp(appExtension);
             if (error != nil)
@@ -462,7 +466,7 @@ struct ALTProgress: public ldid::Progress
                 NSURL *resolvedURL = [fileURL URLByResolvingSymlinksInPath];
                 
                 NSString *entitlements = entitlementsByFileURL[resolvedURL];
-                return entitlements.UTF8String;
+                return entitlements != nil ? entitlements.UTF8String : "";
             }), altProgress);
             
             // Dispatch after to allow time to finish signing binary.

@@ -32,6 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (copy, nonatomic, readonly) NSDictionary<ALTEntitlement, id> *entitlements;
 @property (copy, nonatomic, readonly) NSArray<ALTCertificate *> *certificates;
 @property (copy, nonatomic, readonly) NSArray<NSString *> *deviceIDs;
+@property (copy, nonatomic, readonly) NSArray<NSString *> *platforms;
 
 @property (readonly) BOOL isFreeProvisioningProfile;
 
