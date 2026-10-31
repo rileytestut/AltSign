@@ -17,11 +17,13 @@ extern ALTEntitlement const ALTEntitlementKeychainAccessGroups;
 extern ALTEntitlement const ALTEntitlementAppGroups;
 extern ALTEntitlement const ALTEntitlementGetTaskAllow;
 extern ALTEntitlement const ALTEntitlementTeamIdentifier;
+extern ALTEntitlement const ALTEntitlementHealthKit;
 extern ALTEntitlement const ALTEntitlementInterAppAudio;
 extern ALTEntitlement const ALTEntitlementIncreasedMemoryLimit;
 
 // Features
 typedef NSString *ALTFeature NS_TYPED_EXTENSIBLE_ENUM;
+extern ALTFeature const ALTFeatureHealthKit;
 extern ALTFeature const ALTFeatureGameCenter;
 extern ALTFeature const ALTFeatureAppGroups;
 extern ALTFeature const ALTFeatureInterAppAudio;

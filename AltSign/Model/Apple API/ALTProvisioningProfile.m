@@ -110,6 +110,7 @@
         
         _entitlements = [entitlements copy];
         _deviceIDs = [deviceIDs copy];
+        _platforms = [dictionary[@"Platform"] copy] ?: @[];
         
         _isFreeProvisioningProfile = isFreeProvisioningProfile;
         

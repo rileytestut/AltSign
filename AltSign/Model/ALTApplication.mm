@@ -8,6 +8,7 @@
 
 #import "ALTApplication.h"
 #import "ALTProvisioningProfile.h"
+#import "NSError+ALTErrors.h"
 
 #include "alt_ldid.hpp"
 
@@ -20,6 +21,31 @@ ALTDeviceType ALTDeviceTypeFromUIDeviceFamily(NSInteger deviceFamily)
         case 3: return ALTDeviceTypeAppleTV;
         default: return ALTDeviceTypeNone;
     }
+}
+
+// Provisioning arrays can authorize a wildcard (for example associated domains).
+static BOOL ALTWatchEntitlementValueIsAllowed(id required, id allowed)
+{
+    if (allowed == nil) { return NO; }
+    if ([required isKindOfClass:NSArray.class])
+    {
+        if (![allowed isKindOfClass:NSArray.class]) { return NO; }
+        for (id value in required)
+        {
+            BOOL found = NO;
+            for (id permitted in allowed)
+            {
+                if (ALTWatchEntitlementValueIsAllowed(value, permitted)) { found = YES; break; }
+            }
+            if (!found) { return NO; }
+        }
+        return YES;
+    }
+    if ([required isKindOfClass:NSString.class] && [allowed isKindOfClass:NSString.class] && [allowed hasSuffix:@"*"])
+    {
+        return [allowed length] == 1 || [required hasPrefix:[allowed substringToIndex:[allowed length] - 1]];
+    }
+    return [required isEqual:allowed];
 }
 
 @interface ALTApplication ()
@@ -225,6 +251,134 @@ ALTDeviceType ALTDeviceTypeFromUIDeviceFamily(NSInteger deviceFamily)
     }
     
     return appExtensions;
+}
+
+- (NSArray<ALTApplication *> *)nestedApplications
+{
+    NSMutableArray<ALTApplication *> *children = [NSMutableArray arrayWithArray:self.appExtensions.allObjects];
+    NSMutableArray<NSURL *> *directories = [NSMutableArray arrayWithObject:[self.fileURL URLByAppendingPathComponent:@"Watch"]];
+    if ([self.fileURL.pathExtension.lowercaseString isEqualToString:@"appex"])
+    {
+        // watchOS 1 packaged the Watch app inside the iOS WatchKit extension.
+        [directories addObject:self.fileURL];
+    }
+
+    for (NSURL *directory in directories)
+    {
+        NSArray<NSURL *> *URLs = [[NSFileManager defaultManager] contentsOfDirectoryAtURL:directory includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:nil];
+        for (NSURL *URL in URLs)
+        {
+            if (![URL.pathExtension.lowercaseString isEqualToString:@"app"]) { continue; }
+            ALTApplication *app = [[ALTApplication alloc] initWithFileURL:URL];
+            if (app != nil) { [children addObject:app]; }
+        }
+    }
+
+    [children sortUsingComparator:^NSComparisonResult(ALTApplication *a, ALTApplication *b) {
+        return [a.fileURL.path compare:b.fileURL.path];
+    }];
+    NSMutableArray<ALTApplication *> *applications = [NSMutableArray array];
+    for (ALTApplication *child in children)
+    {
+        [applications addObject:child];
+        [applications addObjectsFromArray:child.nestedApplications];
+    }
+    return applications;
+}
+
+- (BOOL)isWatchOSApplication
+{
+    NSDictionary *info = [NSDictionary dictionaryWithContentsOfURL:[self.fileURL URLByAppendingPathComponent:@"Info.plist"]];
+    return [info[@"DTPlatformName"] isEqual:@"watchos"] ||
+        [info[@"CFBundleSupportedPlatforms"] containsObject:@"WatchOS"] ||
+        [info[@"WKApplication"] boolValue] || [info[@"WKWatchKitApp"] boolValue];
+}
+
+- (BOOL)remapBundleIdentifiers:(NSDictionary<NSString *,NSString *> *)identifiers error:(NSError **)error
+{
+    NSArray<ALTApplication *> *applications = [@[self] arrayByAddingObjectsFromArray:self.nestedApplications];
+    NSMutableDictionary<NSURL *, NSDictionary *> *updates = [NSMutableDictionary dictionary];
+    for (ALTApplication *app in applications)
+    {
+        NSURL *URL = [app.fileURL URLByAppendingPathComponent:@"Info.plist"];
+        NSMutableDictionary *info = [[NSDictionary dictionaryWithContentsOfURL:URL] mutableCopy];
+        NSString *identifier = identifiers[app.bundleIdentifier];
+        if (info == nil || identifier == nil)
+        {
+            if (error) { *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorInvalidApp userInfo:nil]; }
+            return NO;
+        }
+        info[@"CFBundleIdentifier"] = identifier;
+        for (NSString *key in @[@"WKCompanionAppBundleIdentifier", @"WKAppBundleIdentifier"])
+        {
+            NSString *original = info[key];
+            if (original == nil) { continue; }
+            if (identifiers[original] == nil)
+            {
+                if (error) { *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorInvalidApp userInfo:@{NSLocalizedFailureReasonErrorKey: [NSString stringWithFormat:@"No bundle identifier mapping for %@ (%@).", original, key]}]; }
+                return NO;
+            }
+            info[key] = identifiers[original];
+        }
+        NSMutableDictionary *extension = [info[@"NSExtension"] mutableCopy];
+        NSMutableDictionary *attributes = [extension[@"NSExtensionAttributes"] mutableCopy];
+        NSString *watchIdentifier = attributes[@"WKAppBundleIdentifier"];
+        if (watchIdentifier != nil)
+        {
+            if (identifiers[watchIdentifier] == nil)
+            {
+                if (error) { *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorInvalidApp userInfo:nil]; }
+                return NO;
+            }
+            attributes[@"WKAppBundleIdentifier"] = identifiers[watchIdentifier];
+            extension[@"NSExtensionAttributes"] = attributes;
+            info[@"NSExtension"] = extension;
+        }
+        updates[URL] = info;
+    }
+    // Validate the entire mapping before writing any plists.
+    for (NSURL *URL in updates)
+    {
+        if (![updates[URL] writeToURL:URL error:error]) { return NO; }
+    }
+    return YES;
+}
+
+- (BOOL)validateWatchProvisioningProfile:(ALTProvisioningProfile *)profile error:(NSError **)error
+{
+    if (!self.isWatchOSApplication) { return YES; }
+    NSString *reason = nil;
+    // Embedded companions use the iOS provisioning family. Valid profiles may
+    // list only iOS (plus other iOS-family platforms), without a watchOS entry.
+    if (![profile.platforms containsObject:@"iOS"] && ![profile.platforms containsObject:@"watchOS"])
+    {
+        reason = @"The provisioning profile does not support the iOS/watchOS app family.";
+    }
+    else
+    {
+        // Do not silently remove Watch capabilities when the account/profile cannot grant them.
+        // Identity and app groups are remapped separately by the signer/provisioning caller.
+        for (NSString *key in self.entitlements)
+        {
+            if (![key hasPrefix:@"com.apple.developer."] || [key isEqual:ALTEntitlementTeamIdentifier]) { continue; }
+            id required = self.entitlements[key];
+            id allowed = profile.entitlements[key];
+            if ([required isKindOfClass:NSNumber.class] && ![required boolValue]) { continue; }
+            if ([required respondsToSelector:@selector(count)] && [required count] == 0) { continue; }
+            BOOL supported = ALTWatchEntitlementValueIsAllowed(required, allowed);
+            if (!supported)
+            {
+                reason = [NSString stringWithFormat:@"The provisioning profile does not authorize the Watch entitlement %@. Your Apple developer account must support this capability.", key];
+                break;
+            }
+        }
+    }
+    if (reason == nil) { return YES; }
+    if (error)
+    {
+        *error = [NSError errorWithDomain:AltSignErrorDomain code:ALTErrorMissingProvisioningProfile userInfo:@{NSLocalizedFailureReasonErrorKey: reason, ALTAppNameErrorKey: self.name}];
+    }
+    return NO;
 }
 
 @end
