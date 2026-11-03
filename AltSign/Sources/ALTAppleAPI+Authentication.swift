@@ -26,7 +26,7 @@ private final class AuthenticationSessionDelegate: NSObject, URLSessionTaskDeleg
 
 public extension ALTAppleAPIError
 {
-    static func unknown(statusCode: Int? = nil, failure: String? = nil, userInfo: [String: Any] = [:], sourceFile: String = #fileID, sourceLine: UInt = #line) -> ALTAppleAPIError
+    static func unknown(statusCode: Int? = nil, responseDate: String? = nil, failure: String? = nil, userInfo: [String: Any] = [:], sourceFile: String = #fileID, sourceLine: UInt = #line) -> ALTAppleAPIError
     {
         var userInfo = userInfo
         userInfo[ALTSourceFileErrorKey] = sourceFile
@@ -44,7 +44,9 @@ public extension ALTAppleAPIError
             
             if statusCode == 503
             {
-                userInfo[NSLocalizedRecoverySuggestionErrorKey] = NSLocalizedString("This is most likely a problem on Apple's end, or you may have been rate limited. Please wait and try again later.", comment: "")
+                // If this device's clock disagrees with Apple's, that is the likelier cause, and the user can fix it.
+                userInfo[NSLocalizedRecoverySuggestionErrorKey] = ClockSkew.recoverySuggestion(serverDateHeader: responseDate) ??
+                    NSLocalizedString("This is most likely a problem on Apple's end, or you may have been rate limited. Please wait and try again later.", comment: "")
             }
             else if statusCode >= 300
             {
@@ -344,7 +346,7 @@ private extension ALTAppleAPI
                         {
                             let (data, httpResponse) = try result.get()
                             
-                            guard (200 ..< 300).contains(httpResponse.statusCode) else { throw ALTAppleAPIError.unknown(statusCode: httpResponse.statusCode) }
+                            guard (200 ..< 300).contains(httpResponse.statusCode) else { throw ALTAppleAPIError.unknown(statusCode: httpResponse.statusCode, responseDate: httpResponse.value(forHTTPHeaderField: "Date")) }
                             
                             guard let responseDictionary = try PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any] else {
                                 throw URLError(.badServerResponse)
@@ -388,7 +390,7 @@ private extension ALTAppleAPI
             {
                 let (_, response) = try result.get()
                 guard (200 ..< 300).contains(response.statusCode) else {
-                    throw ALTAppleAPIError.unknown(statusCode: response.statusCode, failure: NSLocalizedString("Could not request a verification code from Apple.", comment: ""))
+                    throw ALTAppleAPIError.unknown(statusCode: response.statusCode, responseDate: response.value(forHTTPHeaderField: "Date"), failure: NSLocalizedString("Could not request a verification code from Apple.", comment: ""))
                 }
                 
                 verificationHandler(responseHandler)
@@ -434,7 +436,7 @@ private extension ALTAppleAPI
             {
                 let (_, response) = try result.get()
                 guard (200 ..< 300).contains(response.statusCode) else {
-                    throw ALTAppleAPIError.unknown(statusCode: response.statusCode, failure: NSLocalizedString("Could not request an SMS verification code from Apple.", comment: ""))
+                    throw ALTAppleAPIError.unknown(statusCode: response.statusCode, responseDate: response.value(forHTTPHeaderField: "Date"), failure: NSLocalizedString("Could not request an SMS verification code from Apple.", comment: ""))
                 }
                 
                 func responseHandler(verificationCode: String?)
@@ -587,7 +589,7 @@ private extension ALTAppleAPI
                     let (data, httpResponse) = try result.get()
                     
                     // GSA answers rejected clients with an HTML error page (e.g. 503), which would otherwise surface as a plist parsing error.
-                    guard (200 ..< 300).contains(httpResponse.statusCode) else { throw ALTAppleAPIError.unknown(statusCode: httpResponse.statusCode) }
+                    guard (200 ..< 300).contains(httpResponse.statusCode) else { throw ALTAppleAPIError.unknown(statusCode: httpResponse.statusCode, responseDate: httpResponse.value(forHTTPHeaderField: "Date")) }
                     
                     guard let responseDictionary = try PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any],
                           let dictionary = responseDictionary["Response"] as? [String: Any],
