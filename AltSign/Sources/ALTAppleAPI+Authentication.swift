@@ -406,21 +406,22 @@ private extension ALTAppleAPI
                                  verificationHandler: @escaping (@escaping (String?) -> Void) -> Void,
                                  completionHandler: @escaping (Result<Void, Error>) -> Void)
     {
-        let requestURL = URL(string: "https://gsa.apple.com/auth/verify/phone/put?mode=sms")!
-        let verifyURL = URL(string: "https://gsa.apple.com/auth/verify/phone/securitycode?referrer=/auth/verify/phone/put")!
+        let requestURL = URL(string: "https://gsa.apple.com/auth/verify/phone")!
+        let verifyURL = URL(string: "https://gsa.apple.com/auth/verify/phone/securitycode")!
 
         var request = self.makeTwoFactorCodeRequest(url: requestURL, dsid: dsid, idmsToken: idmsToken, anisetteData: anisetteData)
-        request.httpMethod = "POST"
+        request.httpMethod = "PUT"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
 
         do
         {
-            let bodyXML = [
-                "serverInfo": [
-                    "phoneNumber.id": "1"
-                ]
+            let bodyJSON = [
+                "phoneNumber": ["id": 1],
+                "mode": "sms"
             ] as [String : Any]
             
-            let bodyData = try PropertyListSerialization.data(fromPropertyList: bodyXML, format: .xml, options: 0)
+            let bodyData = try JSONSerialization.data(withJSONObject: bodyJSON)
             request.httpBody = bodyData
         }
         catch
@@ -445,16 +446,16 @@ private extension ALTAppleAPI
                         
                         var request = self.makeTwoFactorCodeRequest(url: verifyURL, dsid: dsid, idmsToken: idmsToken, anisetteData: anisetteData)
                         request.httpMethod = "POST"
+                        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                        request.setValue("application/json", forHTTPHeaderField: "Accept")
                         
-                        let bodyXML = [
-                            "securityCode.code": verificationCode,
-                            "serverInfo": [
-                                "mode": "sms",
-                                "phoneNumber.id": "1"
-                            ]
+                        let bodyJSON = [
+                            "securityCode": ["code": verificationCode],
+                            "phoneNumber": ["id": 1],
+                            "mode": "sms"
                         ] as [String : Any]
                         
-                        let bodyData = try PropertyListSerialization.data(fromPropertyList: bodyXML, format: .xml, options: 0)
+                        let bodyData = try JSONSerialization.data(withJSONObject: bodyJSON)
                         request.httpBody = bodyData
                         
                         self.sendGSARequest(request) { (result) in
