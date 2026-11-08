@@ -207,21 +207,29 @@ ALTDeviceType ALTDeviceTypeFromUIDeviceFamily(NSInteger deviceFamily)
 {
     NSMutableSet *appExtensions = [NSMutableSet set];
     
-    NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtURL:self.bundle.builtInPlugInsURL includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsSubdirectoryDescendants errorHandler:nil];
-    for (NSURL *fileURL in enumerator)
+    NSMutableArray<NSURL *> *directoryURLs = [NSMutableArray arrayWithObject:[self.fileURL URLByAppendingPathComponent:@"Extensions" isDirectory:YES]];
+    if (self.bundle.builtInPlugInsURL != nil)
     {
-        if (![fileURL.pathExtension.lowercaseString isEqualToString:@"appex"])
+        [directoryURLs insertObject:self.bundle.builtInPlugInsURL atIndex:0];
+    }
+    for (NSURL *directoryURL in directoryURLs)
+    {
+        NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtURL:directoryURL includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsSubdirectoryDescendants errorHandler:nil];
+        for (NSURL *fileURL in enumerator)
         {
-            continue;
+            if (![fileURL.pathExtension.lowercaseString isEqualToString:@"appex"])
+            {
+                continue;
+            }
+            
+            ALTApplication *appExtension = [[ALTApplication alloc] initWithFileURL:fileURL];
+            if (appExtension == nil)
+            {
+                continue;
+            }
+            
+            [appExtensions addObject:appExtension];
         }
-        
-        ALTApplication *appExtension = [[ALTApplication alloc] initWithFileURL:fileURL];
-        if (appExtension == nil)
-        {
-            continue;
-        }
-        
-        [appExtensions addObject:appExtension];
     }
     
     return appExtensions;
