@@ -17,7 +17,10 @@ ALTEntitlement const ALTEntitlementTeamIdentifier = @"com.apple.developer.team-i
 ALTEntitlement const ALTEntitlementInterAppAudio = @"inter-app-audio";
 ALTEntitlement const ALTEntitlementIncreasedMemoryLimit = @"com.apple.developer.kernel.increased-memory-limit";
 
+ALTEntitlement const ALTEntitlementHealthKit = @"com.apple.developer.healthkit";
+
 // Features
+ALTFeature const ALTFeatureHealthKit = @"HEALTHKIT";
 ALTFeature const ALTFeatureGameCenter = @"gameCenter";
 ALTFeature const ALTFeatureAppGroups = @"APG3427HIY";
 ALTFeature const ALTFeatureInterAppAudio = @"IAD53UNK2F";
@@ -38,6 +41,10 @@ _Nullable ALTEntitlement ALTEntitlementForFeature(ALTFeature feature)
         return ALTEntitlementIncreasedMemoryLimit;
     }
     
+    else if ([feature isEqualToString:ALTFeatureHealthKit])
+    {
+        return ALTEntitlementHealthKit;
+    }
     return nil;
 }
 
@@ -56,12 +63,16 @@ _Nullable ALTFeature ALTFeatureForEntitlement(ALTEntitlement entitlement)
         return ALTFeatureIncreasedMemoryLimit;
     }
     
+    else if ([entitlement isEqualToString:ALTEntitlementHealthKit])
+    {
+        return ALTFeatureHealthKit;
+    }
     return nil;
 }
 
 BOOL ALTFeatureIsLegacy(ALTFeature feature)
 {
-    if ([feature isEqualToString:ALTFeatureIncreasedMemoryLimit])
+    if ([feature isEqualToString:ALTFeatureIncreasedMemoryLimit] || [feature isEqualToString:ALTFeatureHealthKit])
     {
         return NO;
     }
